@@ -1,0 +1,35 @@
+version: '3'
+services:
+  database:
+    image: postgres:latest
+    networks:
+      - ft_transcendence
+
+  backend:
+    volumes:
+      - ./backend:/app
+    networks:
+      - ft_transcendence
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on: 
+      - database
+
+  frontend:
+    volumes:
+      - ./frontend:/app
+    networks:
+      - ft_transcendence
+    build:
+      context: ./
+      dockerfile: 
+    ports:
+      - 8080:8080
+    depends_on: 
+      - database
+
+networks:
+  ft_transcendence:
