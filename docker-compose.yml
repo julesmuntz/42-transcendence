@@ -1,9 +1,26 @@
-version: '3'
+version: '3.8'
 services:
+
   database:
-    image: postgres:latest
+    image: postgres
     networks:
       - ft_transcendence
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=nest
+    ports:
+      - 5434:5434
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user-name@domain-name.com
+      - PGADMIN_DEFAULT_PASSWORD=strong-password
+    ports:
+      - "8888:80"
+    restart: always
 
   backend:
     volumes:
@@ -12,10 +29,10 @@ services:
       - ft_transcendence
     build:
       context: ./
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.back
     ports:
-      - 3000:3000
-    depends_on: 
+      - 3030:3030
+    depends_on:
       - database
 
   frontend:
@@ -25,10 +42,12 @@ services:
       - ft_transcendence
     build:
       context: ./
-      dockerfile: 
+      dockerfile: Dockerfile.front
     ports:
       - 8080:8080
-    depends_on: 
+    environment:
+      - PORT=8080
+    depends_on:
       - database
 
 networks:
