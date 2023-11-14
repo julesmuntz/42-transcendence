@@ -8,4 +8,4 @@ RUN npm install -g @nestjs/cli
 
 EXPOSE 3030
 
-CMD [ "/bin/bash", "-c", "npm install && npm run start:dev" ]
+CMD [ "/bin/bash", "-c", "npm install && npm install --save @nestjs/typeorm typeorm pg && npm run start:dev" ]

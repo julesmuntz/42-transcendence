@@ -2,51 +2,65 @@ version: '3.8'
 services:
 
   database:
-    image: postgres
+    image: postgres:latest
+    container_name: database_container
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: user-name
+      POSTGRES_PASSWORD: strong-password
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - ft_transcendence
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=nest
-    ports:
-      - 5434:5434
-    restart: always
 
   pgadmin:
     image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=user-name@domain-name.com
-      - PGADMIN_DEFAULT_PASSWORD=strong-password
+    container_name: pgadmin4_container
+    restart: always
     ports:
       - "8888:80"
-    restart: always
-
-  backend:
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
+      PGADMIN_DEFAULT_PASSWORD: strong-password
     volumes:
-      - ./backend:/app
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - database
     networks:
       - ft_transcendence
+
+  backend:
     build:
       context: ./
       dockerfile: Dockerfile.back
     ports:
       - 3030:3030
+    volumes:
+      - ./backend:/app
     depends_on:
       - database
-
-  frontend:
-    volumes:
-      - ./frontend:/app
     networks:
       - ft_transcendence
+
+  frontend:
     build:
       context: ./
       dockerfile: Dockerfile.front
     ports:
       - 8080:3000
+    volumes:
+      - ./frontend:/app
     depends_on:
       - database
+    networks:
+      - ft_transcendence
+
+volumes:
+  postgres_data:
+  pgadmin-data:
 
 networks:
   ft_transcendence:
