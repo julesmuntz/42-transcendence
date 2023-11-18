@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './user/entity/user.entity';
+import { Relation } from './user/entity/relation.entity';
+import { MessageDirect } from './user/entity/message_direct.entity';
+import { Match } from './user/entity/match.entity';
 
 
 @Module({
@@ -10,7 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     username: 'user-name',
     password: 'strong-password',
     database: 'postgres',
-    entities: [],
+    entities: [User, Relation, MessageDirect, Match],
     synchronize: true,
   })],
   controllers: [],
