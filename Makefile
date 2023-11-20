@@ -4,6 +4,7 @@ ENV_FILE			= .env
 all: up
 
 up:
+	sh starting.sh
 	@if [ -e $(ENV_FILE) ]; then \
 		echo "docker compose up"; \
 		docker compose -f $(DOCKER_COMPOSE_FILE) --env-file $(ENV_FILE) up --build; \
@@ -26,7 +27,7 @@ fclean: clean
 	@ if [ -n "$$(docker images -aq)" ]; then docker rmi $$(docker images -aq); fi
 	@ echo "Removing all volumes"
 	@ if [ -n "$$(docker volume ls -q)" ]; then docker volume rm $$(docker volume ls -q); fi
-
-re: fclean all
+	@ echo "Removing .env"
+	@if [ -e $(ENV_FILE) ]; then rm -rf .env; fi
 
 .PHONY: all up down clean fclean re

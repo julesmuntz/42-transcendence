@@ -6,10 +6,8 @@ services:
     container_name: database_container
     ports:
       - '5432:5432'
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: user-name
-      POSTGRES_PASSWORD: strong-password
+    env_file:
+      - .env
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -36,6 +34,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3030:3030
+    env_file:
+      - .env
     volumes:
       - ./backend/src:/app/src
     depends_on:
