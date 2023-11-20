@@ -4,11 +4,11 @@ RUN apt-get update -y && apt-get upgrade -y
 
 WORKDIR /app
 
-COPY package*.json .
+COPY config/package*.json .
 
 RUN npm install && npm install -g create-react-app
 
-COPY tsconfig.json .
+COPY config/tsconfig.json .
 
 COPY public ./public
 
