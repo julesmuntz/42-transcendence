@@ -7,9 +7,9 @@ import Strategy from 'passport-42';
 export class FortyTwoStrategy extends PassportStrategy(Strategy) {
 	constructor() {
 		super({
-			clientID: API_ID,
-			clientSecret: API_SECRET,
-			callbackURL: API_CALLBACK,
+			clientID: process.env.API_ID,
+			clientSecret: process.env.API_SECRET,
+			callbackURL: process.env.API_CALLBACK,
 			scope: ['public'],
 		});
 	}
