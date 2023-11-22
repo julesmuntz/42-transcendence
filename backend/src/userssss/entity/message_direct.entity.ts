@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from './user.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity('message_direct')
 export class MessageDirect {

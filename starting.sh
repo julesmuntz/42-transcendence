@@ -2,7 +2,7 @@
 
 generate_password() {
   # Longueur du mot de passe
-  LENGTH=12
+  LENGTH=42
 
   # Caractères possibles dans le mot de passe
   CHARACTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?"
