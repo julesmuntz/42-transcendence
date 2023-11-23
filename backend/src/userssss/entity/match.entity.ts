@@ -1,8 +1,8 @@
+import { User } from 'src/users/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from './user.entity';
 
-@Entity('message_direct')
-export class MessageDirect {
+@Entity('match')
+export class Match {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -10,13 +10,16 @@ export class MessageDirect {
   creationDate: Date;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'sender_user_id' })
-  senderUser: User;
+  @JoinColumn({ name: 'user1_id' })
+  user1: User;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'recipient_user_id' })
-  recipientUser: User;
+  @JoinColumn({ name: 'user2_id' })
+  user2: User;
 
-  @Column({ length: 1024 })
-  text: string;
+  @Column()
+  score1: number;
+
+  @Column()
+  score2: number;
 }
