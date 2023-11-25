@@ -16,7 +16,7 @@ export class User {
 	creationDate: Date;
 
 	@Column({ length: 32})
-	name: string;
+	username: string;
 
 	@Column({default: 0})
 	elo: number;
@@ -28,7 +28,7 @@ export class User {
 	})
 	status: UserStatus;
 
-	@Column({ length: 64, default: 'intra'})
+	@Column({ length: 128, default: 'intra'})
 	avatarPath: string;
 
 	@Column({ length: 256, nullable: true })
@@ -36,4 +36,10 @@ export class User {
 
 	@Column({ length: 256, nullable: true })
 	oauthGoogleToken: string;
+
+	@Column({ length: 128})
+	email: string;
+
+	@Column({ length: 128})
+	displayName: string;
 }

@@ -11,9 +11,24 @@ export class AuthService {
 		Repository<User>,
 	) {}
 
-	validateUser(details: UserDetails) {
-		console.log('AuthService');
-		console.log(details);
-		// this.userRepository.
+	async validateUser(details: UserDetails) {
+		// console.log('AuthService');
+		// console.log(details);
+		const user = await this.userRepository.findOneBy({ email: details.email });
+		console.log(user);
+		if (user)
+		{
+			console.log('User found. Already signed up.');
+			return user;
+		}
+		console.log('User not found. Signing up.');
+		const newUser = this.userRepository.create(details);
+		return this.userRepository.save(newUser);
+
+	}
+
+	async findUser(id: number) {
+		const user = await this.userRepository.findOneBy({ id });
+		return user;
 	}
 }
