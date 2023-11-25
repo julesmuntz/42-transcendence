@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { FriendsModule } from './friends/friends.module';
 import { GamesModule } from './games/games.module';
 import { ChatsModule } from './chats/chats.module';
+import { ChannelsModule } from './channels/channels.module';
 
 
 @Module({
@@ -22,7 +23,8 @@ import { ChatsModule } from './chats/chats.module';
 	UsersModule,
 	FriendsModule,
 	GamesModule,
-	ChatsModule],
+	ChatsModule,
+	ChannelsModule],
 	controllers: [],
 	providers: [],
 })
