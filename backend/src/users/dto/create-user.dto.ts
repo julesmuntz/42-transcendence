@@ -3,9 +3,9 @@ import { UserStatus } from '../entities/user.entity';
 
 
 export class CreateUserDto {
-	@IsNotEmpty({ message: 'Name should not be empty'})
-	@IsString({ message: 'Name should be a string' })
-	name: string;
+	@IsNotEmpty({ message: 'Username should not be empty'})
+	@IsString({ message: 'Username should be a string' })
+	username: string;
 
 	@IsOptional()
 	@IsNumber({}, { message: 'Elo should be a number' })
@@ -26,5 +26,13 @@ export class CreateUserDto {
 	@IsOptional()
 	@IsString({ message: 'OAuth Google token should be a string' })
 	oauthGoogleToken: string;
+
+	@IsOptional()
+	@IsString({ message: 'Email token should be a string' })
+	email: string;
+
+	@IsOptional()
+	@IsString({ message: 'Display name should be a string' })
+	displayName: string;
 }
 
