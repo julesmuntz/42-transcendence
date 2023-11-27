@@ -42,4 +42,13 @@ export class User {
 
 	@Column({ length: 128})
 	displayName: string;
+
+	@Column({ nullable: true })
+	TFASecret: string;
+
+	@Column({ nullable: true })
+	isTFAEnabled: boolean;
+
+	@Column({ nullable: true })
+	isTFAuthenticated: boolean;
 }

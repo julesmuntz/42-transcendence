@@ -16,19 +16,22 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy) {
 			scope: ['public'],
 		});
 	}
+
 	async validate(accessToken: string, refreshToken: string, profile: Profile) {
 		// console.log(accessToken);
 		// console.log(refreshToken);
 		// console.log(profile);
+
 		const user = await this.authService.validateUser({
+			id: Number(profile.id),
 			username: profile.username,
 			avatarPath: (profile as any)._json.image.link,
 			oauth42Token: accessToken,
 			email: profile.emails[0].value,
 			displayName: profile.displayName,
 		});
-		// console.log('Validate');
-		// console.log(user);
+		console.log('Validate');
+		console.log(user);
 		return user || null;
 	}
 }
