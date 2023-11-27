@@ -39,7 +39,7 @@ export class ChannelsController {
 		if (!channel) {
 			throw new NotFoundException("Channel does not exit !");
 		} else {
-			return this.channelsService.delete(+id);
+			return this.channelsService.delete(id);
 		}
 	}
 }

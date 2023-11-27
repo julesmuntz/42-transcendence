@@ -18,7 +18,7 @@ export class ChannelsService {
 	}
 
 	async findAll() : Promise<Channel[]> {
-	  return this.channelRepository.find();
+		return this.channelRepository.find();
 	}
 
 	async findOne(id: number) : Promise<Channel> {
