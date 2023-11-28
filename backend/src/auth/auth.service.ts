@@ -11,16 +11,17 @@ import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class AuthService {
 	constructor(
-		@InjectRepository(User) private readonly userRepository:
-		Repository<User>,
+		@InjectRepository(User)
+		private readonly userRepository: Repository<User>,
 		private readonly usersService: UsersService,
 		private readonly configService: ConfigService,
-		private readonly jwtService: JwtService,
+		private readonly jwtService: JwtService
 	) {}
 
 	async validateUser(details: UserDetails) {
-		// console.log('AuthService');
+		// console.log("AuthService");
 		// console.log(details);
+
 		const user = await this.userRepository.findOneBy({
 			email: details.email,
 		});
@@ -29,6 +30,7 @@ export class AuthService {
 			console.log("User found. Already signed up.");
 			return user;
 		}
+
 		console.log("User not found. Signing up.");
 		const newUser = this.userRepository.create(details);
 		return this.userRepository.save(newUser);
@@ -39,22 +41,29 @@ export class AuthService {
 		return user;
 	}
 
-	public getCookieWithJwtAccessToken(userId: number, isSecondFactorAuthenticated = false) {
+	public getCookieWithJwtAccessToken(
+		userId: number,
+		isSecondFactorAuthenticated = false
+	) {
 		const payload: TokenPayload = { userId, isSecondFactorAuthenticated };
 		const token = this.jwtService.sign(payload, {
-		  secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
-		  expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}s`
+			secret: this.configService.get("JWT_ACCESS_TOKEN_SECRET"),
+			expiresIn: `${this.configService.get(
+				"JWT_ACCESS_TOKEN_EXPIRATION_TIME"
+			)}s`,
 		});
-		return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`;
-	  }
+		return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
+			"JWT_ACCESS_TOKEN_EXPIRATION_TIME"
+		)}`;
+	}
 
 	async validate(payload: TokenPayload) {
 		const user = await this.findUser(payload.userId);
 		if (!user.isTFAEnabled) {
-		  return user;
+			return user;
 		}
 		if (payload.isSecondFactorAuthenticated) {
-		  return user;
+			return user;
 		}
-	  }
+	}
 }

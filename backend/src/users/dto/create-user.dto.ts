@@ -34,5 +34,13 @@ export class CreateUserDto {
 	@IsOptional()
 	@IsString({ message: 'Display name should be a string' })
 	displayName: string;
+
+	@IsOptional()
+	@IsString({ message: 'TFA secret should be a string' })
+	TFASecret: string;
+
+	@IsOptional()
+	@IsString({ message: 'TFA enabled should be a string' })
+	isTFAEnabled: boolean;
 }
 
