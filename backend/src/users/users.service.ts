@@ -40,7 +40,7 @@ export class UsersService {
 		});
 	}
 
-	async turnOnTwoFactorAuthentication(userId: number) {
+	async turnOnTFA(userId: number) {
 		return this.userRepository.update(userId, {
 			isTFAEnabled: true,
 		});

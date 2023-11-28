@@ -46,9 +46,6 @@ export class User {
 	@Column({ nullable: true })
 	TFASecret: string;
 
-	@Column({ nullable: true })
+	@Column({ default: false })
 	isTFAEnabled: boolean;
-
-	@Column({ nullable: true })
-	isTFAuthenticated: boolean;
 }

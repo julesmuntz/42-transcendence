@@ -5,15 +5,20 @@ import { AuthService } from "src/auth/auth.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "src/users/entities/user.entity";
 import { SessionSerializer } from "./utils/Serializer";
-import { TwoFactorAuthenticationService } from "src/2fa/TwoFactorAuthentication.service";
+import { TFAService } from "./2fa.service"
 import { UsersService } from "src/users/users.service";
-import { TwoFactorAuthenticationController } from "src/2fa/TwoFactorAuthentication.controller";
+import { TFAController } from "./2fa.controller"
 import { ConfigModule } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
 
 @Module({
-	imports: [TypeOrmModule.forFeature([User]), ConfigModule],
-	controllers: [AuthController, TwoFactorAuthenticationController],
+	imports: [
+		PassportModule.register({ session: true }),
+		TypeOrmModule.forFeature([User]),
+		ConfigModule,
+	],
+	controllers: [AuthController, TFAController],
 	providers: [
 		AuthService,
 		FortyTwoStrategy,
@@ -23,7 +28,7 @@ import { JwtService } from "@nestjs/jwt";
 			useClass: AuthService,
 		},
 		UsersService,
-		TwoFactorAuthenticationService,
+		TFAService,
 		JwtService,
 	],
 })

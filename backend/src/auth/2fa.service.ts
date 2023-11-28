@@ -6,15 +6,15 @@ import { toFileStream } from "qrcode";
 import { Response } from "express";
 
 @Injectable()
-export class TwoFactorAuthenticationService {
+export class TFAService {
 	constructor(private readonly usersService: UsersService) {}
 
-	public async generateTwoFactorAuthenticationSecret(user: User) {
+	public async generateTFASecret(user: User) {
 		const secret = authenticator.generateSecret();
 
 		const otpauthUrl = authenticator.keyuri(
 			user.email,
-			"AUTH_APP_NAME",
+			"ft_transcendence",
 			secret
 		);
 
@@ -30,14 +30,16 @@ export class TwoFactorAuthenticationService {
 		return toFileStream(stream, otpauthUrl);
 	}
 
-	public isTwoFactorAuthenticationCodeValid(
-		twoFactorAuthenticationCode: string,
+	public isTFACodeValid(
+		TFACode: string,
 		user: User
 	) {
-		console.log(twoFactorAuthenticationCode);
+		console.log("1");
+		console.log(TFACode);
+		console.log("2");
 		console.log(user.TFASecret);
 		return authenticator.verify({
-			token: twoFactorAuthenticationCode,
+			token: TFACode,
 			secret: user.TFASecret,
 		});
 	}
