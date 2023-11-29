@@ -30,19 +30,19 @@ export class TFAController {
 
 	@Get("generate")
 	async register(@Res() response: Response, @Req() request: RequestWithUser) {
-		console.log("Generating Two Factor Authentication");
-		console.log("Request User:", request.user);
 		const { otpauthUrl } =
 		await this.TFAService.generateTFASecret(
 			request.user
 			);
+			console.log("Generating Two Factor Authentication");
+			console.log("Request User:", request.user);
 			
 			return this.TFAService.pipeQrCodeStream(
 				response,
 				otpauthUrl
-		);
-	}
-
+				);
+			}
+			
 	@Post("turn-on")
 	@HttpCode(200)
 	async turnOnTFA(
@@ -51,6 +51,7 @@ export class TFAController {
 	) {
 		console.log("turnOnTFA");
 		console.log(request.user);
+		console.log(request.body);
 		const isCodeValid =
 			this.TFAService.isTFACodeValid(
 				TFACode,

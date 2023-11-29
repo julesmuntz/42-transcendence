@@ -34,10 +34,10 @@ export class TFAService {
 		TFACode: string,
 		user: User
 	) {
-		console.log("1");
-		console.log(TFACode);
-		console.log("2");
-		console.log(user.TFASecret);
+	// 	console.log("1");
+	// 	console.log(TFACode);
+	// 	console.log("2");
+	// 	console.log(user.TFASecret);
 		return authenticator.verify({
 			token: TFACode,
 			secret: user.TFASecret,
