@@ -2,7 +2,7 @@
 
 generate_password() {
   # Longueur du mot de passe
-  LENGTH=12
+  LENGTH=42
 
   # Caractères possibles dans le mot de passe
   CHARACTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?"
@@ -33,6 +33,9 @@ else
   echo "POSTGRES_DB=postgres" >> "$ENV_FILE"
   echo "POSTGRES_USER=transcendence" >> "$ENV_FILE"
   echo "POSTGRES_PASSWORD=$password" >> "$ENV_FILE"
+
+  sessionEncrypt=$(generate_password)
+  echo "SESSION_ENCRYPT=$sessionEncrypt" >> "$ENV_FILE"
 
   echo "Created $ENV_FILE with example variables."
 fi
