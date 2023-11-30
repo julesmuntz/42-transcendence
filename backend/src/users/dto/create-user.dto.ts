@@ -29,18 +29,6 @@ export class CreateUserDto {
 	oauth42Token: string;
 
 	@IsOptional()
-	@IsString({ message: 'OAuth Google token should be a string' })
-	oauthGoogleToken: string;
-
-	@IsOptional()
-	@IsString({ message: 'Email token should be a string' })
-	email: string;
-
-	@IsOptional()
-	@IsString({ message: 'Display name should be a string' })
-	displayName: string;
-
-	@IsOptional()
 	@IsString({ message: 'TFA secret should be a string' })
 	TFASecret: string;
 
