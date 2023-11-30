@@ -34,5 +34,8 @@ else
   echo "POSTGRES_USER=transcendence" >> "$ENV_FILE"
   echo "POSTGRES_PASSWORD=$password" >> "$ENV_FILE"
 
+  sessionEncrypt=$(generate_password)
+  echo "SESSION_ENCRYPT=$sessionEncrypt" >> "$ENV_FILE"
+
   echo "Created $ENV_FILE with example variables."
 fi
