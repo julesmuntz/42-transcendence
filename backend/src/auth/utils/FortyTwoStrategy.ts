@@ -5,6 +5,8 @@ import Strategy from 'passport-42';
 import { AuthService } from 'src/auth/auth.service';
 import { TFAService } from 'src/auth/2fa.service';
 import { UsersService } from 'src/users/users.service';
+import { UserDetails } from './interfaces';
+
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy) {
@@ -22,21 +24,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy) {
 	}
 
 	async validate(accessToken: string, refreshToken: string, profile: Profile) {
-		// console.log(accessToken);
-		// console.log(refreshToken);
-		// console.log(profile);
-
-		const user = await this.authService.validateUser({
-			id: Number(profile.id),
-			username: profile.username,
-			avatarPath: (profile as any)._json.image.link,
-			oauth42Token: accessToken,
-			email: profile.emails[0].value,
-			displayName: profile.displayName,
-		});
-		// console.log('Validate');
-		// console.log(user);
-		return user || null;
+		return profile;
 	}
 }
 

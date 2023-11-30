@@ -3,6 +3,11 @@ import { UserStatus } from '../entities/user.entity';
 
 
 export class CreateUserDto {
+
+	@IsNotEmpty({ message: 'Email should not be empty'})
+	@IsString({ message: 'Email token should be a string' })
+	email: string;
+
 	@IsNotEmpty({ message: 'Username should not be empty'})
 	@IsString({ message: 'Username should be a string' })
 	username: string;
