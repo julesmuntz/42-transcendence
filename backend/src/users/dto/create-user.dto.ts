@@ -33,6 +33,14 @@ export class CreateUserDto {
 	oauthGoogleToken: string;
 
 	@IsOptional()
+	@IsString({ message: 'Email token should be a string' })
+	email: string;
+
+	@IsOptional()
+	@IsString({ message: 'Display name should be a string' })
+	displayName: string;
+
+	@IsOptional()
 	@IsString({ message: 'TFA secret should be a string' })
 	TFASecret: string;
 

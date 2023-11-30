@@ -27,6 +27,7 @@ export class UsersService {
 
 	async findOne(id: number) : Promise<User> {
 		return this.userRepository.findOne({where: {id}});
+
 	}
 
 	async update(id: number, updateUserDto: UpdateUserDto) : Promise<User> {
