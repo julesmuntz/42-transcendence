@@ -9,6 +9,7 @@ import { TokenPayload } from "./utils/interfaces";
 import { ConfigService } from "@nestjs/config";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 
+
 @Injectable()
 export class AuthService {
 	constructor(
@@ -50,6 +51,7 @@ export class AuthService {
 
 	async validate(payload: TokenPayload) {
 		const user = await this.usersService.findOne(payload.userId);
+
 		if (!user.isTFAEnabled) {
 			return user;
 		}
