@@ -4,6 +4,7 @@ import { User } from './user/entity/user.entity';
 import { Relation } from './user/entity/relation.entity';
 import { MessageDirect } from './user/entity/message_direct.entity';
 import { Match } from './user/entity/match.entity';
+import { ChatGateway } from './chat/chat.gateway';
 
 
 @Module({
@@ -18,6 +19,6 @@ import { Match } from './user/entity/match.entity';
     synchronize: true,
   })],
   controllers: [],
-  providers: [],
+  providers: [ChatGateway],
 })
 export class AppModule {}

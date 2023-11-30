@@ -25,7 +25,8 @@ fclean: clean
 	@ echo "Removing all images"
 	@ if [ -n "$$(docker images -aq)" ]; then docker rmi $$(docker images -aq); fi
 	@ echo "Removing all volumes"
-	@ if [ -n "$$(docker volume ls -q)" ]; then docker volume rm $$(docker volume ls -q); fi
+	@ if [ -n "$$(docker volume ls -q)" ]; then docker volume rm $$(docker volume ls -aq); fi
+	docker system prune -a
 
 re: fclean all
 

@@ -36,6 +36,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3030:3030
+      - 8001:8001
     volumes:
       - ./backend/src:/app/src
     depends_on:
@@ -48,7 +49,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - 8080:3000
+      - 3000:3000
     volumes:
       - ./frontend/src:/app/src
     depends_on:
