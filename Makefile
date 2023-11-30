@@ -7,7 +7,7 @@ up:
 	sh starting.sh
 	@if [ -e $(ENV_FILE) ]; then \
 		echo "docker compose up"; \
-		docker compose -f $(DOCKER_COMPOSE_FILE) --env-file $(ENV_FILE) up --build; \
+		docker-compose -f $(DOCKER_COMPOSE_FILE) --env-file $(ENV_FILE) up --build; \
 	else \
 		echo "docker compose up"; \
 		docker compose -f $(DOCKER_COMPOSE_FILE) up --build; \

@@ -15,8 +15,11 @@ export class User {
 	@CreateDateColumn({ type: 'timestamptz'})
 	creationDate: Date;
 
+	@Column({ length: 128})
+	email: string;
+
 	@Column({ length: 32})
-	name: string;
+	username: string;
 
 	@Column({default: 0})
 	elo: number;
@@ -28,12 +31,15 @@ export class User {
 	})
 	status: UserStatus;
 
-	@Column({ length: 64, default: 'intra'})
+	@Column({ length: 128, default: 'intra'})
 	avatarPath: string;
 
 	@Column({ length: 256, nullable: true })
 	oauth42Token: string;
 
-	@Column({ length: 256, nullable: true })
-	oauthGoogleToken: string;
+	@Column({ nullable: true })
+	TFASecret: string;
+
+	@Column({ default: false })
+	isTFAEnabled: boolean;
 }

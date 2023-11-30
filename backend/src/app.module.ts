@@ -6,7 +6,8 @@ import { FriendsModule } from './friends/friends.module';
 import { GamesModule } from './games/games.module';
 import { ChatsModule } from './chats/chats.module';
 import { ChannelsModule } from './channels/channels.module';
-
+import { AuthModule } from "src/auth/auth.module";
+import { PassportModule } from "@nestjs/passport";
 
 @Module({
 	imports: [ConfigModule.forRoot(),
@@ -20,11 +21,13 @@ import { ChannelsModule } from './channels/channels.module';
 	entities: [__dirname + '/**/*.entity{.ts,.js}'],
 	synchronize: true,
 	}),
+	AuthModule,
 	UsersModule,
 	FriendsModule,
 	GamesModule,
 	ChatsModule,
-	ChannelsModule],
+	ChannelsModule,
+	PassportModule.register({ session: true })],
 	controllers: [],
 	providers: [],
 })
