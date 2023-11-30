@@ -7,6 +7,8 @@ import { UsersService } from "src/users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { TokenPayload } from "./utils/interfaces";
 import { ConfigService } from "@nestjs/config";
+import { CreateUserDto } from "src/users/dto/create-user.dto";
+
 
 @Injectable()
 export class AuthService {
@@ -18,27 +20,17 @@ export class AuthService {
 		private readonly jwtService: JwtService
 	) {}
 
-	async validateUser(details: UserDetails) {
-		// console.log("AuthService");
-		// console.log(details);
-
-		const user = await this.userRepository.findOneBy({
-			email: details.email,
-		});
-		console.log(user);
-		if (user) {
-			console.log("User found. Already signed up.");
+	async login(userDetails: UserDetails) {
+		//verifier avant de faire tout ca que le user n'est pas connecter !
+		const user = await this.usersService.findemail(userDetails.email);
+		if (!user) {
+			console.log("create users !");
+			return this.usersService.create(userDetails as CreateUserDto);
+		} else {
+			console.log("le user est deja dans la base de donne !");
+			console.log(user);
 			return user;
 		}
-
-		console.log("User not found. Signing up.");
-		const newUser = this.userRepository.create(details);
-		return this.userRepository.save(newUser);
-	}
-
-	async findUser(id: number) {
-		const user = await this.userRepository.findOneBy({ id });
-		return user;
 	}
 
 	public getCookieWithJwtAccessToken(
@@ -58,7 +50,8 @@ export class AuthService {
 	}
 
 	async validate(payload: TokenPayload) {
-		const user = await this.findUser(payload.userId);
+		const user = await this.usersService.findOne(payload.userId);
+
 		if (!user.isTFAEnabled) {
 			return user;
 		}
