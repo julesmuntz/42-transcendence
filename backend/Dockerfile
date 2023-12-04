@@ -12,7 +12,8 @@ RUN npm install && npm install --save @nestjs/typeorm typeorm pg\
 	&& npm install @nestjs/mapped-types express-session otplib qrcode @nestjs/jwt\
 	&& npm i --save class-validator class-transformer\
 	&& npm install -D @types/express-session\
-	&& npm install --save-dev @types/qrcode @types/express
+	&& npm install --save-dev @types/qrcode @types/express\
+	&& npm install cors
 
 COPY tsconfig.json .
 

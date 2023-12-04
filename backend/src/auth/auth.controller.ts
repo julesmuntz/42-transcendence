@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Req, Post, Body, UnauthorizedException, HttpCode } from "@nestjs/common";
+import { Controller, Get, UseGuards, Req, Post, Body, UnauthorizedException, HttpCode, Redirect } from "@nestjs/common";
 import { FortyTwoAuthGuard } from "./utils/Guards";
 import { Request } from "express";
 
@@ -11,9 +11,10 @@ export class AuthController {
 	}
 
 	@Get("callback")
+	@Redirect("http://localhost:3000")
 	@UseGuards(FortyTwoAuthGuard)
 	getRedirect() {
-		return { msg: "You are logged in" };
+		return { msg: "User connected, you will be redirected" };
 	}
 
 	@Get("status")

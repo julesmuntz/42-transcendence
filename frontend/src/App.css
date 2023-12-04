@@ -1,8 +1,28 @@
-.App {
-  text-align: center;
+@font-face {
+  font-family: blox;
+  src: url(../public/Blox2.ttf);
 }
 
-.App-logo {
+.App {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.pong-title {
+  font-family: blox;
+  font-size: 8rem;
+}
+
+.container-form {
+  width: 500px;
+  max-width: 700px;
+}
+
+.button-dark {
+  background-color: black;
+}
+
+/* .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
@@ -35,4 +55,4 @@
   to {
     transform: rotate(360deg);
   }
-}
+} */
