@@ -10,8 +10,6 @@ import Login from "./components/Login/Login";
 console.log(React.version);
 
 function App() {
-  //useContext for user logged in, and token and everything
-
   return (
     <div className="App">
       <SideNav/>

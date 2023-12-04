@@ -17,8 +17,12 @@ RUN npm install && npm install --save @nestjs/typeorm typeorm pg\
 
 COPY tsconfig.json .
 
+RUN npm i --save @nestjs/websockets @nestjs/platform-socket.io
+
 RUN npm run build
 
 EXPOSE 3030
+
+EXPOSE 8001
 
 CMD [ "/bin/bash", "-c", "npm run start:dev" ]
