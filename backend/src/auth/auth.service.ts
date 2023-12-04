@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Req } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserDetails } from "src/auth/utils/interfaces";
 import { User } from "src/users/entities/user.entity";
@@ -13,8 +13,6 @@ import { CreateUserDto } from "src/users/dto/create-user.dto";
 @Injectable()
 export class AuthService {
 	constructor(
-		@InjectRepository(User)
-		private readonly userRepository: Repository<User>,
 		private readonly usersService: UsersService,
 		private readonly configService: ConfigService,
 		private readonly jwtService: JwtService
@@ -25,11 +23,23 @@ export class AuthService {
 		const user = await this.usersService.findemail(userDetails.email);
 		if (!user) {
 			console.log("create users !");
-			return this.usersService.create(userDetails as CreateUserDto);
+			const usercreate = await this.usersService.create(userDetails as CreateUserDto);
+			if (usercreate) {
+				const payload = { sub: usercreate.id, user: usercreate };
+				return this.jwtService.sign(payload);
+			}
 		} else {
-			console.log("le user est deja dans la base de donne !");
-			console.log(user);
-			return user;
+			const payload = { sub: user.id, user: user };
+			if (user.isTFAEnabled) {
+
+				//2fa authenticate
+
+				return this.jwtService.sign(payload);
+			} else {
+				console.log("2fa non active !");
+
+				return this.jwtService.sign(payload);
+			}
 		}
 	}
 

@@ -39,10 +39,9 @@ export class UsersService {
 		await this.userRepository.delete(id);
 	}
 
-	async setTFASecret(secret: string, id: number) {
-		return this.userRepository.update(id, {
-			TFASecret: secret,
-		});
+	async setTFASecret(secret: string, id: number) : Promise<User>{
+		await this.userRepository.update(id, { TFASecret: secret });
+		return this.userRepository.findOne({ where: { id } });
 	}
 
 	async turnOnTFA(userId: number) {

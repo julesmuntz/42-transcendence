@@ -31,7 +31,10 @@ export class User {
 	})
 	status: UserStatus;
 
-	@Column({ length: 128, default: 'intra'})
+	@Column({ length: 128})
+	avatarDefault: string;
+
+	@Column({ length: 128, nullable: true})
 	avatarPath: string;
 
 	@Column({ length: 256, nullable: true })

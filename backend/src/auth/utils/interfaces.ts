@@ -4,7 +4,7 @@ import { User } from "../../users/entities/user.entity";
 export interface UserDetails {
 	username: string;
 	email: string;
-	avatarPath: string;
+	avatarDefault: string;
 }
 
 export interface RequestWithUser extends Request {
