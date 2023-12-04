@@ -4,18 +4,19 @@ import io, {Socket} from "socket.io-client";
 import Messages from "./components/Messages/Messages";
 import MessageInput from "./components/MessageInput/MessageInput";
 import SideNav from "./components/SideNav/SideNav";
-import Title from "./components/Title/Title";
-import Login from "./components/Login/Login";
+import LoginPage from './components/LoginPage/LoginPage';
+import UserProvider from './contexts/UserContext';
 
 console.log(React.version);
 
 function App() {
   return (
-    <div className="App">
-      <SideNav/>
-      <Title/>
-      <Login/>
-    </div>
+    <UserProvider>
+     <div className="App">
+       <SideNav/>
+       <LoginPage/>
+     </div>
+    </UserProvider>
   );
 }
 
