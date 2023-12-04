@@ -7,9 +7,20 @@ import { useNavigate } from 'react-router-dom';
 export default function Login() {
 	async function redirectToBack(e : any)
 	{
-		// e.preventDefault();
+		e.preventDefault();
 		// window.location.href = "http://localhost:3030/auth/login";
+		const response = await fetch("https://dummyjson.com/auth/login",
+			{
+				method: "POST",
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({
+					username: "kminchelle",
+					password: "0lelplR",
+				})
+			}).then((res) => res.json());
+		console.log(response);
 	}
+
 	return (
 		<div className="container-fluid d-flex justify-content-center">
 			<div className="container-form">
