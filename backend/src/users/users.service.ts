@@ -12,7 +12,7 @@ export class UsersService {
 		private userRepository: Repository<User>
 	) {}
 
-	async create(createUserDto: CreateUserDto): Promise<User> {
+	async create(createUserDto: CreateUserDto) : Promise<User> {
 		const newuser = this.userRepository.create(createUserDto);
 		return this.userRepository.save(newuser);
 	}
@@ -21,23 +21,27 @@ export class UsersService {
 		return this.userRepository.find();
 	}
 
-	async findOne(id: number): Promise<User> {
-		return this.userRepository.findOne({ where: { id } });
+	async findemail(email: string) : Promise<User> {
+		return this.userRepository.findOne({where: {email}});
 	}
 
-	async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+	async findOne(id: number) : Promise<User> {
+		return this.userRepository.findOne({where: {id}});
+
+	}
+
+	async update(id: number, updateUserDto: UpdateUserDto) : Promise<User> {
 		await this.userRepository.update(id, updateUserDto);
 		return this.userRepository.findOne({ where: { id } });
 	}
 
-	async delete(id: number): Promise<void> {
+	async delete(id: number) : Promise<void> {
 		await this.userRepository.delete(id);
 	}
 
-	async setTFASecret(secret: string, id: number) {
-		return this.userRepository.update(id, {
-			TFASecret: secret,
-		});
+	async setTFASecret(secret: string, id: number) : Promise<User>{
+		await this.userRepository.update(id, { TFASecret: secret });
+		return this.userRepository.findOne({ where: { id } });
 	}
 
 	async turnOnTFA(userId: number) {

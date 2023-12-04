@@ -7,10 +7,10 @@ up:
 	sh starting.sh
 	@if [ -e $(ENV_FILE) ]; then \
 		echo "docker compose up"; \
-		docker compose -f $(DOCKER_COMPOSE_FILE) --env-file $(ENV_FILE) up --build; \
+		docker-compose -f $(DOCKER_COMPOSE_FILE) --env-file $(ENV_FILE) up --build; \
 	else \
 		echo "docker compose up"; \
-		docker compose -f $(DOCKER_COMPOSE_FILE) up --build; \
+		docker-compose -f $(DOCKER_COMPOSE_FILE) up --build; \
 	fi
 
 down:
@@ -28,6 +28,7 @@ fclean: clean
 	@ echo "Removing all volumes"
 	@ if [ -n "$$(docker volume ls -q)" ]; then docker volume rm $$(docker volume ls -q); fi
 	@ echo "Removing .env"
-	@if [ -e $(ENV_FILE) ]; then rm -rf .env; fi
+	@ if [ -e $(ENV_FILE) ]; then rm -rf .env; fi
+	@ docker system prune -f -a
 
 .PHONY: all up down clean fclean re
