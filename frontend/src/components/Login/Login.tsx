@@ -8,17 +8,15 @@ export default function Login() {
 	async function redirectToBack(e : any)
 	{
 		e.preventDefault();
-		// window.location.href = "http://localhost:3030/auth/login";
-		const response = await fetch("https://dummyjson.com/auth/login",
-			{
-				method: "POST",
-				headers: {"Content-Type": "application/json"},
-				body: JSON.stringify({
-					username: "kminchelle",
-					password: "0lelplR",
-				})
-			}).then((res) => res.json());
-		console.log(response);
+		window.location.href = "http://localhost:3030/auth/callback";
+		console.log("this is done");
+		// const response = await fetch("http://localhost:3030/auth/callback",
+		// 	{
+		// 		method: "GET",
+		// 		headers: {"Content-Type": "application/json"},
+		// 	}).then((res) => res.json());
+		// console.log(response);
+		// console.log("hoho");
 	}
 
 	return (

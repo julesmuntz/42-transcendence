@@ -6,7 +6,7 @@ import { FriendsModule } from './friends/friends.module';
 import { GamesModule } from './games/games.module';
 import { ChatsModule } from './chats/chats.module';
 import { ChannelsModule } from './channels/channels.module';
-import { AuthModule } from "src/auth/auth.module";
+import { AuthModule } from "./auth/auth.module";
 import { PassportModule } from "@nestjs/passport";
 
 @Module({

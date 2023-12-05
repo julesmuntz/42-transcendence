@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
 import { AuthController } from "./auth.controller";
 import { FortyTwoStrategy } from "./strategy/42.Strategy";
-import { AuthService } from "src/auth/auth.service";
+import { AuthService } from "./auth.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "src/users/entities/user.entity";
+import { User } from "../users/entities/user.entity";
 import { TFAService } from "./2fa.service"
-import { UsersService } from "src/users/users.service";
+import { UsersService } from "../users/users.service";
 import { TFAController } from "./2fa.controller"
 import { ConfigModule } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";

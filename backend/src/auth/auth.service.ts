@@ -1,13 +1,13 @@
 import { Injectable, Req } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserDetails } from "src/auth/utils/interfaces";
-import { User } from "src/users/entities/user.entity";
+import { UserDetails } from "./utils/interfaces";
+import { User } from "../users/entities/user.entity";
 import { Repository } from "typeorm";
-import { UsersService } from "src/users/users.service";
+import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { TokenPayload } from "./utils/interfaces";
 import { ConfigService } from "@nestjs/config";
-import { CreateUserDto } from "src/users/dto/create-user.dto";
+import { CreateUserDto } from "../users/dto/create-user.dto";
 
 
 @Injectable()

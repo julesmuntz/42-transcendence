@@ -15,10 +15,10 @@ import {
 import { TFAService } from "./2fa.service";
 import { Response } from "express";
 import { RequestWithUser } from "./utils/interfaces";
-import { UsersService } from "src/users/users.service";
+import { UsersService } from "../users/users.service";
 import { TFACodeDto } from "./dto/2fa.dto";
-import { AuthService } from "src/auth/auth.service";
-import { User } from "src/users/entities/user.entity";
+import { AuthService } from "./auth.service";
+import { User } from "../users/entities/user.entity";
 import { JwtAuthGuard } from "./guard/jwt.Guards";
 
 @Controller("2fa")
