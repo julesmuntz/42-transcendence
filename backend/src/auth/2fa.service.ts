@@ -17,7 +17,7 @@ export class TFAService {
 			"ft_transcendence",
 			secret
 		);
-
+		console.log(secret);
 		await this.usersService.setTFASecret(secret, user.id);
 
 		return {

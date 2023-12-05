@@ -3,6 +3,11 @@ import { UserStatus } from '../entities/user.entity';
 
 
 export class CreateUserDto {
+
+	@IsNotEmpty({ message: 'Email should not be empty'})
+	@IsString({ message: 'Email token should be a string' })
+	email: string;
+
 	@IsNotEmpty({ message: 'Username should not be empty'})
 	@IsString({ message: 'Username should be a string' })
 	username: string;
@@ -15,6 +20,10 @@ export class CreateUserDto {
 	@IsEnum(UserStatus, { message: 'Invalid status' })
 	status: UserStatus;
 
+	@IsNotEmpty()
+	@IsString({ message: 'Avatar path should be a string' })
+	avatarDefault: string;
+
 	@IsOptional()
 	@IsString({ message: 'Avatar path should be a string' })
 	avatarPath: string;
@@ -22,18 +31,6 @@ export class CreateUserDto {
 	@IsOptional()
 	@IsString({ message: 'OAuth 42 token should be a string' })
 	oauth42Token: string;
-
-	@IsOptional()
-	@IsString({ message: 'OAuth Google token should be a string' })
-	oauthGoogleToken: string;
-
-	@IsOptional()
-	@IsString({ message: 'Email token should be a string' })
-	email: string;
-
-	@IsOptional()
-	@IsString({ message: 'Display name should be a string' })
-	displayName: string;
 
 	@IsOptional()
 	@IsString({ message: 'TFA secret should be a string' })
