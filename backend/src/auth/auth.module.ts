@@ -16,7 +16,7 @@ import { JwtStrategy } from "./strategy/jwt.Strategy";
 		TypeOrmModule.forFeature([User]),
 		ConfigModule,
 		JwtModule.register({
-			secret: 'your-secret-key',
+			secret: process.env.JWT_SECRET,
 			signOptions: { expiresIn: '7d' },
 		  }),
 	],

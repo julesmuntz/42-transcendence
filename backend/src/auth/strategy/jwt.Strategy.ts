@@ -7,15 +7,15 @@ import { User } from '../../users/entities/user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor(private readonly authService: UsersService) {
-    super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKey: 'your-secret-key', // Remplacez par votre clé secrète
-    });
-  }
+	constructor() {
+		super({
+			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+			ignoreExpiration: false,
+			secretOrKey: process.env.JWT_SECRET, // Remplacez par votre clé secrète
+		});
+	}
 
-  async validate(payload: User) {
-    return payload;
-  }
+	async validate(payload: any) {
+		return payload;
+	}
 }

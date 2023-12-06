@@ -35,7 +35,7 @@ else
   echo "POSTGRES_PASSWORD=$password" >> "$ENV_FILE"
 
   sessionEncrypt=$(generate_password)
-  echo "SESSION_ENCRYPT=$sessionEncrypt" >> "$ENV_FILE"
+  echo "JWT_SECRET=$sessionEncrypt" >> "$ENV_FILE"
 
   echo "Created $ENV_FILE with example variables."
 fi
