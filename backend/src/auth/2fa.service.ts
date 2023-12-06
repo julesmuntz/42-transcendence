@@ -12,18 +12,10 @@ export class TFAService {
 	public async generateTFASecret(user: User) {
 		const secret = authenticator.generateSecret();
 
-		const otpauthUrl = authenticator.keyuri(
-			user.email,
-			"ft_transcendence",
-			secret
-		);
-		console.log(secret);
+		const otpauthUrl = authenticator.keyuri(user.email, "ft_transcendence", secret);
 		await this.usersService.setTFASecret(secret, user.id);
 
-		return {
-			secret,
-			otpauthUrl,
-		};
+		return {secret, otpauthUrl};
 	}
 
 	public async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
