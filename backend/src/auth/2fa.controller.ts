@@ -19,6 +19,7 @@ import { TFACodeDto } from "./dto/2fa.dto";
 import { AuthService } from "./auth.service";
 import { User } from "../users/entities/user.entity";
 import { Public } from "./decorator/public.decorator";
+import { JwtAuthGuard } from "./guard/jwt.Guards";
 
 @Controller("2fa")
 @UseInterceptors(ClassSerializerInterceptor)
@@ -63,6 +64,7 @@ export class TFAController {
 	@Public()
 	@Post("authenticate")
 	@HttpCode(200)
+	@UseGuards(JwtAuthGuard)
 	async authenticate(
 		@Req() request: any,
 		@Body()  TFACode : TFACodeDto,

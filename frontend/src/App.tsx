@@ -3,7 +3,6 @@ import './App.css';
 // import io, {Socket} from "socket.io-client";
 import SideNav from "./components/SideNav/SideNav";
 import LoginPage from './components/LoginPage/LoginPage';
-import Title from './components/Title/Title';
 import { UserContext } from "./contexts/UserContext";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
@@ -35,7 +34,7 @@ function App() {
        const info = user.users;
        userContext.login(info, token);
      }
-   }, []);
+   }, [token, userContext]);
 
   if (!userContext.user.auth && !token)
     return (

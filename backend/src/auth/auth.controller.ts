@@ -14,6 +14,7 @@ export class AuthController {
 
 	@Public()
 	@Get("callback")
+	// @Redirect("http://localhost:3000")
 	@UseGuards(FortyTwoAuthGuard)
 	async login(@Req() req: any,  @Res() res: Response) {
 		const userDetails = {username: req.user._json.login, email: req.user._json.email, avatarDefault: req.user._json.image.link};
@@ -29,6 +30,7 @@ export class AuthController {
 	}
 
 	@Get("status")
+	@UseGuards(JwtAuthGuard)
 	user(@Req() request: Request) {
 		console.log(request.user);
 		return request.user;
