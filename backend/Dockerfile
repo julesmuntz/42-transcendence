@@ -23,6 +23,4 @@ RUN npm run build
 
 EXPOSE 3030
 
-EXPOSE 8001
-
 CMD [ "/bin/bash", "-c", "npm run start:dev" ]

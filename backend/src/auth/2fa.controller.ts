@@ -14,13 +14,10 @@ import {
 } from "@nestjs/common";
 import { TFAService } from "./2fa.service";
 import { Response } from "express";
-import { RequestWithUser } from "./utils/interfaces";
 import { UsersService } from "../users/users.service";
 import { TFACodeDto } from "./dto/2fa.dto";
 import { AuthService } from "./auth.service";
 import { User } from "../users/entities/user.entity";
-import { JwtAuthGuard } from "./guard/jwt.Guards";
-import { CreateUserDto } from "../users/dto/create-user.dto";
 import { Public } from "./decorator/public.decorator";
 
 @Controller("2fa")

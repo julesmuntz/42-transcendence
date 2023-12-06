@@ -1,23 +1,56 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import './App.css';
-import io, {Socket} from "socket.io-client";
-import Messages from "./components/Messages/Messages";
-import MessageInput from "./components/MessageInput/MessageInput";
+// import io, {Socket} from "socket.io-client";
 import SideNav from "./components/SideNav/SideNav";
 import LoginPage from './components/LoginPage/LoginPage';
-import UserProvider from './contexts/UserContext';
+import Title from './components/Title/Title';
+import { UserContext } from "./contexts/UserContext";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
-console.log(React.version);
+interface JwtPayload {
+  users: {
+    TFASecret: string,
+    avatarDefault: string,
+    avatarPath: string,
+    email: string,
+    id: number,
+    isTFAEnabled: boolean,
+    status: string,
+    username: string
+  }
+}
 
 function App() {
+
+  const userContext = useContext(UserContext);
+
+  const token = Cookies.get('access_token');
+
+  useEffect(() => {
+    if (!userContext.user.auth && token)
+     {
+       console.log("The cookie access_token exists and is set");
+       const user = jwtDecode<JwtPayload>(token);
+       const info = user.users;
+       userContext.login(info, token);
+     }
+   }, []);
+
+  if (!userContext.user.auth && !token)
+    return (
+      <div className="App">
+        <LoginPage/>
+      </div>
+    );
+
   return (
-    <UserProvider>
-     <div className="App">
-       <SideNav/>
-       <LoginPage/>
-     </div>
-    </UserProvider>
+    <div className="App">
+      <h1>Hello {userContext.user.info.username}</h1>
+      <SideNav/>
+    </div>
   );
+
 }
 
 export default App;

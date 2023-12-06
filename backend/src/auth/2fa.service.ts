@@ -14,7 +14,7 @@ export class TFAService {
 
 		const otpauthUrl = authenticator.keyuri(user.email, "ft_transcendence", secret);
 		await this.usersService.setTFASecret(secret, user.id);
-
+		console.log(secret);
 		return {secret, otpauthUrl};
 	}
 

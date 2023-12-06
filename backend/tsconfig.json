@@ -17,9 +17,6 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-<<<<<<< HEAD:backend/tsconfig.json
-	"esModuleInterop": true
-=======
->>>>>>> test-maha:backend/config/tsconfig.json
+    "esModuleInterop": true
   }
 }
