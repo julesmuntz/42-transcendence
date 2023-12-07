@@ -36,7 +36,7 @@ export class TFAController {
 		if (!isCodeValid) {
 			throw new UnauthorizedException("Wrong authentication code");
 		}
-		await this.usersService.turnOnTFA(request.user.id);
+		await this.usersService.turnOnTFA(request.user.users.id);
 		return res.redirect('http://localhost:3000');
 	}
 
