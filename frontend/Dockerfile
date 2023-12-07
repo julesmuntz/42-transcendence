@@ -6,7 +6,9 @@ WORKDIR /app
 
 COPY package*.json .
 
-RUN npm install && npm install -g create-react-app
+RUN npm install && npm install -g create-react-app && npm install socket.io-client
+
+RUN npm install react-bootstrap bootstrap react-router-dom bootstrap-icons react-bootstrap-icons js-cookie @types/js-cookie jwt-decode
 
 COPY tsconfig.json .
 
@@ -14,6 +16,6 @@ COPY public ./public
 
 # RUN npm run build
 
-EXPOSE 8080
+EXPOSE 3000
 
 CMD [ "/bin/bash", "-c", " npm start" ]
