@@ -6,8 +6,10 @@ import { FriendsModule } from './friends/friends.module';
 import { GamesModule } from './games/games.module';
 import { ChatsModule } from './chats/chats.module';
 import { ChannelsModule } from './channels/channels.module';
-import { AuthModule } from "src/auth/auth.module";
+import { AuthModule } from "./auth/auth.module";
 import { PassportModule } from "@nestjs/passport";
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guard/jwt.Guards';
 
 @Module({
 	imports: [ConfigModule.forRoot(),
@@ -29,7 +31,12 @@ import { PassportModule } from "@nestjs/passport";
 	ChannelsModule,
 	PassportModule.register({ session: true })],
 	controllers: [],
-	providers: [],
+	providers: [
+		{
+			provide: APP_GUARD,
+			useClass: JwtAuthGuard,
+		}
+	],
 })
 
 export class AppModule {}
