@@ -20,6 +20,10 @@ export class CreateUserDto {
 	@IsEnum(UserStatus, { message: 'Invalid status' })
 	status: UserStatus;
 
+	@IsNotEmpty()
+	@IsString({ message: 'Avatar path should be a string' })
+	avatarDefault: string;
+
 	@IsOptional()
 	@IsString({ message: 'Avatar path should be a string' })
 	avatarPath: string;
