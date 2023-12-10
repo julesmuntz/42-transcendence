@@ -1,6 +1,6 @@
 import {useState, createContext} from 'react';
 
-interface Info {
+export interface Info {
 	TFASecret: string;
 	avatarDefault: string;
 	avatarPath: string;
@@ -10,7 +10,7 @@ interface Info {
 	status: string;
 	username: string;
 }
-interface Iuser {
+export interface Iuser {
 	info : Info;
 	auth : boolean;
 	authToken : string;
@@ -28,6 +28,7 @@ export default function UserProvider({ children } : any) {
 	const [user, setUser] = useState<Iuser>({info: {} as Info, auth: false, authToken: ''});
 
 	const login = (info : Info, authToken: string) => {
+		console.log("USER IS SET");
 		setUser((user : Iuser) => ({
 			info: info,
 			auth: true,

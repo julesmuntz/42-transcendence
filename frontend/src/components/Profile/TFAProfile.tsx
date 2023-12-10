@@ -1,7 +1,8 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { UserContext, Info } from '../../contexts/UserContext';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
+import Cookies from "js-cookie";
 
 export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : any}}) {
 
@@ -23,15 +24,18 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 		})
 		.then(
 			(res) => {
-				console.log(res);
-				return res.text();
+				return res.json();
 			})
-			.then(() => {
-				const newUser = userContext.user.info;
-				//newUser.isTFAEnabled = true;
-				//qrset.setQrcode("");
+			.then((ret) => {
+				console.log(ret);
+				const newUser = ret;
+				// const newUser = ret.users;
+				// newUser.isTFAEnabled = true;
+				qrset.setQrcode("");
 				console.log("updating the user");
 				userContext.login(newUser, userContext.user.authToken);
+				Cookies.remove("user-info");
+				Cookies.set("user-info", JSON.stringify(newUser));
 			}
 			);
 	}

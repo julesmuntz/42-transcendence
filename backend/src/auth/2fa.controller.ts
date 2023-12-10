@@ -4,6 +4,7 @@ import { UsersService } from "../users/users.service";
 import { AuthService } from "./auth.service";
 import { User } from "../users/entities/user.entity";
 import { Public } from "./decorator/public.decorator";
+import TFACodeDto from "./dto/2fa.dto";
 
 @Controller("2fa")
 @UseInterceptors(ClassSerializerInterceptor)
@@ -25,19 +26,28 @@ export class TFAController {
 	@HttpCode(200)
 	async turnOnTFA(
 		@Req() request: any,
-		@Res() res:  Response,
-		@Body() TFACode: string
+		// @Res() res:  Response,
+		@Body() TFACode: TFACodeDto
 	) {
+		console.log("BEFORE: " + request.user.users.id);
+		const updatedUser = await this.usersService.findOne(request.user.users.id);
+		console.log("UPDATE:  " + updatedUser.id);
+		console.log(updatedUser.TFASecret);
+		console.log(TFACode.TFACode);
 		const isCodeValid =
 			this.TFAService.isTFACodeValid(
-				TFACode,
-				request.user.users.TFASecret
+				TFACode.TFACode,
+				updatedUser.TFASecret
 			);
+		console.log("SUPER");
 		if (!isCodeValid) {
 			throw new UnauthorizedException("Wrong authentication code");
 		}
+		console.log("HELLO");
 		await this.usersService.turnOnTFA(request.user.users.id);
-		return res.redirect('http://localhost:3000');
+		const finalUser = await this.usersService.findOne(updatedUser.id);
+		return finalUser;
+		// return res.redirect('http://localhost:3000');
 	}
 
 	@Public()
