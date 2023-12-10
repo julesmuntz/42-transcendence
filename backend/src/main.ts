@@ -1,9 +1,5 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import session, { MemoryStore } from "express-session";
-import passport from "passport";
-import express, { NextFunction, Request, Response } from "express";
-import * as cors from 'cors';
 
 async function bootstrap() {
 	// var cors = require('cors');

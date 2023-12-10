@@ -45,9 +45,7 @@ export class UsersService {
 		return this.userRepository.findOne({ where: { id } });
 	}
 
-	async turnOnTFA(userId: number) {
-		return this.userRepository.update(userId, {
-			isTFAEnabled: true,
-		});
+	async turnOnTFA(userId: number) : Promise<void> {
+		this.userRepository.update(userId, { isTFAEnabled: true});
 	}
 }

@@ -4,7 +4,6 @@ import { FortyTwoStrategy } from "./strategy/42.Strategy";
 import { AuthService } from "./auth.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "../users/entities/user.entity";
-import { TFAService } from "./2fa.service"
 import { UsersService } from "../users/users.service";
 import { TFAController } from "./2fa.controller"
 import { ConfigModule } from "@nestjs/config";
@@ -25,7 +24,6 @@ import { JwtStrategy } from "./strategy/jwt.Strategy";
 		AuthService,
 		FortyTwoStrategy,
 		UsersService,
-		TFAService,
 		JwtStrategy
 	],
 })

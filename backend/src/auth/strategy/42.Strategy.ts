@@ -1,11 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile } from 'passport';
 import Strategy from 'passport-42';
-import { AuthService } from '../auth.service';
-import { TFAService } from '../2fa.service';
-import { UsersService } from '../../users/users.service';
-
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy) {
