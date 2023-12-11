@@ -10,7 +10,6 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 	const sendCode = async (e : any) => {
 		e.preventDefault();
 		const code = (document.getElementById("2fa_code") as HTMLInputElement)?.value;
-		console.log(code);
 		await fetch("http://localhost:3030/2fa/turn-on", {
 			method: "POST",
 			headers: {
@@ -26,10 +25,8 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 				return res.json();
 			})
 			.then((ret) => {
-				console.log(ret);
 				const newUser = ret;
 				qrset.setQrcode("");
-				console.log("updating the user");
 				userContext.login(newUser, userContext.user.authToken);
 				window.location.href = "http://localhost:3000";
 			}

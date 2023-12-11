@@ -39,11 +39,8 @@ function App() {
         "Authorization": `Bearer ${token}`
       }
       }).then((res) => {
-        console.log("RES");
-        console.log(res);
         return res.json();
       }).then((ret) => {
-        console.log(ret);
         userContext.login(ret, token);
         return (ret);
       });
@@ -57,7 +54,6 @@ function App() {
        console.log("The cookie access_token exists and is set");
        const user = jwtDecode<JwtPayload>(token);
        const info = user.users;
-       console.log("hello");
        getUser(info.id, token);
      }
    }, [token, userContext]);

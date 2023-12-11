@@ -5,7 +5,6 @@ export default function TwoFA({id, TFASecret} : {id : string, TFASecret :  strin
 	const sendCode = async (e : any) => {
 		e.preventDefault();
 		const code = (document.getElementById("2fa_code") as HTMLInputElement)?.value;
-		console.log(code);
 		await fetch("http://localhost:3030/2fa/authenticate", {
 			method: "POST",
 			credentials: "include",
@@ -20,7 +19,6 @@ export default function TwoFA({id, TFASecret} : {id : string, TFASecret :  strin
 		}).then(res => {
 			return res.json();
 		}).then(ret => {
-			console.log(ret);
 			window.location.href = "http://localhost:3000";
 		});
 	}

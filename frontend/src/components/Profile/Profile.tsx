@@ -9,7 +9,6 @@ import "./Profile.css";
 export default function Profile() {
 	const userContext = useContext(UserContext);
 
-	console.log(userContext.user.info);
 	const [qrcode, setQrcode] = useState("");
 
 	let getQrcode = async () =>
@@ -46,8 +45,6 @@ export default function Profile() {
 	async function activate2FA(e : any) {
 		e.preventDefault();
 		const response = await getQrcode();
-		console.log(qrcode);
-		//the user enters a code and sends it to /authenticate
 	};
 
 	return (

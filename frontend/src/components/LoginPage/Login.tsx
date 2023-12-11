@@ -7,7 +7,6 @@ export default function Login() {
 	{
 		e.preventDefault();
 		window.location.href = "http://localhost:3030/auth/callback";
-		console.log("this is done");
 	}
 
 	return (

@@ -29,21 +29,15 @@ export class TFAController {
 		// @Res() res:  Response,
 		@Body() TFACode: TFACodeDto
 	) {
-		console.log("BEFORE: " + request.user.users.id);
 		const updatedUser = await this.usersService.findOne(request.user.users.id);
-		console.log("UPDATE:  " + updatedUser.id);
-		console.log(updatedUser.TFASecret);
-		console.log(TFACode.TFACode);
 		const isCodeValid =
 			this.TFAService.isTFACodeValid(
 				TFACode.TFACode,
 				updatedUser.TFASecret
 			);
-		console.log("SUPER");
 		if (!isCodeValid) {
 			throw new UnauthorizedException("Wrong authentication code");
 		}
-		console.log("HELLO");
 		await this.usersService.turnOnTFA(request.user.users.id);
 		const finalUser = await this.usersService.findOne(updatedUser.id);
 		return finalUser;
@@ -62,7 +56,6 @@ export class TFAController {
 		// if (!isCodeValid) {
 			// throw new UnauthorizedException("Wrong authentication code");
 		// }
-		console.log("testttt");
 		res.setHeader('Access-Control-Allow-Origin', "http://localhost:3000");
 		const user = await this.usersService.findOne(body.id);
 		const access_token = await this.TFAService.generateJwt(user);
