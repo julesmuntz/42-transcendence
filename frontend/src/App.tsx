@@ -7,6 +7,8 @@ import { UserContext } from "./contexts/UserContext";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { Info, Iuser } from './contexts/UserContext';
+import TwoFA from './components/LoginPage/TwoFA';
+import { TFAProfile } from './components/Profile/TFAProfile';
 
 interface JwtPayload {
   users: {
@@ -26,46 +28,52 @@ function App() {
   const userContext = useContext(UserContext);
 
   const token = Cookies.get('access_token');
-  const userCookie = Cookies.get('user-info');
-  let userObject : Info;
-  if (userCookie)
-    userObject = JSON.parse(userCookie);
+  const TFASecret = Cookies.get('TFASecret');
+  const id = Cookies.get("id");
 
-  // if (user)
-  // {
-  //   const userObject = JSON.parse(user);
-  //   userContext.login(userObject.info, userObject.authToken);
-  // }
+  const getUser = async (id : number, token: string) => {
+
+    const result = await fetch(`http://localhost:3030/users/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+      }).then((res) => {
+        console.log("RES");
+        console.log(res);
+        return res.json();
+      }).then((ret) => {
+        console.log(ret);
+        userContext.login(ret, token);
+        return (ret);
+      });
+
+    return (result);
+  };
 
   useEffect(() => {
     if (!userContext.user.auth && token)
      {
-       if (userObject)
-       {
-        console.log("cookie");
-        userContext.login(userObject, token);
-        return ;
-       }
        console.log("The cookie access_token exists and is set");
        const user = jwtDecode<JwtPayload>(token);
        const info = user.users;
-       userContext.login(info, token);
+       console.log("hello");
+       getUser(info.id, token);
      }
-   }, [token, userContext, userCookie]);
-
-  //  useEffect(() => {
-  //   if (!userContext.user.auth && userObject)
-  //   {
-  //     userContext.login(userObject.info, userObject.authToken);
-  //   }
-  //  }, [userCookie, userContext])
+   }, [token, userContext]);
 
   if (!userContext.user.auth && !token)
+  {
+    if (TFASecret && id)
+    {
+      return (<TwoFA id={id} TFASecret={TFASecret}/>);
+    }
     return (
       <div className="App">
         <LoginPage/>
       </div>
     );
+  }
 
   return (
     <div className="App">

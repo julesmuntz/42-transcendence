@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, Controller, Post, Get, UseInterceptors, Res, Req, HttpCode, Body, UnauthorizedException } from "@nestjs/common";
+import { ClassSerializerInterceptor, Controller, Post, Get, UseInterceptors, Res, Req, HttpCode, Body, UnauthorizedException, Redirect } from "@nestjs/common";
 import { Response } from "express";
 import { UsersService } from "../users/users.service";
 import { AuthService } from "./auth.service";
@@ -52,20 +52,21 @@ export class TFAController {
 
 	@Public()
 	@Post("authenticate")
-	@HttpCode(200)
 	async authenticate(
-		@Res() res: Response,
+		@Req() req: Request,
+		@Res({ passthrough: true }) res: Response,
 		@Body() body: { id: number, TFASecret: string, TFACode: string }
 	) {
 		console.log(body);
-		const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, body.TFASecret);
-		if (!isCodeValid) {
-			throw new UnauthorizedException("Wrong authentication code");
-		}
+		// const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, body.TFASecret);
+		// if (!isCodeValid) {
+			// throw new UnauthorizedException("Wrong authentication code");
+		// }
+		console.log("testttt");
+		res.setHeader('Access-Control-Allow-Origin', "http://localhost:3000");
 		const user = await this.usersService.findOne(body.id);
-		const access_token = this.TFAService.generateJwt(user);
-		res.cookie('access_token', `${access_token}`);
-
-		return res.redirect('http://localhost:3000');
+		const access_token = await this.TFAService.generateJwt(user);
+		console.log(access_token);
+		res.cookie('access_token', `${access_token}`).send({status: 'ok'});
 	}
 }

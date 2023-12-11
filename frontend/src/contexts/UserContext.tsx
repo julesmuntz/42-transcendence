@@ -28,7 +28,6 @@ export default function UserProvider({ children } : any) {
 	const [user, setUser] = useState<Iuser>({info: {} as Info, auth: false, authToken: ''});
 
 	const login = (info : Info, authToken: string) => {
-		console.log("USER IS SET");
 		setUser((user : Iuser) => ({
 			info: info,
 			auth: true,
