@@ -1,19 +1,12 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import "./Login.css";
 
 export default function Login() {
 	async function redirectToBack(e : any)
 	{
 		e.preventDefault();
 		window.location.href = "http://localhost:3030/auth/callback";
-		console.log("this is done");
-		// const response = await fetch("http://localhost:3030/auth/callback",
-		// 	{
-		// 		method: "GET",
-		// 		headers: {"Content-Type": "application/json"},
-		// 	}).then((res) => res.json());
-		// console.log(response);
-		// console.log("hoho");
 	}
 
 	return (

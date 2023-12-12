@@ -6,18 +6,22 @@ import LoginPage from './components/LoginPage/LoginPage';
 import { UserContext } from "./contexts/UserContext";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import { Info, Iuser } from './contexts/UserContext';
+import TwoFA from './components/LoginPage/TwoFA';
+import { TFAProfile } from './components/Profile/TFAProfile';
 
 interface JwtPayload {
-  users: {
-    TFASecret: string,
-    avatarDefault: string,
-    avatarPath: string,
-    email: string,
-    id: number,
-    isTFAEnabled: boolean,
-    status: string,
-    username: string
-  }
+	sub: number,
+	users: {
+		TFASecret: string,
+		avatarDefault: string,
+		avatarPath: string,
+		email: string,
+		id: number,
+		isTFAEnabled: boolean,
+		status: string,
+		username: string
+	}
 }
 
 function App() {
@@ -25,6 +29,25 @@ function App() {
   const userContext = useContext(UserContext);
 
   const token = Cookies.get('access_token');
+  const TFASecret = Cookies.get('TFASecret');
+  const id = Cookies.get("id");
+
+  const getUser = async (id : number, token: string) => {
+
+    const result = await fetch(`http://localhost:3030/users/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+      }).then((res) => {
+        return res.json();
+      }).then((ret) => {
+        userContext.login(ret, token);
+        return (ret);
+      });
+
+    return (result);
+  };
 
   useEffect(() => {
     if (!userContext.user.auth && token)
@@ -32,16 +55,22 @@ function App() {
        console.log("The cookie access_token exists and is set");
        const user = jwtDecode<JwtPayload>(token);
        const info = user.users;
-       userContext.login(info, token);
+       getUser(info.id, token);
      }
    }, [token, userContext]);
 
   if (!userContext.user.auth && !token)
+  {
+    if (TFASecret && id)
+    {
+      return (<TwoFA id={id} TFASecret={TFASecret}/>);
+    }
     return (
       <div className="App">
         <LoginPage/>
       </div>
     );
+  }
 
   return (
     <div className="App">

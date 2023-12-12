@@ -7,6 +7,7 @@ import { CreateUserDto } from "../users/dto/create-user.dto";
 import { Response } from "express";
 import { authenticator } from "otplib";
 import { toFileStream } from "qrcode";
+import { statusOnline } from "users/dto/update-user.dto";
 
 @Injectable()
 export class AuthService {
@@ -27,9 +28,15 @@ export class AuthService {
 			if (user.isTFAEnabled) {
 				return user;
 			} else {
+				const u = await this.usersService.update(user.id, statusOnline);
+				console.log(u)
 				return this.generateJwt(user);
 			}
 		}
+	}
+
+	async logout(user: User) : Promise<void> {
+
 	}
 
 	public async generateTFASecret(user: User) {
