@@ -9,6 +9,20 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 		const inputValue = e.target.value;
 		const numericValue = inputValue.replace(/\D/g, "");
 		e.target.value = numericValue;
+		if (e.target.value.length <= 1) {
+			const nextInput = e.target.nextElementSibling;
+			if (nextInput !== null) {
+				(nextInput as HTMLInputElement).focus();
+			}
+			if (document.getElementsByName("code1").entries().next().value[1].value.length == 1
+				&& document.getElementsByName("code2").entries().next().value[1].value.length == 1
+				&& document.getElementsByName("code3").entries().next().value[1].value.length == 1
+				&& document.getElementsByName("code4").entries().next().value[1].value.length == 1
+				&& document.getElementsByName("code5").entries().next().value[1].value.length == 1
+				&& document.getElementsByName("code6").entries().next().value[1].value.length == 1) {
+				sendCode(e);
+			}
+		}
 	};
 
 	const sendCode = async (e: any) => {
@@ -33,7 +47,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 				window.location.href = "http://localhost:3000";
 			});
 	};
-
+	
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			setCountdown((prevCountdown) => (prevCountdown <= 0 ? 30 : prevCountdown - 1));
@@ -50,8 +64,13 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 	return (
 		<>
 			<Form onSubmit={sendCode}>
-				<input id="2fa_code" type="number" pattern="[0-9]{6}" maxLength={6} onInput={handleInput} required />
-				<button type="submit">Valider</button>
+				<input name="code1" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+				<input name="code2" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+				<input name="code3" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+				<input name="code4" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+				<input name="code5" type="number" pattern="[0-1]{1}" maxLength={1} onInput={handleInput} required />
+				<input name="code6" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+				<button name="submit-button" type="submit">Valider</button>
 			</Form>
 			<div id="countdown">
 				<div id="countdown-number">{countdown}</div>
