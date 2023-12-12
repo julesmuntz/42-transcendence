@@ -1,0 +1,48 @@
+body {
+	display: flex;
+	align-items: center;
+	justif-content: center;
+	background-color: #073A39;
+	color: white;
+}
+
+body, html {
+	height: 100%;
+}
+
+.otc {
+	position: relative;
+	width: 320px;
+	margin: 0 auto;
+}
+input[type="number"] {
+	width: 50%;
+	line-height: 1;
+	line-width: 6;
+	margin: .1em;
+	padding: 8px 0 4px;
+	font-size: 2.65em;
+	text-align: center;
+	appearance: textfield;
+	-webkit-appearance: textfield;
+	border: 0;
+	color: #073A39;
+	border-radius: 6px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.otc div::before {
+	content: '';
+	height: 2px;
+	width: 12px;
+	margin: 0 .25em;
+	order: 1;
+	background: #fff;
+	border-radius: 2px;
+	opacity: .4;
+}

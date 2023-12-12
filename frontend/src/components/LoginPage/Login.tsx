@@ -1,6 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import "./Login.css";
+import "./css/Login.css";
 
 export default function Login() {
 	async function redirectToBack(e : any)
