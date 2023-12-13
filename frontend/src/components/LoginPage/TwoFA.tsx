@@ -1,6 +1,22 @@
 import { useState, useEffect } from "react";
-import Form from "react-bootstrap/Form";
+import { Form } from 'react-bootstrap';
+import styled from "styled-components";
 import "./css/TwoFA.css"
+
+const TwofaBody = styled.div`
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #073A39;
+	color: white;
+`;
+
+const TwofaLegend = styled.div`
+	margin: 0 auto 1em;
+	color: #fff;
+	font-weight: bold;
+`;
 
 export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string }) {
 	const [countdown, setCountdown] = useState(30);
@@ -47,7 +63,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 				window.location.href = "http://localhost:3000";
 			});
 	};
-	
+
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			setCountdown((prevCountdown) => (prevCountdown <= 0 ? 30 : prevCountdown - 1));
@@ -56,25 +72,34 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 		return () => clearInterval(intervalId);
 	}, []);
 
-	// useEffect(() => {
-	// 	if (countdown == 0)
-	// 	window.location.href = "http://localhost:3000";
-	// }, [countdown]);
+	useEffect(() => {
+		if (countdown == 0)
+		window.location.href = "http://localhost:3000";
+	}, [countdown]);
 
 	return (
-		<>
-			<Form onSubmit={sendCode}>
-				<input name="code1" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
-				<input name="code2" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
-				<input name="code3" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
-				<input name="code4" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
-				<input name="code5" type="number" pattern="[0-1]{1}" maxLength={1} onInput={handleInput} required />
-				<input name="code6" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
-				<button name="submit-button" type="submit">Valider</button>
-			</Form>
-			<div id="countdown">
-				<div id="countdown-number">{countdown}</div>
+		<TwofaBody>
+		<div>
+			<div className="countdown">
+				<div className="countdown-number">{countdown}</div>
+				<svg>
+					<circle r="18" cx="20" cy="20"></circle>
+				</svg>
 			</div>
-		</>
+			<Form className="otc" onSubmit={sendCode}>
+			<fieldset>
+				<TwofaLegend>Validation Code</TwofaLegend>
+				<div className="twofa-div">
+					<input name="code1" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+					<input name="code2" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+					<input name="code3" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+					<input name="code4" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+					<input name="code5" type="number" pattern="[0-1]{1}" maxLength={1} onInput={handleInput} required />
+					<input name="code6" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+				</div>
+			</fieldset>
+			</Form>
+		</div>
+		</TwofaBody>
 	);
 }

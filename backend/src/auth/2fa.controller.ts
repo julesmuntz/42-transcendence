@@ -36,8 +36,8 @@ export class TFAController {
 		// if (!isCodeValid) {
 			// throw new UnauthorizedException("Wrong authentication code");
 		// }
-		const User = await this.usersService.turnOnTFA(request.user.sub);
-		return User;
+		// const User = await this.usersService.turnOnTFA(request.user.sub);
+		return updatedUser;
 	}
 
 	@Public()
