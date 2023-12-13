@@ -17,7 +17,7 @@ export class TFAController {
 
 	@Get("generate")
 	async register(@Res() response: Response, @Req() request: any) {
-		await this.usersService.turnOffTFA(request.user.sub);
+		// await this.usersService.turnOffTFA(request.user.sub);
 		const { otpauthUrl } = await this.TFAService.generateTFASecret(request.user.users as User);
 		return this.TFAService.pipeQrCodeStream(response, otpauthUrl);
 	}
@@ -33,11 +33,11 @@ export class TFAController {
 				TFACode,
 				updatedUser.TFASecret
 			);
-		// if (!isCodeValid) {
-			// throw new UnauthorizedException("Wrong authentication code");
-		// }
-		// const User = await this.usersService.turnOnTFA(request.user.sub);
-		return updatedUser;
+		if (!isCodeValid) {
+			throw new UnauthorizedException("Wrong authentication code");
+		}
+		const User = await this.usersService.turnOnTFA(request.user.sub);
+		return User;
 	}
 
 	@Public()
@@ -47,10 +47,10 @@ export class TFAController {
 		@Body() body: { id: number, TFASecret: string, TFACode: string }
 	) {
 		console.log(body);
-		// const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, body.TFASecret);
-		// if (!isCodeValid) {
-			// throw new UnauthorizedException("Wrong authentication code");
-		// }
+		const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, body.TFASecret);
+		if (!isCodeValid) {
+			throw new UnauthorizedException("Wrong authentication code");
+		}
 		const expirationDate = new Date();
 		expirationDate.setDate(expirationDate.getDate() + 7);
 		res.setHeader('Access-Control-Allow-Origin', "http://localhost:3000");
@@ -61,4 +61,13 @@ export class TFAController {
 		console.log(u)
 		res.cookie('access_token', `${access_token}`, { expires: expirationDate }).send({status: 'ok'});
 	}
+
+	@Post("turn-off")
+	async turnOffTFA(
+		@Req() request: any,
+	) {
+		const User = await this.usersService.turnOffTFA(request.user.sub);
+		return User;
+	}
+
 }

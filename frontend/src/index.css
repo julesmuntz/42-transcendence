@@ -6,22 +6,21 @@ body {
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	margin: 0;
-	padding: 0;
+	
 }
 
- code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+		monospace;
 }
 
 .sidebar {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  min-height: 100vh !important;
-  z-index: 100;
-  padding: 20px 0 0;
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	min-height: 100vh !important;
+	z-index: 100;
+	padding: 20px 0 0;
+	box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 }

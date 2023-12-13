@@ -8,7 +8,6 @@ const TwofaBody = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: #073A39;
 	color: white;
 `;
 
@@ -30,12 +29,14 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 			if (nextInput !== null) {
 				(nextInput as HTMLInputElement).focus();
 			}
+
 			if (document.getElementsByName("code1").entries().next().value[1].value.length == 1
 				&& document.getElementsByName("code2").entries().next().value[1].value.length == 1
 				&& document.getElementsByName("code3").entries().next().value[1].value.length == 1
 				&& document.getElementsByName("code4").entries().next().value[1].value.length == 1
 				&& document.getElementsByName("code5").entries().next().value[1].value.length == 1
 				&& document.getElementsByName("code6").entries().next().value[1].value.length == 1) {
+					
 				sendCode(e);
 			}
 		}
@@ -74,7 +75,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 
 	useEffect(() => {
 		if (countdown == 0)
-		window.location.href = "http://localhost:3000";
+			window.location.href = "http://localhost:3000";
 	}, [countdown]);
 
 	return (
@@ -87,17 +88,17 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 				</svg>
 			</div>
 			<Form className="otc" onSubmit={sendCode}>
-			<fieldset>
-				<TwofaLegend>Validation Code</TwofaLegend>
-				<div className="twofa-div">
-					<input name="code1" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
-					<input name="code2" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
-					<input name="code3" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
-					<input name="code4" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
-					<input name="code5" type="number" pattern="[0-1]{1}" maxLength={1} onInput={handleInput} required />
-					<input name="code6" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
-				</div>
-			</fieldset>
+				<fieldset>
+					<TwofaLegend>Validation Code</TwofaLegend>
+					<div className="twofa-div">
+						<input name="code1" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+						<input name="code2" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+						<input name="code3" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+						<input name="code4" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+						<input name="code5" type="number" pattern="[0-1]{1}" maxLength={1} onInput={handleInput} required />
+						<input name="code6" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} required />
+					</div>
+				</fieldset>
 			</Form>
 		</div>
 		</TwofaBody>

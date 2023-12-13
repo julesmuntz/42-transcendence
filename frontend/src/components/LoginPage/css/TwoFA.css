@@ -69,7 +69,7 @@
 	appearance: textfield;
 	-webkit-appearance: textfield;
 	border: 0;
-	color: #073A39;
+	color: rgba(34,85,161,1);
 	border-radius: 6px;
 }
 
