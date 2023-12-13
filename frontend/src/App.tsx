@@ -6,77 +6,77 @@ import LoginPage from './components/LoginPage/LoginPage';
 import { UserContext } from "./contexts/UserContext";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
-import { Info, Iuser } from './contexts/UserContext';
 import TwoFA from './components/LoginPage/TwoFA';
-import { TFAProfile } from './components/Profile/TFAProfile';
 
 interface JwtPayload {
-  users: {
-    TFASecret: string,
-    avatarDefault: string,
-    avatarPath: string,
-    email: string,
-    id: number,
-    isTFAEnabled: boolean,
-    status: string,
-    username: string
-  }
+	users: {
+	TFASecret: string,
+	avatarDefault: string,
+	avatarPath: string,
+	email: string,
+	id: number,
+	isTFAEnabled: boolean,
+	status: string,
+	username: string
+	}
 }
 
 function App() {
 
-  const userContext = useContext(UserContext);
+	const userContext = useContext(UserContext);
 
-  const token = Cookies.get('access_token');
-  const TFASecret = Cookies.get('TFASecret');
-  const id = Cookies.get("id");
+	const token = Cookies.get('access_token');
+	const TFASecret = Cookies.get('TFASecret');
+	const id = Cookies.get("id");
 
-  const getUser = async (id : number, token: string) => {
+	useEffect(() => {
 
-    const result = await fetch(`http://localhost:3030/users/${id}`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-      }).then((res) => {
-        return res.json();
-      }).then((ret) => {
-        userContext.login(ret, token);
-        return (ret);
-      });
+		const getUser = async (id : number, token: string) => {
 
-    return (result);
-  };
+			const result = await fetch(`http://localhost:3030/users/${id}`, {
+				method: "GET",
+				headers: {
+					"Authorization": `Bearer ${token}`
+				}
+			}).then((res) => {
+				return res.json();
+			}).then((ret) => {
+				userContext.login(ret, token);
+				return (ret);
+			});
 
-  useEffect(() => {
-    if (!userContext.user.auth && token)
-     {
-       console.log("The cookie access_token exists and is set");
-       const user = jwtDecode<JwtPayload>(token);
-       const info = user.users;
-       getUser(info.id, token);
-     }
-   }, [token, userContext]);
+			return (result);
+		};
 
-  if (!userContext.user.auth && !token)
-  {
-    if (TFASecret && id)
-    {
-      return (<TwoFA id={id} TFASecret={TFASecret}/>);
-    }
-    return (
-      <div className="App">
-        <LoginPage/>
-      </div>
-    );
-  }
+		if (!userContext.user.auth && token)
+		{
+			console.log("The cookie access_token exists and is set");
+			const user = jwtDecode<JwtPayload>(token);
+			const info = user.users;
+			getUser(info.id, token);
+		}
 
-  return (
-    <div className="App">
-      <h1>Hello {userContext.user.info.username}</h1>
-      <SideNav/>
-    </div>
-  );
+	}, [token, userContext]);
+
+	if (!userContext.user.auth && !token)
+	{
+		if (TFASecret && id)
+		{
+			return (<TwoFA id={id} TFASecret={TFASecret}/>);
+		}
+		return (
+			<div className="App">
+				<LoginPage/>
+			</div>
+		);
+	}
+
+	return (
+		<div className="App">
+			<h1>Hello {userContext.user.info.username}</h1>
+			<SideNav/>
+		</div>
+	);
 
 }
 

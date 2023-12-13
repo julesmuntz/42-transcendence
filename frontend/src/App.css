@@ -4,8 +4,12 @@
 }
 
 .App {
+  padding-left: 44px;
   text-align: center;
-  margin-top: 40px;
+  padding-top: 40px;
+  background-color: rgb(41, 42, 44);
+  height: 100vh;
+  color: white;
 }
 
 /* .App-logo {

@@ -1,0 +1,34 @@
+.relative {
+	position: relative;
+	width: 1;
+  }
+
+  .absolute {
+	width: 100%;
+	overflow-y: scroll;
+	max-height: 100px;
+	position: absolute;
+	background-color: blueviolet;
+  }
+
+  .searchInput {
+	width: 100%;
+	max-width: 100%;
+  }
+
+  .absolute::-webkit-scrollbar {
+	width: 0.5em;
+	border: 1px black solid;
+	border-radius: 10px;
+  }
+
+  .absolute::-webkit-scrollbar-track {
+	/* box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); */
+  }
+
+  .absolute::-webkit-scrollbar-thumb {
+	background-color: darkgrey;
+	border: 1px black solid;
+	border-radius: 10px;
+	/* outline: 1px solid slategray; */
+  }

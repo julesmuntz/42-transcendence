@@ -1,7 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { UserContext, Info } from '../../contexts/UserContext';
-import { useContext, useEffect } from 'react';
+import { UserContext } from '../../contexts/UserContext';
+import { useContext } from 'react';
 
 export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : any}}) {
 

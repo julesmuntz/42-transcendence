@@ -1,0 +1,16 @@
+.chat {
+	width: 100%;
+	margin-top: 50px;
+	height: 80%;
+}
+
+.sideDisplay {
+	border-radius: 20px 0 0 20px;
+	width: 25%;
+	background-color: black;
+}
+
+.mainChatBox {
+	border-radius: 0 20px 20px 0;
+	background-color: rgb(19, 19, 19);
+}

@@ -44,7 +44,7 @@ export default function Profile() {
 
 	async function activate2FA(e : any) {
 		e.preventDefault();
-		const response = await getQrcode();
+		await getQrcode();
 	};
 
 	return (
