@@ -17,13 +17,13 @@ const TwofaBody = styled.div`
 export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : any}}) {
 
 	const userContext = useContext(UserContext);
-
+	let code = "";
 	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		const inputValue = e.target.value;
 		const numericValue = inputValue.replace(/\D/g, "");
 		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
-		let code = "";
+
 
 		e.target.value = numericValue;
 		if (e.target.value.length == 1) {
@@ -35,6 +35,7 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 				codeInputNames.forEach((name) => {
 					const input = document.getElementsByName(name)[0] as HTMLInputElement;
 					code += input.value;
+					console.log(code);
 				});
 				if (code.length == 6)
 					sendCode(code);
@@ -43,7 +44,6 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 	};
 
 	const sendCode = async (e : any) => {
-		const code = (document.getElementById("2fa_code") as HTMLInputElement)?.value;
 		await fetch("http://localhost:3030/2fa/turn-on", {
 			method: "POST",
 			headers: {
@@ -83,7 +83,6 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 					</div>
 				</fieldset>
 			</Form>
-
 			</div>
 		</TwofaBody>
 	);

@@ -47,7 +47,7 @@ export class User {
 	isTFAEnabled: boolean;
 
 	UpdateStatus() {
-		
+
 	}
 
 }

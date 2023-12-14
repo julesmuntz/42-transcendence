@@ -19,13 +19,13 @@ const TwofaLegend = styled.div`
 
 export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string }) {
 	const [countdown, setCountdown] = useState(30);
+	let code = "";
 
 	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		const inputValue = e.target.value;
 		const numericValue = inputValue.replace(/\D/g, "");
 		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
-		let code = "";
 
 		e.target.value = numericValue;
 		if (e.target.value.length == 1) {
@@ -46,7 +46,6 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 
 	const sendCode = async (e: any) => {
 		e.preventDefault();
-		const code = (document.getElementById("2fa_code") as HTMLInputElement)?.value;
 		await fetch("http://localhost:3030/2fa/authenticate", {
 			method: "POST",
 			credentials: "include",

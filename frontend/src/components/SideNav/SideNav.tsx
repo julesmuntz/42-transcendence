@@ -5,6 +5,7 @@ import Super from "../Chat/Chat";
 import Profile from "../Profile/Profile";
 import Home from "../Home/Home";
 import "./SideNav.css";
+import Friends from "../Friends/Friends";
 
 
 export default function SideBar() {
@@ -38,7 +39,7 @@ export default function SideBar() {
 				<Route path="/profile" element={<Profile />}></Route>
 				<Route path="/" element={<Home />}></Route>
 				<Route path="/chat" element={<Super />}></Route>
-				<Route path="/friend" /*?element={ add route friend }*/></Route>
+				<Route path="/friend" element={<Friends />}></Route>
 			</Routes>
 		</BrowserRouter>
 	);

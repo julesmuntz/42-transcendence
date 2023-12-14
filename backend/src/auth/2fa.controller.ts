@@ -25,14 +25,15 @@ export class TFAController {
 	@Post("turn-on")
 	async turnOnTFA(
 		@Req() request: any,
-		@Body() TFACode: string
+		@Body() body: {TFACode: string}
 	) {
-		const updatedUser = await this.usersService.findOne(request.user.users.id);
+		const updatedUser = await this.usersService.findOne(request.user.sub);
 		const isCodeValid =
-			this.TFAService.isTFACodeValid(
-				TFACode,
+			await this.TFAService.isTFACodeValid(
+				body.TFACode,
 				updatedUser.TFASecret
 			);
+		console.log(isCodeValid);
 		if (!isCodeValid) {
 			throw new UnauthorizedException("Wrong authentication code");
 		}
