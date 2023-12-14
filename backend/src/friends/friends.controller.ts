@@ -18,6 +18,7 @@ export class FriendsController {
 		return this.friendsService.findAll();
 	}
 
+
 	@Get(':id')
 	async findOne(@Param('id') id: number) : Promise<Friend> {
 		const friend = await this.friendsService.findOne(id);
@@ -41,5 +42,10 @@ export class FriendsController {
 		} else {
 			return this.friendsService.delete(id);
 		}
+	}
+
+	@Get('invite/:id')
+	async invite(@Param('id') id: number) : Promise<void> {
+		
 	}
 }

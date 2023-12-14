@@ -21,23 +21,25 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 	const [countdown, setCountdown] = useState(30);
 
 	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+		e.preventDefault();
 		const inputValue = e.target.value;
 		const numericValue = inputValue.replace(/\D/g, "");
+		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
+		let code = "";
+
 		e.target.value = numericValue;
-		if (e.target.value.length <= 1) {
+		if (e.target.value.length == 1) {
 			const nextInput = e.target.nextElementSibling;
 			if (nextInput !== null) {
 				(nextInput as HTMLInputElement).focus();
-			}
-
-			if (document.getElementsByName("code1").entries().next().value[1].value.length == 1
-				&& document.getElementsByName("code2").entries().next().value[1].value.length == 1
-				&& document.getElementsByName("code3").entries().next().value[1].value.length == 1
-				&& document.getElementsByName("code4").entries().next().value[1].value.length == 1
-				&& document.getElementsByName("code5").entries().next().value[1].value.length == 1
-				&& document.getElementsByName("code6").entries().next().value[1].value.length == 1) {
-					
-				sendCode(e);
+			}else
+			{
+				codeInputNames.forEach((name) => {
+					const input = document.getElementsByName(name)[0] as HTMLInputElement;
+					code += input.value;
+				});
+				if (code.length == 6)
+					sendCode(code);
 			}
 		}
 	};

@@ -47,6 +47,16 @@ export default function Profile() {
 		const response = await getQrcode();
 	};
 
+	async function deactivate2FA(e: any) {
+		e.preventDefault();
+		return fetch("http://localhost:3030/2fa/turn-off" , {
+			method: "POST",
+			headers: {
+				"Authorization": `Bearer ${userContext.user.authToken}`
+			}
+		})
+	}
+
 	useEffect(() => {
 		if (qrcode) {
 			setIs2FAActive(true);
@@ -59,7 +69,12 @@ export default function Profile() {
 	return (
 		<Container>
 			<Image src={userContext.user.info.avatarDefault} className="image" roundedCircle fluid/>
-			{!userContext.user.info.isTFAEnabled ? <Button onClick={activate2FA}>Activate 2FA</Button> : <Button onClick={activate2FA}>Reactivate 2FA</Button>  }
+			{!userContext.user.info.isTFAEnabled ? <Button onClick={activate2FA}>Activate 2FA</Button> :
+	 <>
+		<Button onClick={activate2FA}>Reactivate 2FA</Button>
+		<Button onClick={deactivate2FA}>Deactivate 2FA</Button>
+	</>
+	}
 		</Container>
 	);
 }
