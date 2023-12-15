@@ -6,8 +6,8 @@ export default function Friends() {
 	const userContext = useContext(UserContext);
 	const [Users, setUsers] = useState<Info[]>([]);
 	const [inviteUser, setInviteUser] = useState<IFriends[]>([]);
-	const [vfriend, setvfriend] = useState<Info[]>([]);
-	
+	const [vfriend, setvfriend] = useState<IFriends[]>([]);
+
 	useEffect(() => {
 		fetch("http://localhost:3030/users", {
 		method: "GET",
@@ -35,6 +35,22 @@ export default function Friends() {
 			})
 			.catch((error) => console.error("Error fetching users:", error));
 	}, [inviteUser]);
+
+	useEffect(() =>
+	{
+		fetch("http://localhost:3030/friends/view_friend/", {
+			method: "GET",
+			headers: {
+			"Authorization": `Bearer ${userContext.user.authToken}`
+			}
+		})
+			.then((res) => res.json())
+			.then((ret) => {
+				setvfriend(ret);
+				// console.log(vfriend);
+			})
+			.catch((error) => console.error("Error fetching users:", error));
+	}, [vfriend]);
 
 	async function handelButtonInviteFriends(userId: number) {
 		//A passer en Post donc cree une interface CREATEFRIENDDTO
@@ -66,13 +82,22 @@ export default function Friends() {
 			}).then((res) => console.log(res));
 	}
 
+	async function handelButtonSupFriends(friendId: number) {
+		fetch(`http://localhost:3030/friends/${friendId}`, {
+			method: "DELETE",
+			headers: {
+				"Authorization": `Bearer ${userContext.user.authToken}`
+			}
+		}).then((res) => console.log(res));
+}
+
 	return (
 		<>
 			<p>add friends</p>
 			{Array.isArray(Users) && Users.length > 0 ? (
 			Users.map((user) => (
 			<p>
-				{user.id !== userContext.user.info.id ? (
+				{user.id != userContext.user.info.id ? (
 					<Button onClick={() => handelButtonInviteFriends(user.id)}>
 					{user.username}
 					</Button>
@@ -88,14 +113,69 @@ export default function Friends() {
 			<p>demande friends</p>
 			<p>Accepter</p>
 			{Array.isArray(inviteUser) && inviteUser.length > 0 ? (
-			inviteUser.map((friend) => (
+			inviteUser.map((Infriend) => (
 			<p>
-				{friend.user2.id !== userContext.user.info.id ? (
-					<Button onClick={() => handelButtonAddFriends(friend.id)}>
-					{friend.user1.username}
+				{Infriend.user1.id != userContext.user.info.id ? (
+					<Button onClick={() => handelButtonAddFriends(Infriend.id)}>
+					{Infriend.user1.username}
 					</Button>
 				) : (
 					"vous"
+				)}
+			</p>
+			))
+			) : (
+			<p>No friend requests available.</p>
+			)}
+
+			<p>Vos Friends</p>
+			{Array.isArray(vfriend) && vfriend.length > 0 ? (
+			vfriend.map((friends) => (
+			<p>
+				{friends.user1.id === userContext.user.info.id ? (
+					<p>
+					{friends.user2.username}
+					</p>
+				) : (
+					<p>
+					{friends.user1.username}
+					</p>
+				)}
+			</p>
+			))
+			) : (
+			<p>No friend requests available.</p>
+			)}
+			<p>Bloquet</p>
+			{Array.isArray(vfriend) && vfriend.length > 0 ? (
+			vfriend.map((friendsw) => (
+			<p>
+				{friendsw.user1.id === userContext.user.info.id ? (
+					<Button onClick={() => handelButtonAddFriends(friendsw.id)}>
+					{friendsw.user2.username}
+					</Button>
+				) : (
+					<Button onClick={() => handelButtonAddFriends(friendsw.id)}>
+					{friendsw.user1.username}
+					</Button>
+				)}
+			</p>
+			))
+			) : (
+			<p>No friend requests available.</p>
+			)}
+			<p>Suprimer</p>
+			{Array.isArray(vfriend) && vfriend.length > 0 ? (
+			vfriend.map((friendsw) => (
+			<p>
+				{friendsw.user1.id === userContext.user.info.id ? (
+					<Button onClick={() => handelButtonSupFriends(friendsw.id)}>
+					{friendsw.user2.username}
+					</Button>
+				) : (
+					<Button onClick={() => handelButtonSupFriends(friendsw.id)}>
+					{friendsw.user1.username}
+					</Button>
 				)}
 			</p>
 			))

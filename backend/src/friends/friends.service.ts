@@ -4,8 +4,6 @@ import { Repository } from 'typeorm';
 import { CreateFriendDto } from './dto/create-friend.dto';
 import { UpdateFriendDto } from './dto/update-friend.dto';
 import { Friend, RelationType } from './entities/friend.entity';
-import { UsersService } from 'users/users.service';
-
 
 @Injectable()
 export class FriendsService {
@@ -43,6 +41,16 @@ export class FriendsService {
 		return this.friendRepository.findOne({where: {id}});
 	}
 
+	async viewFriend(id: number) : Promise<Friend[]> {
+		return this.friendRepository.find({
+			relations: ["user1", "user2"],
+			where: [
+				{ user1: { id }, type: RelationType.Friend },
+				{ user2: { id }, type: RelationType.Friend },
+			],
+		});
+	}
+
 	async update(id: number, updateFriendDto: UpdateFriendDto): Promise<any> {
 		await this.friendRepository.update(id, updateFriendDto);
 		return this.friendRepository.findOne({where: {id}});
@@ -52,5 +60,14 @@ export class FriendsService {
 		await this.friendRepository.delete(id);
 	}
 
+	async view(id1: number, id2: number): Promise<Friend> {
+		return this.friendRepository.findOne({
+			relations: ["user1", "user2"],
+			where: [
+				{ user1: { id: id1 }, user2: { id: id2 } },
+				{ user2: { id: id1 }, user1: { id: id2 } },
+			],
+		});
+	}
 
 }

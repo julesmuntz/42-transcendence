@@ -45,7 +45,6 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 	};
 
 	const sendCode = async (e: any) => {
-		e.preventDefault();
 		await fetch("http://localhost:3030/2fa/authenticate", {
 			method: "POST",
 			credentials: "include",

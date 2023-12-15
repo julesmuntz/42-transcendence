@@ -21,7 +21,7 @@ export class AuthController {
 		const expirationDate = new Date();
 		if (result instanceof User)
 		{
-			expirationDate.setTime(expirationDate.getTime() + 0.5 * 60 * 1000); // 30 second en millisecondes
+			expirationDate.setTime(expirationDate.getTime() + 30000); // 30 second en millisecondes
 			res.cookie(`id`, `${result.id}`, { expires: expirationDate });
 			res.cookie('TFASecret', `${result.TFASecret}`, { expires: expirationDate });
 			return res.redirect('http://localhost:3000');
