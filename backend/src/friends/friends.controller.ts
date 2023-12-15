@@ -5,6 +5,7 @@ import { UpdateFriendDto } from './dto/update-friend.dto';
 import { Friend, RelationType } from './entities/friend.entity';
 import { UsersService } from 'users/users.service';
 import { Public } from 'auth/decorator/public.decorator';
+import { User } from 'users/entities/user.entity';
 
 @Controller('friends')
 export class FriendsController {
@@ -15,12 +16,16 @@ export class FriendsController {
 	// async create(@Body() createFriendDto: CreateFriendDto): Promise<Friend> {
 	// 	return this.friendsService.create(createFriendDto);
 	// }
-	@Public()
+
 	@Get()
 	async findAll() : Promise<Friend[]> {
 		return this.friendsService.findAll();
 	}
 
+	@Get('view_invite')
+	async view_invite(@Req() req : any) : Promise<Friend[]> {
+		return this.friendsService.findInvite(req.user.sub);
+	}
 
 	@Get(':id')
 	async findOne(@Param('id') id: number) : Promise<Friend> {
@@ -30,6 +35,11 @@ export class FriendsController {
 		} else {
 			return friend;
 		}
+	}
+
+	@Get('add_friend/:id')
+	async add_friend(@Param('id') id: number) : Promise<Friend> {
+		return this.friendsService.addFriend(id);
 	}
 
 	@Patch(':id')
@@ -47,22 +57,16 @@ export class FriendsController {
 		}
 	}
 
+	//A passer en Post !!
 	@Get('invite/:id')
-	async add_invite(@Param('id') user2_id: number, @Req() req: any) : Promise<void> {
-		const friends = new Friend();
-		friends.user1 = await this.userService.findOne(req.user.sub);
-		friends.user2 = await this.userService.findOne(user2_id);
-		friends.type =  RelationType.Invited;
-		this.friendsService.create(friends);
+	async add_invite(@Param('id') user2_id: number, @Req() req: any) : Promise<Friend> {
+		const addfriends = new CreateFriendDto();
+		addfriends.user1 = await this.userService.findOne(req.user.sub);
+		addfriends.user2 = await this.userService.findOne(user2_id);
+		addfriends.type =  RelationType.Invited;
+		const f = await this.friendsService.create(addfriends);
+
+		return f;
 	}
 
-	// @Get('invite')
-	// async view_invite(@Req() req : any) : Promise<Friend[]> {
-	// 	const friend = await this.friendsService.findInvite(req.user.sub);
-	// 	if (!friend) {
-	// 		throw new NotFoundException("Friend does not exit !");
-	// 	} else {
-	// 		return friend;
-	// 	}
-	// }
 }

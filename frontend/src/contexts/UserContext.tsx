@@ -10,11 +10,19 @@ export interface Info {
 	status: string;
 	username: string;
 }
+
 export interface Iuser {
 	info : Info;
 	auth : boolean;
 	authToken : string;
 };
+
+export interface IFriends {
+	id: number;
+	user1: Info;
+	user2: Info;
+	type: string;
+}
 
 interface ContextProps {
 	user: Iuser;
