@@ -30,6 +30,16 @@ export class FriendsController {
 		return this.friendsService.viewFriend(req.user.sub);
 	}
 
+	@Get('viewinvite/:id')
+	async viewinvite(@Param('id') id: number, @Req() req : any) : Promise<Friend> {
+		return this.friendsService.viewinvite(req.user.sub, id);
+	}
+
+	@Get('viewblock/:id')
+	async viewblock(@Param('id') id: number, @Req() req : any) : Promise<Friend> {
+		return this.friendsService.viewblock(req.user.sub, id);
+	}
+
 	@Get(':id')
 	async findOne(@Param('id') id: number) : Promise<Friend> {
 		const friend = await this.friendsService.findOne(id);

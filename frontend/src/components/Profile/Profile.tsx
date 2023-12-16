@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { TFAProfile } from "./TFAProfile";
-import "./Profile.css";
+import "./css/Profile.css";
 
 export default function Profile() {
 	const userContext = useContext(UserContext);
@@ -54,7 +54,11 @@ export default function Profile() {
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`
 			}
-		})
+		}).then(() => {
+			const newUser = userContext.user.info;
+			newUser.isTFAEnabled = false;
+			userContext.login(newUser, userContext.user.authToken);
+		});
 	}
 
 	useEffect(() => {

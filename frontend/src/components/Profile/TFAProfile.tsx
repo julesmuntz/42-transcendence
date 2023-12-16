@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { UserContext } from '../../contexts/UserContext';
 import { useContext } from 'react';
 import "../LoginPage/css/TwoFA.css"
-import "./Profile.css"
+import "./css/Profile.css"
 
 const TwofaBody = styled.div`
 	height: 100vh;
@@ -48,8 +48,8 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 		const input = e.target as HTMLInputElement;
 		input.value = "";
 		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
-		
-		
+
+
 		if ((e.currentTarget.name == "code1") || (e.currentTarget.name == "code2") || (e.currentTarget.name == "code3") || (e.currentTarget.name == "code4") || (e.currentTarget.name == "code5") || (e.currentTarget.name == "code6"))
 		{
 			codeInputNames.forEach((name) => {

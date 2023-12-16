@@ -60,6 +60,26 @@ export class FriendsService {
 		await this.friendRepository.delete(id);
 	}
 
+	async viewinvite(id: number, idUserTarget: number) : Promise<Friend> {
+		return this.friendRepository.findOne({
+			relations: ["user1", "user2"],
+			where: [
+				{ user1: { id :idUserTarget }, user2: {id}, type: RelationType.Invited },
+				{ user1: { id } ,user2: { id :idUserTarget }, type: RelationType.Invited },
+			],
+		});
+	}
+
+	async viewblock(id: number, idUserTarget: number) : Promise<Friend> {
+		return this.friendRepository.findOne({
+			relations: ["user1", "user2"],
+			where: [
+				{ user1: { id :idUserTarget }, user2: {id}, type: RelationType.Blocked },
+				{ user1: { id } ,user2: { id :idUserTarget }, type: RelationType.Blocked },
+			],
+		});
+	}
+
 	async view(id1: number, id2: number): Promise<Friend> {
 		return this.friendRepository.findOne({
 			relations: ["user1", "user2"],

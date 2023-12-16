@@ -49,8 +49,8 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 		const input = e.target as HTMLInputElement;
 		input.value = "";
 		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
-		
-		
+
+
 		if ((e.currentTarget.name == "code1") || (e.currentTarget.name == "code2") || (e.currentTarget.name == "code3") || (e.currentTarget.name == "code4") || (e.currentTarget.name == "code5") || (e.currentTarget.name == "code6"))
 		{
 			codeInputNames.forEach((name) => {
@@ -103,11 +103,11 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 				TFACode: code,
 			}),
 		})
-			.then((res) => {
-				return res.json();
-			})
-			.then((ret) => {
+			.then(() => {
 				window.location.href = "http://localhost:3000";
+			})
+			.catch(() => {
+				console.log("ERROR fetch");
 			});
 	};
 

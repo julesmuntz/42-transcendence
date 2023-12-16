@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,7 +8,7 @@ import { Public } from 'auth/decorator/public.decorator';
 @Controller('users')
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
-	
+
 	@Public()
 	@Post()
 	async create(@Body() createUserDto: CreateUserDto) : Promise<User> {
@@ -28,6 +28,11 @@ export class UsersController {
 		} else {
 			return user;
 		}
+	}
+
+	@Get('search/:name')
+	async search(@Param('name') name: string) : Promise<User[]> {
+		return this.usersService.search(name);
 	}
 
 	@Patch(':id')
