@@ -1,6 +1,7 @@
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import ElementList from "./ElementList";
 import "./Chat.css";
@@ -11,6 +12,12 @@ export enum Mode {
 }
 
 export default function ChatPage() {
+
+	const { id } = useParams();
+
+	if (id) {
+		console.log("Id = " + id);
+	}
 
 	const changeMode = () => {
 		if (sideDisplayMode === Mode.Channel_Mode)

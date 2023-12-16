@@ -26,5 +26,5 @@ export default function TwoFA({id, TFASecret} : {id : string, TFASecret :  strin
 	return (<Form onSubmit={sendCode}>
 			<input id="2fa_code" type="number" maxLength={6} />
 			<button type="submit">Valider</button>
-	</Form>)
+	</Form>);
 }

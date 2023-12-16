@@ -39,6 +39,7 @@ export default function SideBar() {
 				<Route path="/profile" element={<Profile />}></Route>
 				<Route path="/" element={<Home />}></Route>
 				<Route path="/chat" element={<ChatPage />}></Route>
+				<Route path="/chat/:id" element={<ChatPage />}></Route>
 				<Route path="/game" element={<Game />}></Route>
 			</Routes>
 		</BrowserRouter>
