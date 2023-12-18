@@ -45,7 +45,7 @@ export default function SideBar() {
 				<Route path="/profile" element={<Profile />}></Route>
 				<Route path="/" element={<Home />}></Route>
 				<Route path="/chat" element={<Super />}></Route>
-				<Route path="/friend" element={<Friends IdUserTarget={0} />}></Route>
+				{/* <Route path="/friend" element={<Friends IdUserTarget={0} />}></Route> */}
 				<Route path="/search" element={<SearchProfile />}></Route>
 			</Routes>
 		</BrowserRouter>

@@ -6,18 +6,18 @@ import { Friend, RelationType } from './entities/friend.entity';
 import { UsersService } from 'users/users.service';
 import { Public } from 'auth/decorator/public.decorator';
 import { User } from 'users/entities/user.entity';
+import { CreateUserDto } from 'users/dto/create-user.dto';
 
 @Controller('friends')
 export class FriendsController {
 	constructor(private readonly friendsService: FriendsService,
 		private readonly userService: UsersService) {}
 
-	//peut-etre a sup
+	@Public()
 	@Get()
 	async findAll() : Promise<Friend[]> {
 		return this.friendsService.findAll();
 	}
-
 	//a laire ok
 	@Get('view_invite')
 	async view_invite(@Req() req : any) : Promise<Friend[]> {
@@ -30,16 +30,24 @@ export class FriendsController {
 		return this.friendsService.viewFriend(req.user.sub);
 	}
 
+	// Friends scearch
 	@Get('viewinvite/:id')
 	async viewinvite(@Param('id') id: number, @Req() req : any) : Promise<Friend> {
-		return this.friendsService.viewinvite(req.user.sub, id);
+		const invite  = await this.friendsService.viewinvite(req.user.sub, id);
+		console.log(invite);
+		return invite;
+	}
+
+	@Get('viewfriends/:id')
+	async viewfriends(@Param('id') id: number, @Req() req : any) : Promise<Friend> {
+		return this.friendsService.viewfriends(req.user.sub, id);
 	}
 
 	@Get('viewblock/:id')
 	async viewblock(@Param('id') id: number, @Req() req : any) : Promise<Friend> {
 		return this.friendsService.viewblock(req.user.sub, id);
 	}
-
+	// fin
 	@Get(':id')
 	async findOne(@Param('id') id: number) : Promise<Friend> {
 		const friend = await this.friendsService.findOne(id);
@@ -50,33 +58,44 @@ export class FriendsController {
 		}
 	}
 
-	//modifition a aporter peut-etrre
-	@Get('add_friend/:id')
-	async add_friend(@Param('id') id: number) : Promise<Friend> {
-		return this.friendsService.addFriend(id);
-	}
-
 	//modification a aporter
-	@Get('bloquet/:id')
-	async bloquet(@Param('id') id: number, @Req() req: any, @Body() body: {user2: number}) : Promise<Friend> {
-		const friend = await this.friendsService.view(req.user.sub, body.user2);
+
+	//les modification verifier en premier si il sont amie ou non delete si besoin est apres create en function.
+	@Patch('bloquet/:id')
+	async bloquet(@Param('id') id: number, @Req() req: any) : Promise<Friend> {
+
+		const verifFriend = await this.friendsService.view(req.user.sub, id);
 		const bloqueFriend = new CreateFriendDto();
 		bloqueFriend.user1 = await this.userService.findOne(req.user.sub);
-		bloqueFriend.user2 = await this.userService.findOne(body.user2);
+		bloqueFriend.user2 = await this.userService.findOne(id);
 		bloqueFriend.type = RelationType.Blocked;
-		if (!friend) {
-			return this.friendsService.create(bloqueFriend);
-		} else {
-			this.friendsService.delete(id);
-			return this.friendsService.create(bloqueFriend);
+		if (req.user.sub != id)
+		{
+			if (!verifFriend)
+				return this.friendsService.create(bloqueFriend);
+			else
+			{
+				this.friendsService.delete(verifFriend.id);
+				return this.friendsService.create(bloqueFriend);
+			}
 		}
 	}
-	// peut-etre a supprimer
-	@Patch(':id')
-	async update(@Param('id') id: number, @Body() updateFriendDto: UpdateFriendDto) : Promise<any> {
-		return this.friendsService.update(id, updateFriendDto);
+
+
+	// A tester !!
+	//check que il y a pas deja un truc en db
+	@Post()
+	async add_invite(@Body() body : {createFriendDto: CreateFriendDto}, @Req() req: any) : Promise<Friend> {
+		if (body.createFriendDto.user1.id == req.user.sub)
+			throw new NotFoundException("Error create Friends");
+		return this.friendsService.create(body.createFriendDto);
 	}
 
+	//check que il exite bien
+	@Patch('accept/:id')
+	async acceptFriends(@Param('id') id: number) : Promise<Friend> {
+		return this.friendsService.addFriend(id);
+	}
 	//pas de check a effectuer
 	@Delete(':id')
 	async delete(@Param('id') id: number) : Promise<void> {
@@ -86,19 +105,6 @@ export class FriendsController {
 		} else {
 			return this.friendsService.delete(id);
 		}
-	}
-
-	//A passer en Post !!
-	//A ne pas oublier de check si il sont deja friend ou inviter ou bloquet
-	@Get('invite/:id')
-	async add_invite(@Param('id') user2_id: number, @Req() req: any) : Promise<Friend> {
-		const addfriends = new CreateFriendDto();
-		addfriends.user1 = await this.userService.findOne(req.user.sub);
-		addfriends.user2 = await this.userService.findOne(user2_id);
-		addfriends.type =  RelationType.Invited;
-		const f = await this.friendsService.create(addfriends);
-
-		return f;
 	}
 
 }

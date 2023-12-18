@@ -18,7 +18,7 @@ export class FriendsService {
 	}
 
 	async findAll(): Promise<Friend[]> {
-		return this.friendRepository.find();
+		return this.friendRepository.find({relations: ["user1", "user2"]});
 	}
 
 	async findOne(id: number): Promise<Friend> {
@@ -64,8 +64,18 @@ export class FriendsService {
 		return this.friendRepository.findOne({
 			relations: ["user1", "user2"],
 			where: [
-				{ user1: { id :idUserTarget }, user2: {id}, type: RelationType.Invited },
+				{ user1: { id : idUserTarget }, user2: {id}, type: RelationType.Invited },
 				{ user1: { id } ,user2: { id :idUserTarget }, type: RelationType.Invited },
+			],
+		});
+	}
+
+	async viewfriends(id: number, idUserTarget: number) : Promise<Friend> {
+		return this.friendRepository.findOne({
+			relations: ["user1", "user2"],
+			where: [
+				{ user1: { id :idUserTarget }, user2: {id}, type: RelationType.Friend },
+				{ user1: { id } ,user2: { id :idUserTarget }, type: RelationType.Friend },
 			],
 		});
 	}

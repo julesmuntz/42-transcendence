@@ -55,8 +55,7 @@ export default function SearchProfile () {
 						  </div>
 						  <div className="col-md-3 col-sm-3">
 							<br />
-							<Friends IdUserTarget={user.id} />
-							<button className="btn btn-primary pull-right">Add Friend</button>
+							{user.id != userContext.user.info.id && <Friends IdUserTarget={user.id} UserTarget={user} /> }
 						  </div>
 						</div>
 					  </div>

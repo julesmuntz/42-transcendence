@@ -18,11 +18,13 @@ export interface Iuser {
 };
 
 export interface IFriends {
-	id: number;
+	id?: number;
 	user1: Info;
 	user2: Info;
 	type: string;
 }
+
+
 
 interface ContextProps {
 	user: Iuser;
