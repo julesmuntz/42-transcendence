@@ -13,7 +13,8 @@ RUN npm install && npm install --save @nestjs/typeorm typeorm pg\
 	&& npm i --save class-validator class-transformer\
 	&& npm install -D @types/express-session\
 	&& npm install --save-dev @types/qrcode @types/express && npm i --save @nestjs/jwt\
-	&& npm install passport-jwt
+	&& npm install passport-jwt \
+	&& npm i --save @nestjs/websockets @nestjs/platform-socket.io
 
 COPY tsconfig.json .
 
