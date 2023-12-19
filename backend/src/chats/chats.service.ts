@@ -1,108 +1,90 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
-import { Chat } from './entities/chat.entity';
-import { Room, UserRoom } from '../../../shared/chats.interface';
+import { Injectable, Scope } from '@nestjs/common';
+import { Room, UserRoom } from '../shared/chats.interface';
+import * as fs from 'fs';
 
-@Injectable()
 export class ChatsService {
-	private rooms: Room[] = [];
+  private rooms: Room[] = [];
+  private readonly dataFilePath = 'rooms-data.json';
 
-	async addRoom(roomName: string, host: UserRoom): Promise<void> {
-		const idRoom = this.rooms.length + 1;
-		this.rooms.push({ idRoom, name: roomName, host, users: [] });
-	}
+  constructor() {
+	console.log("ChatsService");
+    this.loadRoomsFromDisk();
+  }
 
-	async removeRoom(idRoom: number): Promise<void> {
-		const findRoom = await this.getRoomById(idRoom);
-		if (findRoom != -1) {
-			this.rooms = this.rooms.filter((room) => room.idRoom !== idRoom);
-		}
-	}
+  private loadRoomsFromDisk(): void {
+    try {
+      const data = fs.readFileSync(this.dataFilePath, 'utf-8');
+      this.rooms = JSON.parse(data);
+    } catch (error) {
+      // Handle file reading errors or initialize the rooms array if the file doesn't exist.
+      this.rooms = [];
+    }
+  }
 
-	async getRoomById(idRoom: number): Promise<number> {
-		return this.rooms.findIndex((room) => room.idRoom === idRoom);
-	}
+  private saveRoomsToDisk(): void {
+    const data = JSON.stringify(this.rooms, null, 2);
+    fs.writeFileSync(this.dataFilePath, data, 'utf-8');
+  }
 
-	async getRoomHost(idRoom: number): Promise<UserRoom> {
-		const findRoom = await this.getRoomById(idRoom);
-		if (findRoom != -1) {
-			return this.rooms[findRoom].host;
-		}
-	}
+  async addRoom(roomName: string, host: UserRoom): Promise<number> {
+    let idRoom = this.rooms.length;
+	if (idRoom)
+		idRoom = this.rooms[idRoom - 1].idRoom + 1;
+    this.rooms.push({ idRoom, name: roomName, host, users: [] });
+    this.saveRoomsToDisk(); // Save the updated state to the file.
+    return idRoom;
+  }
 
-	async addUserToRoom(user: UserRoom, idRoom?: number, roomName?: string): Promise<void> {
-		if (idRoom == undefined) {
-			const findRoom = await this.getRoomById(idRoom);
-			if (findRoom != -1) {
-				this.rooms[findRoom].users.push(user);
-				const host = await this.getRoomHost(idRoom);
-				if (host.userId == user.userId) {
-					this.rooms[findRoom].host.socketId = user.socketId;
-				}
-			}
-		}
-		else /*if(roomName != undefined)*/
-		{
-			await this.addRoom("temporaire", user);
-		}
-	}
+  async removeRoom(idRoom: number): Promise<void> {
+    const findRoom = await this.getRoomById(idRoom);
+    if (findRoom !== -1) {
+      this.rooms = this.rooms.filter((room) => room.idRoom !== idRoom);
+      this.saveRoomsToDisk(); // Save the updated state to the file.
+    }
+  }
 
-	async findRoomsByUserSocketId(socketId: string): Promise<Room[]> {
-		const filteredRooms = this.rooms.filter((room) => {
-			const found = room.users.find((user) => user.socketId === socketId);
-				if (found) {
-					return found;
-				}
-			})
-		return filteredRooms;
-	}
+  async getRoomById(idRoom: number): Promise<number> {
+    return this.rooms.findIndex((room) => room.idRoom === idRoom);
+  }
 
-	async removeUserFromAllRooms(socketId: string): Promise<void> {
-		const rooms = await this.findRoomsByUserSocketId(socketId);
-		for (const room of rooms) {
-		  await this.removeUserFromRoom(socketId, room.idRoom);
-		}
-	}
+  async getRoomHost(idRoom: number): Promise<UserRoom> {
+    const findRoom = await this.getRoomById(idRoom);
+    if (findRoom !== -1) {
+      return this.rooms[findRoom].host;
+    }
+  }
 
-	async removeUserFromRoom(socketId: string, idRoom: number): Promise<void> {
-		const room = await this.getRoomById(idRoom)
-		this.rooms[room].users = this.rooms[room].users.filter((user) => user.socketId !== socketId)
-		if (this.rooms[room].users.length === 0) {
-			await this.removeRoom(idRoom)
-		}
-	}
+  async addUserToRoom(user: UserRoom, idRoom?: number, roomName?: string): Promise<void> {
+    if (idRoom !== undefined) {
+      const findRoom = await this.getRoomById(idRoom);
+      if (findRoom !== -1) {
+        this.rooms[findRoom].users.push(user);
+        const host = await this.getRoomHost(idRoom);
+        if (host.userId === user.userId) {
+          this.rooms[findRoom].host.socketId = user.socketId;
+        }
+        this.saveRoomsToDisk(); // Save the updated state to the file.
+      }
+    } else if (roomName !== undefined) {
+      await this.addRoom(roomName, user);
+    }
+  }
 
-	async getRooms(): Promise<Room[]> {
-		return this.rooms
-	}
+  // ... rest of the methods ...
 
-	// constructor(
-	// 	@InjectRepository(Chat)
-	// 	private chatRepository: Repository<Chat>
-	// ) {}
+  async removeUserFromRoom(socketId: string, idRoom: number): Promise<void> {
+    const roomIndex = await this.getRoomById(idRoom);
+    if (roomIndex !== -1) {
+      this.rooms[roomIndex].users = this.rooms[roomIndex].users.filter((user) => user.socketId !== socketId);
+      if (this.rooms[roomIndex].users.length === 0) {
+        await this.removeRoom(idRoom);
+      }
+      this.saveRoomsToDisk(); // Save the updated state to the file.
+    }
+  }
 
-	// async create(createChatDto: CreateChatDto) : Promise<Chat> {
-	// 	const newchat = this.chatRepository.create(createChatDto);
-	// 	return this.chatRepository.save(newchat);
-	// }
-
-	// async findAll() : Promise<Chat[]> {
-	// 	return this.chatRepository.find();
-	// }
-
-	// async findOne(id: number) : Promise<Chat> {
-	// 	return this.chatRepository.findOne({where: {id}});
-	// }
-
-	// async update(id: number, updateChatDto: UpdateChatDto) : Promise<Chat> {
-	// 	await this.chatRepository.update(id, updateChatDto);
-	// 	return this.chatRepository.findOne({where: {id}});
-	// }
-
-	// async delete(id: number) : Promise<void> {
-	// 	await this.chatRepository.delete(id);
-	// }
+  async getRooms(): Promise<Room[]> {
+	this.loadRoomsFromDisk();
+    return this.rooms;
+  }
 }

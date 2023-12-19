@@ -27,4 +27,8 @@ export class Friend {
 	  default: RelationType.Invited
 	})
 	type: RelationType;
+
+
+	@Column({ nullable: true })
+	idRoom: number;
 }

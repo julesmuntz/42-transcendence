@@ -1,11 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { IFriends, UserContext } from "../../contexts/UserContext";
+import { useNavigate } from '@tanstack/react-location'
 import "./css/ViewFriends.css"
+import Button from 'react-bootstrap/Button';
 
 export default function ViewFriends() {
   const userContext = useContext(UserContext);
   const [viewFriends, setViewFriends] = useState<IFriends[]>([]);
-
+//   const naivgate = useNavigate();
   useEffect(() => {
     fetch(`http://localhost:3030/friends/view_friend`, {
       method: "GET",
@@ -19,6 +21,9 @@ export default function ViewFriends() {
       });
   }, []);
 
+//   const joinRoom = (roomId: number) => {
+//     naivgate({ to: `/chat/${roomId}`, replace: true });
+//   };
 
   if (viewFriends.length > 0) {
     return (
@@ -44,6 +49,7 @@ export default function ViewFriends() {
                       {viewFriends.map((friend) => (
                         <tr key={friend.id}>
                           <td>
+						  {/* <Button onClick={() => joinRoom(friend.idRoom as number)}> join </Button> */}
                             <img
                               src={friend.user2.avatarDefault}
                               alt={`Profile of ${friend.user2.username}`}

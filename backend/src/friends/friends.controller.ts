@@ -7,11 +7,13 @@ import { UsersService } from 'users/users.service';
 import { Public } from 'auth/decorator/public.decorator';
 import { User } from 'users/entities/user.entity';
 import { CreateUserDto } from 'users/dto/create-user.dto';
+import { ChatsService } from 'chats/chats.service';
 
 @Controller('friends')
 export class FriendsController {
 	constructor(private readonly friendsService: FriendsService,
-		private readonly userService: UsersService) {}
+		private readonly userService: UsersService,
+		private readonly chatService: ChatsService) {}
 
 
 	@Post()
@@ -106,6 +108,12 @@ export class FriendsController {
 		if (!friend) {
 			throw new NotFoundException("Friend does not exist !");
 		} else {
+			if (friend.type == RelationType.Friend)
+			{
+				console.log(friend.idRoom);
+				const idRoom = await this.chatService.getRoomById(friend.idRoom);
+				await this.chatService.removeRoom(idRoom);
+			}
 			return this.friendsService.delete(id);
 		}
 	}

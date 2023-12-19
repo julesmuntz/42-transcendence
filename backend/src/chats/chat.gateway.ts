@@ -1,6 +1,6 @@
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets'
 import { Logger } from '@nestjs/common'
-import { ClientToServerEvents, Message, ServerToClientEvents, UserRoom} from "../../../shared/chats.interface";
+import { ClientToServerEvents, Message, ServerToClientEvents, UserRoom} from "../shared/chats.interface";
 import { Server, Socket } from 'socket.io'
 import { ChatsService } from "./chats.service";
 
@@ -32,7 +32,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 	}
 
 	async handleDisconnect(client: Socket) : Promise<void> {
-		await this.chatService.removeUserFromAllRooms(client.id);
+		// await this.chatService.removeUserFromAllRooms(client.id);
 		this.logger.log(`Client disconnected: ${client.id}`);
 	}
 

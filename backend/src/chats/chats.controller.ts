@@ -3,15 +3,17 @@ import { ChatsService } from './chats.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Chat } from './entities/chat.entity';
-import { Room } from '../../../shared/chats.interface';
+import { Room } from '../shared/chats.interface';
+import { Public } from 'auth/decorator/public.decorator';
 
 @Controller('chats')
 export class ChatsController {
 	constructor(private readonly chatsService: ChatsService) {}
 
-
+	@Public()
 	@Get('rooms')
 	async getAllRooms() : Promise<Room[]> {
+		console.log(this.chatsService.getRooms());
 		return this.chatsService.getRooms();
 	}
 

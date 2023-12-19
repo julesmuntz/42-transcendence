@@ -4,12 +4,14 @@ import { Repository } from 'typeorm';
 import { CreateFriendDto } from './dto/create-friend.dto';
 import { UpdateFriendDto } from './dto/update-friend.dto';
 import { Friend, RelationType } from './entities/friend.entity';
+import { ChatsService } from 'chats/chats.service';
 
 @Injectable()
 export class FriendsService {
 	constructor(
 		@InjectRepository(Friend)
-		private friendRepository: Repository<Friend>
+		private friendRepository: Repository<Friend>,
+		private readonly chatsService: ChatsService
 		) {}
 
 	async create(createFriendDto: CreateFriendDto): Promise<Friend> {
@@ -37,7 +39,12 @@ export class FriendsService {
 	}
 
 	async addFriend(id: number) : Promise<any> {
-		await this.friendRepository.update(id, {type: RelationType.Friend});
+		const userfriend  = this.friendRepository.findOne({relations: ["user1", "user2"],
+		where : {id}});
+		console.log((await userfriend).user1.id);
+		const idRoom = await this.chatsService.addRoom("Message Priver", {userId: (await userfriend).user1.id, userName: (await userfriend).user1.username, socketId: ""});
+		await this.friendRepository.update(id, {type: RelationType.Friend, idRoom: idRoom} );
+		console.log(this.chatsService.getRooms());
 		return this.friendRepository.findOne({where: {id}});
 	}
 

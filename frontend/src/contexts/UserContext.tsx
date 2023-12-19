@@ -22,6 +22,7 @@ export interface IFriends {
 	user1: Info;
 	user2: Info;
 	type: string;
+	idRoom?: number;
 }
 
 

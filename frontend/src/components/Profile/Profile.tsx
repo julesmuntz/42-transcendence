@@ -13,7 +13,7 @@ export default function Profile() {
 
 	let getQrcode = async () =>
 	{
-		return fetch("http://localhost:3030/2fa/generate", {
+		return fetch(`http://localhost:3030/2fa/generate`, {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`
@@ -49,7 +49,7 @@ export default function Profile() {
 
 	async function deactivate2FA(e: any) {
 		e.preventDefault();
-		return fetch("http://localhost:3030/2fa/turn-off" , {
+		return fetch(`http://localhost:3030/2fa/turn-off` , {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`

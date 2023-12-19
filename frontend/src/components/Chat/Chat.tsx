@@ -2,8 +2,23 @@ import React, { useState, useEffect, useContext, useTransition } from 'react'
 import { MakeGenerics, useMatch, useNavigate } from '@tanstack/react-location'
 import { io, Socket } from 'socket.io-client'
 import { UserContext } from '../../contexts/UserContext'
-import { ClientToServerEvents, Message, ServerToClientEvents, UserRoom} from "../../../shared/chats.interface";
-import { Header } from './header';
+import { ClientToServerEvents, Message, ServerToClientEvents, UserRoom, Room} from "../../shared/chats.interface";
+import { Header, UserList, Messages, MessageForm } from './header';
+import { useQuery } from 'react-query';
+import axios from 'axios';
+
+
+export const useRoomQuery = (idRoom: number, isConnected: boolean) => {
+	const query = useQuery({
+	  queryKey: ['rooms', idRoom],
+	  queryFn: (): Promise<Room> =>
+		axios.get(`/api/rooms/${idRoom}`).then((response) => response.data),
+	  refetchInterval: 60000,
+	  enabled: isConnected,
+	});
+	return query;
+  };
+
 
 export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => {
 	return (
@@ -26,54 +41,56 @@ export default function Chat() {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [toggleUserList, setToggleUserList] = useState<boolean>(false);
 
-	const { data: room } = useRoomQuery(idRoom, isConnected); //peut-etre metrre idRoom
+	const { data: room } = useRoomQuery(idRoom as number, isConnected); //peut-etre metrre idRoom
 	const naivgate = useNavigate();
 
 	useEffect(() => {
 		if (!user || !idRoom) {
-			naivgate({ to: '/', replace: true });
+		  naivgate({ to: '/', replace: true });
 		} else {
-			socket.on('connect', () => {
-				socket.emit('join_room', { user: {socketId: socket.id, userId: userContext.user.info.id, userName: userContext.user.info.username}, idRoom });
-				setIsConnected(true);
-			})
-			socket.on('disconnect', () => {
-				setIsConnected(false);
-			}
-			socket.on('chat', (e) => {
-				setMessages((messages) => [e, ...messages]);
-			}
-			socket.connect();
+		  socket.on('connect', () => {
+			socket.emit('join_room', { user: {socketId: socket.id, userId: userContext.user.info.id, userName: userContext.user.info.username}, idRoom });
+			setIsConnected(true);
+		  });
+		  socket.on('disconnect', () => {
+			setIsConnected(false);
+		  });
+		  socket.on('chat', (e) => {
+			setMessages((messages) => [e, ...messages]);
+		  });
+		  socket.connect();
 		}
 		return () => {
-			socket.off('connect')
-			socket.off('disconnect')
-			socket.off('chat')
+			socket.off('connect');
+			socket.off('disconnect');
+			socket.off('chat');
 		};
-
-	}, []);
+	  }, []);
 
 	const leaveRoom = () => {
 		socket.disconnect();
-		unsetRoom();
 		naivgate({ to: '/', replace: true });
 	}
 
+
+
 	const sendMessage = (message: string) => {
-		if (user && idRoom) {
-			socket.emit('chat',
-			{
+		if (user && idRoom && room) {
+			socket.emit('chat', {
 				user: {
-					socketId: user.socketId,
-					userId: user.userId,
-					userName: user.userName
+				  socketId: (user as UserRoom).socketId, // Ensure 'user' is of type UserRoom
+				  userId: user.userId,
+				  userName: user.userName,
 				},
 				timeSent: new Date(Date.now()).toLocaleString('en-US'),
 				message,
-				idRoom
-			 });
+				roomName: room.name,
+				idRoom,
+			  });
+
 		}
-	}
+	  };
+
 
 	return (
 		<>{user?.userId && idRoom && room && (
@@ -81,7 +98,7 @@ export default function Chat() {
 				<Header
 					isConnected={isConnected}
 					users={room?.users ?? []}
-					roomName={room?.roomName}
+					roomName={room?.name}
 					handleUsersClick={() => setToggleUserList((toggleUserList) => !toggleUserList)}
 					handleLeaveRoom={() => leaveRoom()}
 				></Header>
@@ -95,3 +112,10 @@ export default function Chat() {
 		)}</>
 	);
 }
+
+type ChatLocationGenerics = MakeGenerics<{
+	LoaderData: {
+	  user: Pick<UserRoom, 'userId' | 'userName'>
+	  idRoom: number
+	}
+  }>
