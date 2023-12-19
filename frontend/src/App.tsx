@@ -73,7 +73,6 @@ function App() {
 
 	return (
 		<div className="App">
-			<h1>Hello {userContext.user.info.username}</h1>
 			<SideNav/>
 		</div>
 	);

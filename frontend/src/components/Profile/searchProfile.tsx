@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { Info, UserContext } from "../../contexts/UserContext";
-import Button from 'react-bootstrap/Button';
+import Image from 'react-bootstrap/Image';
 import Form from 'react-bootstrap/Form';
 import "./css/SearchProfile.css"
 import Friends from "../Friends/Friends";
@@ -9,8 +9,8 @@ export default function SearchProfile () {
 	const userContext = useContext(UserContext);
 	const [Users, setUsers] = useState<Info[]>([]);
 
-	async function handelsearch(e : any) {
-		if (e.target.value != 0)
+	async function handlesearch(e : any) {
+		if (e.target.value !== 0)
 		{
 			return(fetch(`http://localhost:3030/users/search/${e.target.value}`, {
 				method: "GET",
@@ -34,7 +34,7 @@ export default function SearchProfile () {
 			<div className="row">
 			  <div className="col-md">
 				<Form>
-				  <input type="search" name="User" id="" onInput={handelsearch} />
+				  <input type="search" name="User" id="" onInput={handlesearch} />
 				</Form>
 
 				<div className="people-nearby">
@@ -43,7 +43,13 @@ export default function SearchProfile () {
 					  <div className="nearby-user" key={user.id}>
 						<div className="row">
 						  <div className="col-md-2 col-sm-2">
-							<img src={user.avatarDefault} alt={user.username} className="profile-photo-lg" />
+							<Image
+								src={user.avatarDefault}
+								alt={user.username}
+								className="profile-photo-lg"
+								roundedCircle
+								fluid
+							/>
 						  </div>
 						  <div className="col-md-7 col-sm-7">
 							<h5>
@@ -55,7 +61,7 @@ export default function SearchProfile () {
 						  </div>
 						  <div className="col-md-3 col-sm-3">
 							<br />
-							{user.id != userContext.user.info.id && <Friends IdUserTarget={user.id} UserTarget={user} /> }
+							{user.id !== userContext.user.info.id && <Friends IdUserTarget={user.id} UserTarget={user} /> }
 						  </div>
 						</div>
 					  </div>

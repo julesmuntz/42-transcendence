@@ -36,13 +36,13 @@ export default function SideBar() {
 						</NavLink>
 					</Nav.Item>
 					<Nav.Item className="pb-1">
-						<NavLink to="/">
-							<BalloonHeart color="gray" size={25} />
+						<NavLink to="/search">
+							<Search color="gray" size={22} />
 						</NavLink>
 					</Nav.Item>
 					<Nav.Item className="pb-1">
-						<NavLink to="/search">
-							<Search color="white" size={25} />
+						<NavLink to="/">
+							<BalloonHeart color="gray" size={25} />
 						</NavLink>
 					</Nav.Item>
 				</div>
