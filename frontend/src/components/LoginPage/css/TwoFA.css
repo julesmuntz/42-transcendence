@@ -1,0 +1,109 @@
+.countdown {
+	position: relative;
+	margin: auto;
+	height: 40px;
+	width: 40px;
+	text-align: center;
+	margin-bottom:30px;
+}
+
+.countdown-number {
+	color: white;
+	line-height: 40px
+
+}
+
+.countdown svg {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 40px;
+	height: 40px;
+	transform: rotateY(-180deg) rotateZ(-90deg);
+}
+
+.countdown svg circle {
+	stroke-dasharray: 113px;
+	stroke-dashoffset: 0px;
+	stroke-linecap: round;
+	stroke-width: 2px;
+	stroke: white;
+	fill: none;
+	animation: countdown 30s linear infinite forwards;
+}
+
+@keyframes countdown {
+	from {
+		stroke-dashoffset: 0px;
+	}
+	to {
+		stroke-dashoffset: 113px;
+	}
+}
+
+.otc {
+	position: relative;
+	width: 320px;
+	margin: 0 auto;
+}
+
+.otc fieldset {
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+.otc fieldset div {
+	display: flex;
+	align-items: center;
+	justify-content: center
+}
+
+.otc fieldset div input[type="number"] {
+	width: .86em;
+	line-height: 1;
+	margin: .1em;
+	padding: 8px 0 4px;
+	font-size: 2.65em;
+	text-align: center;
+	appearance: textfield;
+	-webkit-appearance: textfield;
+	border: 0;
+	color: rgba(34,85,161,1);
+	border-radius: 6px;
+}
+
+.otc fieldset div input::-webkit-outer-spin-button,
+.otc fieldset div input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.otc fieldset div input[type="number"]:nth-child(n+4) {
+	order: 2;
+}
+
+.otc .twofa-div::before {
+	content: '';
+	height: 2px;
+	width: 12px;
+	margin: 0 .25em;
+	order: 1;
+	background: #fff;
+	border-radius: 2px;
+	opacity: .4;
+}
+
+.otc fieldset label {
+	border: 0 !important;
+	clip: rect(1px, 1px, 1px, 1px) !important;
+	-webkit-clip-path: inset(50%) !important;
+	clip-path: inset(50%) !important;
+	height: 1px !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	padding: 0 !important;
+	position: absolute !important;
+	width: 1px !important;
+	white-space: nowrap !important;
+}

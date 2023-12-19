@@ -13,12 +13,12 @@ export class Friend {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => User, { onDelete: 'CASCADE' })
-	@JoinColumn({ name: 'user1_id' })
+	@ManyToOne(() => User)
+	@JoinColumn()
 	user1: User;
 
-	@ManyToOne(() => User, { onDelete: 'CASCADE' })
-	@JoinColumn({ name: 'user2_id' })
+	@ManyToOne(() => User)
+	@JoinColumn()
 	user2: User;
 
 	@Column({

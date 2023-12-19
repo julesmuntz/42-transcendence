@@ -16,6 +16,13 @@ export interface Iuser {
 	authToken : string;
 };
 
+export interface IFriends {
+	id: number;
+	user1: Info;
+	user2: Info;
+	type: string;
+}
+
 interface ContextProps {
 	user: Iuser;
 	login: (info : Info, authToken: string) => void;

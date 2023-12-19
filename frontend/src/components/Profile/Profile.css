@@ -4,3 +4,9 @@
 	padding: 10px;
 	object-fit: cover;
 }
+
+
+.qrcode {
+	margin-bottom: 35px;
+	border-radius: 10px;
+}

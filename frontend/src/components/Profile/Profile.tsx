@@ -1,15 +1,15 @@
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
 import Button from "react-bootstrap/Button";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { TFAProfile } from "./TFAProfile";
 import "./Profile.css";
 
 export default function Profile() {
 	const userContext = useContext(UserContext);
-
 	const [qrcode, setQrcode] = useState("");
+	const [is2FAActive, setIs2FAActive] = useState(false);
 
 	let getQrcode = async () =>
 	{
@@ -47,11 +47,34 @@ export default function Profile() {
 		await getQrcode();
 	};
 
+	async function deactivate2FA(e: any) {
+		e.preventDefault();
+		return fetch("http://localhost:3030/2fa/turn-off" , {
+			method: "POST",
+			headers: {
+				"Authorization": `Bearer ${userContext.user.authToken}`
+			}
+		})
+	}
+
+	useEffect(() => {
+		if (qrcode) {
+			setIs2FAActive(true);
+		}
+	}, [qrcode]);
+
+	if (is2FAActive)
+		return(<TFAProfile qrset={{qrcode, setQrcode}} />);
+
 	return (
 		<Container>
 			<Image src={userContext.user.info.avatarDefault} className="image" roundedCircle fluid/>
-			{!userContext.user.info.isTFAEnabled ? <Button onClick={activate2FA}>Activate 2FA</Button> : "" }
-			{qrcode ? <TFAProfile qrset={{qrcode, setQrcode}} /> : ""}
+			{!userContext.user.info.isTFAEnabled ? <Button onClick={activate2FA}>Activate 2FA</Button> :
+	 <>
+		<Button onClick={activate2FA}>Reactivate 2FA</Button>
+		<Button onClick={deactivate2FA}>Deactivate 2FA</Button>
+	</>
+	}
 		</Container>
 	);
 }

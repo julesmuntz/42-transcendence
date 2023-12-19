@@ -4,7 +4,7 @@ import { UsersService } from "../users/users.service";
 import { AuthService } from "./auth.service";
 import { User } from "../users/entities/user.entity";
 import { Public } from "./decorator/public.decorator";
-import TFACodeDto from "./dto/2fa.dto";
+import { statusOnline } from "users/dto/update-user.dto";
 
 @Controller("2fa")
 @UseInterceptors(ClassSerializerInterceptor)
@@ -15,51 +15,60 @@ export class TFAController {
 
 	) {}
 
-	//si la 2fa n'est pas encore activer !
 	@Get("generate")
 	async register(@Res() response: Response, @Req() request: any) {
+		// await this.usersService.turnOffTFA(request.user.sub);
 		const { otpauthUrl } = await this.TFAService.generateTFASecret(request.user.users as User);
 		return this.TFAService.pipeQrCodeStream(response, otpauthUrl);
 	}
 
 	@Post("turn-on")
-	@HttpCode(200)
 	async turnOnTFA(
 		@Req() request: any,
-		// @Res() res:  Response,
-		@Body() TFACode: TFACodeDto
+		@Body() body: {TFACode: string}
 	) {
-		const updatedUser = await this.usersService.findOne(request.user.users.id);
+		const updatedUser = await this.usersService.findOne(request.user.sub);
 		const isCodeValid =
-			this.TFAService.isTFACodeValid(
-				TFACode.TFACode,
+			await this.TFAService.isTFACodeValid(
+				body.TFACode,
 				updatedUser.TFASecret
 			);
+		console.log(isCodeValid);
 		if (!isCodeValid) {
 			throw new UnauthorizedException("Wrong authentication code");
 		}
-		await this.usersService.turnOnTFA(request.user.users.id);
-		const finalUser = await this.usersService.findOne(updatedUser.id);
-		return finalUser;
-		// return res.redirect('http://localhost:3000');
+		const User = await this.usersService.turnOnTFA(request.user.sub);
+		return User;
 	}
 
 	@Public()
 	@Post("authenticate")
 	async authenticate(
-		@Req() req: Request,
 		@Res({ passthrough: true }) res: Response,
 		@Body() body: { id: number, TFASecret: string, TFACode: string }
 	) {
 		console.log(body);
-		// const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, body.TFASecret);
-		// if (!isCodeValid) {
-			// throw new UnauthorizedException("Wrong authentication code");
-		// }
+		const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, body.TFASecret);
+		if (!isCodeValid) {
+			throw new UnauthorizedException("Wrong authentication code");
+		}
+		const expirationDate = new Date();
+		expirationDate.setDate(expirationDate.getDate() + 7);
 		res.setHeader('Access-Control-Allow-Origin', "http://localhost:3000");
 		const user = await this.usersService.findOne(body.id);
 		const access_token = await this.TFAService.generateJwt(user);
 		console.log(access_token);
-		res.cookie('access_token', `${access_token}`).send({status: 'ok'});
+		const u = await this.usersService.update(body.id, statusOnline);
+		console.log(u)
+		res.cookie('access_token', `${access_token}`, { expires: expirationDate }).send({status: 'ok'});
 	}
+
+	@Post("turn-off")
+	async turnOffTFA(
+		@Req() request: any,
+	) {
+		const User = await this.usersService.turnOffTFA(request.user.sub);
+		return User;
+	}
+
 }
