@@ -1,12 +1,13 @@
 import Nav from "react-bootstrap/Nav";
-import { BalloonHeart, PersonCircle, ChatDots, Controller, People } from "react-bootstrap-icons";
+import { BalloonHeart, PersonCircle, ChatDots, Controller, People, Search } from "react-bootstrap-icons";
 import { BrowserRouter, Route, Routes, NavLink } from "react-router-dom";
 import Profile from "../Profile/Profile";
 import Home from "../Home/Home";
 import "./SideNav.css";
 import ChatPage from "../Chat/Chat";
 import Game from "../Game/Game";
-import Friends from "../Friends/Friends";
+import ViewFriends from "../Friends/ViewFriends";
+import SearchProfile from "../Profile/searchProfile";
 
 
 export default function SideBar() {
@@ -39,6 +40,11 @@ export default function SideBar() {
 							<BalloonHeart color="gray" size={25} />
 						</NavLink>
 					</Nav.Item>
+					<Nav.Item className="pb-1">
+						<NavLink to="/search">
+							<Search color="white" size={25} />
+						</NavLink>
+					</Nav.Item>
 				</div>
 			</Nav>
 			<Routes>
@@ -46,8 +52,9 @@ export default function SideBar() {
 				<Route path="/" element={<Home />}></Route>
 				<Route path="/chat" element={<ChatPage />}></Route>
 				<Route path="/chat/:id" element={<ChatPage />}></Route>
+				<Route path="/friend" element={<ViewFriends />}></Route>
+				<Route path="/search" element={<SearchProfile />}></Route>
 				<Route path="/game" element={<Game />}></Route>
-				<Route path="/friend" element={<Friends />}></Route>
 			</Routes>
 		</BrowserRouter>
 	);

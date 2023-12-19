@@ -29,10 +29,6 @@ export class CreateUserDto {
 	avatarPath: string;
 
 	@IsOptional()
-	@IsString({ message: 'OAuth 42 token should be a string' })
-	oauth42Token: string;
-
-	@IsOptional()
 	@IsString({ message: 'TFA secret should be a string' })
 	TFASecret: string;
 

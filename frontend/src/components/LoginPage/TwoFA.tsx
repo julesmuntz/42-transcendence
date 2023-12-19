@@ -91,7 +91,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 	}
 
 	const sendCode = async (e: any) => {
-		await fetch("http://localhost:3030/2fa/authenticate", {
+		await fetch(`http://localhost:3030/2fa/authenticate`, {
 			method: "POST",
 			credentials: "include",
 			headers: {
@@ -103,11 +103,11 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 				TFACode: code,
 			}),
 		})
-			.then((res) => {
-				return res.json();
+			.then(() => {
+				window.location.href = `http://localhost:3000`;
 			})
-			.then((ret) => {
-				window.location.href = "http://localhost:3000";
+			.catch(() => {
+				console.log("ERROR fetch");
 			});
 	};
 

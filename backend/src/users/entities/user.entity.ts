@@ -37,8 +37,6 @@ export class User {
 	@Column({ length: 128, nullable: true})
 	avatarPath: string;
 
-	@Column({ length: 256, nullable: true })
-	oauth42Token: string;
 
 	@Column({ nullable: true })
 	TFASecret: string;

@@ -2,193 +2,206 @@ import { useContext, useEffect, useState } from "react";
 import { IFriends, Info, UserContext } from "../../contexts/UserContext";
 import Button from 'react-bootstrap/Button';
 
-export default function Friends() {
+export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: number; UserTarget: Info }) {
 	const userContext = useContext(UserContext);
-	const [Users, setUsers] = useState<Info[]>([]);
-	const [inviteUser, setInviteUser] = useState<IFriends[]>([]);
-	const [vfriend, setvfriend] = useState<IFriends[]>([]);
+	const [UserBlock, setUserBlock] = useState<IFriends | null>(null);
+	const [ViewInvite, setViewInvite] = useState<IFriends | null>(null);
+	const [ViewFriends, setViewFriends] = useState<IFriends | null>(null);
+	const [refresh, setRefresh] = useState(false);
+
+	const createFriendDto: IFriends = {
+	  user1: userContext.user.info,
+	  user2: UserTarget,
+	  type: "invited",
+	};
 
 	useEffect(() => {
-		const interval = setInterval(() => {
-			fetch("http://localhost:3030/users", {
-				method: "GET",
-				headers: {
-					"Authorization": `Bearer ${userContext.user.authToken}`
-				}
-				})
-				.then((res) => res.json())
-				.then((ret) => {
-					setUsers(ret);
-				})
-				.catch((error) => console.error("Error fetching users:", error));
-		}, 2000);
-		return () => clearInterval(interval);
-	}, [Users, userContext]);
-
-	useEffect(() => {
-		const interval = setInterval(() => {
-			fetch("http://localhost:3030/friends/view_invite", {
-				method: "GET",
-				headers: {
-				"Authorization": `Bearer ${userContext.user.authToken}`
-				}
-			})
-				.then((res) => res.json())
-				.then((ret) => {
-					setInviteUser(ret);
-				})
-				.catch((error) => console.error("Error fetching users:", error));
-		}, 1000);
-		return () => clearInterval(interval);
-	}, [inviteUser, userContext]);
-
-	useEffect(() =>
-	{
-		fetch("http://localhost:3030/friends/view_friend/", {
+		fetch(`http://localhost:3030/friends/viewblock/${IdUserTarget}`, {
 			method: "GET",
 			headers: {
-			"Authorization": `Bearer ${userContext.user.authToken}`
-			}
+			  Authorization: `Bearer ${userContext.user.authToken}`,
+			},
 		})
-			.then((res) => res.json())
-			.then((ret) => {
-				setvfriend(ret);
-				// console.log(vfriend);
-			})
-			.catch((error) => console.error("Error fetching users:", error));
-	}, [vfriend, userContext]);
-
-	async function handelButtonInviteFriends(userId: number) {
-		//A passer en Post donc cree une interface CREATEFRIENDDTO
-		// 	@IsNotEmpty()
-		// user1: User;
-
-		// @IsNotEmpty()
-		// user2: User;
-
-		// @IsEnum(RelationType)
-		// type: RelationType;
-		if (userId !== userContext.user.info.id)
-		{
-			fetch(`http://localhost:3030/friends/invite/${userId}`, {
-				method: "GET",
-				headers: {
-					"Authorization": `Bearer ${userContext.user.authToken}`
-				}
-			}).then((res) => console.log(res));
-		}
-	}
-
-	async function handelButtonAddFriends(friendId: number) {
-			fetch(`http://localhost:3030/friends/add_friend/${friendId}`, {
-				method: "GET",
-				headers: {
-					"Authorization": `Bearer ${userContext.user.authToken}`
-				}
-			}).then((res) => console.log(res));
-	}
-
-	async function handelButtonSupFriends(friendId: number) {
-		fetch(`http://localhost:3030/friends/${friendId}`, {
-			method: "DELETE",
-			headers: {
-				"Authorization": `Bearer ${userContext.user.authToken}`
+		.then((res) => {
+			if (!res.ok) {
+			  throw new Error(res.statusText);
 			}
-		}).then((res) => console.log(res));
-}
+			return res.text();
+		  })
+		  .then((data) => {
+			if (data) {
+			  setUserBlock(JSON.parse(data));
+			}
+		  })
+		  .catch((error) => console.error('Error fetching users:', error));
+	}, [UserBlock, refresh]);
+
+	useEffect(() => {
+	  fetch(`http://localhost:3030/friends/viewinvite/${IdUserTarget}`, {
+		method: "GET",
+		headers: {
+		  Authorization: `Bearer ${userContext.user.authToken}`,
+		},
+	  })
+	  .then((res) => {
+		if (!res.ok) {
+		  throw new Error(res.statusText);
+		}
+		return res.text();
+	  })
+	  .then((data) => {
+		if (data) {
+		  setViewInvite(JSON.parse(data));
+		}
+	  })
+	  .catch((error) => console.error('Error fetching users:', error));
+	}, [ViewInvite, refresh]);
+
+	useEffect(() => {
+		fetch(`http://localhost:3030/friends/viewfriends/${IdUserTarget}`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${userContext.user.authToken}`,
+			},
+		})
+		.then((res) => {
+			if (!res.ok) {
+			  throw new Error(res.statusText);
+			}
+			return res.text();
+		  })
+		  .then((data) => {
+			if (data) {
+			  setViewFriends(JSON.parse(data));
+			}
+		  })
+		  .catch((error) => console.error('Error:', error));
+	}, [ViewFriends, refresh]);
+
+	async function handleButtonInviteFriends(userId: number) {
+		if (userId !== userContext.user.info.id) {
+		  fetch(`http://localhost:3030/friends/`, {
+			method: "POST",
+			headers: {
+			  Authorization: `Bearer ${userContext.user.authToken}`,
+			  "Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+			  createFriendDto,
+			}),
+		  })
+		  .then(() => {
+			setViewFriends(null);
+			setViewInvite(null);
+			setUserBlock(null);
+			setRefresh((prev) => !prev);
+		  });		}
+	  }
+
+	  async function handleButtonBlocketFriends(userId: number) {
+		if (userId !== userContext.user.info.id) {
+		  fetch(`http://localhost:3030/friends/bloquet/${userId}`, {
+			method: "PATCH",
+			headers: {
+			  Authorization: `Bearer ${userContext.user.authToken}`,
+			},
+		  })
+		  .then(() => {
+			setViewFriends(null);
+			setViewInvite(null);
+			setUserBlock(null);
+			setRefresh((prev) => !prev);
+		  });		}
+	  }
+
+	  async function handleButtonAddFriends(friendId: number) {
+		fetch(`http://localhost:3030/friends/accept/${friendId}`, {
+		  method: "PATCH",
+		  headers: {
+			Authorization: `Bearer ${userContext.user.authToken}`,
+		  },
+		})
+		.then(() => {
+			setViewFriends(null);
+			setViewInvite(null);
+			setUserBlock(null);
+			setRefresh((prev) => !prev);
+		  });	  }
+
+	  async function handleButtonDeleteFriends(friendId: number) {
+		fetch(`http://localhost:3030/friends/${friendId}`, {
+		  method: "DELETE",
+		  headers: {
+			Authorization: `Bearer ${userContext.user.authToken}`,
+		  },
+		})
+		.then(() => {
+			setViewFriends(null);
+			setViewInvite(null);
+			setUserBlock(null);
+			setRefresh((prev) => !prev);
+		  });	  }
+
+	if (UserBlock) {
+	  return (
+		<>
+		  {UserBlock.user2.id === userContext.user.info.id ? (
+			<>Vous êtes bloqué</>
+		  ) : (
+			<>
+			  <Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(UserBlock.id as number)}>
+				Débloquer
+			  </Button>
+			</>
+		  )}
+		</>
+	  );
+	}
+
+	if (ViewInvite) {
+	  return (
+		<>
+		  {ViewInvite.user2.id === userContext.user.info.id ? (
+			<>
+			  <Button className="btn btn-primary pull-right" onClick={() => handleButtonAddFriends(ViewInvite.id as number)}>
+				Accepter
+			  </Button>
+			  <Button className="btn btn-primary pull-right" onClick={() => handleButtonBlocketFriends(IdUserTarget)}>
+				Bloquer
+			  </Button>
+			</>
+		  ) : (
+			<>
+			  <Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(ViewInvite.id as number)}>
+				Supprimer la demande
+			  </Button>
+			</>
+		  )}
+		</>
+	  );
+	}
+
+	if (ViewFriends) {
+	  return (
+		<>
+		  <Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(ViewFriends.id as number)}>
+			Supprimer
+		  </Button>
+		  <Button className="btn btn-primary pull-right" onClick={() => handleButtonBlocketFriends(IdUserTarget)}>
+			Bloquer
+		  </Button>
+		</>
+	  );
+	}
 
 	return (
-		<>
-			<p>add friends</p>
-			{Array.isArray(Users) && Users.length > 0 ? (
-			Users.map((user) => (
-			<p>
-				{user.id != userContext.user.info.id ? (
-					<Button onClick={() => handelButtonInviteFriends(user.id)}>
-					{user.username}
-					</Button>
-				) : (
-					"vous"
-				)}
-			</p>
-			))
-			) : (
-			<p>No users available.</p>
-			)}
-
-			<p>demande friends</p>
-			<p>Accepter</p>
-			{Array.isArray(inviteUser) && inviteUser.length > 0 ? (
-			inviteUser.map((Infriend) => (
-			<p>
-				{Infriend.user1.id != userContext.user.info.id ? (
-					<Button onClick={() => handelButtonAddFriends(Infriend.id)}>
-					{Infriend.user1.username}
-					</Button>
-				) : (
-					"vous"
-				)}
-			</p>
-			))
-			) : (
-			<p>No friend requests available.</p>
-			)}
-
-			<p>Vos Friends</p>
-			{Array.isArray(vfriend) && vfriend.length > 0 ? (
-			vfriend.map((friends) => (
-			<p>
-				{friends.user1.id === userContext.user.info.id ? (
-					<p>
-					{friends.user2.username}
-					</p>
-				) : (
-					<p>
-					{friends.user1.username}
-					</p>
-				)}
-			</p>
-			))
-			) : (
-			<p>No friend requests available.</p>
-			)}
-			<p>Bloquer</p>
-			{Array.isArray(vfriend) && vfriend.length > 0 ? (
-			vfriend.map((friendsw) => (
-			<p>
-				{friendsw.user1.id === userContext.user.info.id ? (
-					<Button onClick={() => handelButtonAddFriends(friendsw.id)}>
-					{friendsw.user2.username}
-					</Button>
-				) : (
-					<Button onClick={() => handelButtonAddFriends(friendsw.id)}>
-					{friendsw.user1.username}
-					</Button>
-				)}
-			</p>
-			))
-			) : (
-			<p>No friend requests available.</p>
-			)}
-			<p>Supprimer</p>
-			{Array.isArray(vfriend) && vfriend.length > 0 ? (
-			vfriend.map((friendsw) => (
-			<p>
-				{friendsw.user1.id === userContext.user.info.id ? (
-					<Button onClick={() => handelButtonSupFriends(friendsw.id)}>
-					{friendsw.user2.username}
-					</Button>
-				) : (
-					<Button onClick={() => handelButtonSupFriends(friendsw.id)}>
-					{friendsw.user1.username}
-					</Button>
-				)}
-			</p>
-			))
-			) : (
-			<p>No friend requests available.</p>
-			)}
-		</>
+	  <>
+		<Button className="btn btn-primary pull-right" onClick={() => handleButtonInviteFriends(IdUserTarget)}>
+		  Inviter
+		</Button>
+		<Button className="btn btn-primary pull-right" onClick={() => handleButtonBlocketFriends(IdUserTarget)}>
+		  Bloquer
+		</Button>
+	  </>
 	);
-
-}
+  }

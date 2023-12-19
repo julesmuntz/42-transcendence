@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { TFAProfile } from "./TFAProfile";
-import "./Profile.css";
+import "./css/Profile.css";
 
 export default function Profile() {
 	const userContext = useContext(UserContext);
@@ -13,7 +13,7 @@ export default function Profile() {
 
 	let getQrcode = async () =>
 	{
-		return fetch("http://localhost:3030/2fa/generate", {
+		return fetch(`http://localhost:3030/2fa/generate`, {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`
@@ -49,12 +49,16 @@ export default function Profile() {
 
 	async function deactivate2FA(e: any) {
 		e.preventDefault();
-		return fetch("http://localhost:3030/2fa/turn-off" , {
+		return fetch(`http://localhost:3030/2fa/turn-off` , {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`
 			}
-		})
+		}).then(() => {
+			const newUser = userContext.user.info;
+			newUser.isTFAEnabled = false;
+			userContext.login(newUser, userContext.user.authToken);
+		});
 	}
 
 	useEffect(() => {
