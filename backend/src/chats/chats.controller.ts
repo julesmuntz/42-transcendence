@@ -16,13 +16,14 @@ export class ChatsController {
 		console.log(this.chatsService.getRooms());
 		return this.chatsService.getRooms();
 	}
-
+	@Public()
 	@Get('rooms/:id')
-	async getRoomById(@Param('id') id: number) : Promise<Room>
+	async getRoomById(@Param('id') id: string) : Promise<Room>
 	{
 		const rooms = await this.chatsService.getRooms();
+		console.log(id);
 		const room = await this.chatsService.getRoomById(id);
-		if (!room) {
+		if (room < 0) {
 			throw new NotFoundException("Room does not exit !");
 		} else {
 			return rooms[room]

@@ -30,5 +30,5 @@ export class Friend {
 
 
 	@Column({ nullable: true })
-	idRoom: number;
+	idRoom: string;
 }

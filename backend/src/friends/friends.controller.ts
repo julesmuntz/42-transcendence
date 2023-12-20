@@ -111,8 +111,8 @@ export class FriendsController {
 			if (friend.type == RelationType.Friend)
 			{
 				console.log(friend.idRoom);
-				const idRoom = await this.chatService.getRoomById(friend.idRoom);
-				await this.chatService.removeRoom(idRoom);
+				// const idRoom = await this.chatService.getRoomById(friend.idRoom);
+				await this.chatService.removeRoom(friend.idRoom);
 			}
 			return this.friendsService.delete(id);
 		}

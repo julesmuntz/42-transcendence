@@ -1,12 +1,13 @@
 import Nav from "react-bootstrap/Nav";
 import { BalloonHeart, PersonCircle, ChatDots, People, Search } from "react-bootstrap-icons";
 import { BrowserRouter, Route, Routes, NavLink } from "react-router-dom";
-import Super from "../Chat/Chat";
 import Profile from "../Profile/Profile";
 import Home from "../Home/Home";
 import "./SideNav.css";
 import ViewFriends from "../Friends/ViewFriends";
 import SearchProfile from "../Profile/searchProfile";
+
+import Chat, { loader as chatLoader } from '../Chat/Chat'
 
 
 export default function SideBar() {
@@ -20,7 +21,7 @@ export default function SideBar() {
 						</NavLink>
 					</Nav.Item>
 					<Nav.Item className="pb-1">
-						<NavLink to="/chat">
+						<NavLink to="/s">
 							<ChatDots color="white" size={25} />
 						</NavLink>
 					</Nav.Item>
@@ -44,9 +45,13 @@ export default function SideBar() {
 			<Routes>
 				<Route path="/profile" element={<Profile />}></Route>
 				<Route path="/" element={<Home />}></Route>
-				<Route path="/chat" element={<Super />}></Route>
+				{/* <Route path="/chat" element={<Super />}></Route> */}
 				<Route path="/friend" element={<ViewFriends />}></Route>
 				<Route path="/search" element={<SearchProfile />}></Route>
+				<Route
+          path="/chat/:id"
+          element={<Chat />}
+        />
 			</Routes>
 		</BrowserRouter>
 	);

@@ -19,7 +19,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 	}
 
 	@SubscribeMessage('join_room')
-	async handleSetClientDataEvent(@MessageBody() payload: { user: UserRoom; idRoom: number; roomName: string }) {
+	async handleSetClientDataEvent(@MessageBody() payload: { user: UserRoom; idRoom: string; roomName: string }) {
+		console.log("join_room", payload);
 		if (payload.user.socketId) {
 			this.logger.log(`${payload.user.socketId} is joining ${payload.idRoom}`);
 			await this.server.in(payload.user.socketId).socketsJoin(payload.idRoom.toString());

@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 
 import TwoFA from './components/LoginPage/TwoFA';
-
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 interface JwtPayload {
 	sub: number,
@@ -23,6 +23,10 @@ interface JwtPayload {
 		username: string
 	}
 }
+
+
+const queryClient = new QueryClient();
+
 
 function App() {
 
@@ -74,7 +78,10 @@ function App() {
 
 	return (
 		<div className="App">
-			<SideNav/>
+			 <QueryClientProvider client={queryClient}>
+
+				<SideNav/>
+				</QueryClientProvider>
 		</div>
 	);
 
