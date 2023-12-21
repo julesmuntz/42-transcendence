@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { Info, UserContext } from "../../contexts/UserContext";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import "./css/SearchProfile.css"
+import "./SearchProfile.css"
 import Friends from "../Friends/Friends";
 
 export default function SearchProfile () {

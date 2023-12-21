@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { TFAProfile } from "./TFAProfile";
-import "./css/Profile.css";
+import "./Profile.css";
 
 export default function Profile() {
 	const userContext = useContext(UserContext);

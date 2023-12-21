@@ -5,7 +5,7 @@ import Profile from "../Profile/Profile";
 import Home from "../Home/Home";
 import "./SideNav.css";
 import ViewFriends from "../Friends/ViewFriends";
-import SearchProfile from "../Profile/searchProfile";
+import SearchProfile from "../Search/SearchProfile";
 
 import Chat from '../Chat/Chat'
 

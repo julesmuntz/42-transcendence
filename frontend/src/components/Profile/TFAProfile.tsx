@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { UserContext } from '../../contexts/UserContext';
 import { useContext } from 'react';
 import "../LoginPage/css/TwoFA.css"
-import "./css/Profile.css"
+import "./Profile.css"
 
 const TwofaBody = styled.div`
 	height: 100vh;
