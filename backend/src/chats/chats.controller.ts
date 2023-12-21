@@ -26,7 +26,7 @@ export class ChatsController {
 		if (room < 0) {
 			throw new NotFoundException("Room does not exit !");
 		} else {
-			console.log(rooms[room].users);
+			// console.log(rooms[room].users);
 			return rooms[room]
 		}
 	}

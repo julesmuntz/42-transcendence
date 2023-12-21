@@ -28,7 +28,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
 
 		e.target.value = numericValue;
-		if (e.target.value.length == 1) {
+		if (e.target.value.length === 1) {
 			const nextInput = e.target.nextElementSibling;
 			if (nextInput !== null) {
 				(nextInput as HTMLInputElement).focus();
@@ -38,7 +38,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 					const input = document.getElementsByName(name)[0] as HTMLInputElement;
 					code += input.value;
 				});
-				if (code.length == 6)
+				if (code.length === 6)
 					sendCode(code);
 			}
 		}
@@ -51,7 +51,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
 
 
-		if ((e.currentTarget.name == "code1") || (e.currentTarget.name == "code2") || (e.currentTarget.name == "code3") || (e.currentTarget.name == "code4") || (e.currentTarget.name == "code5") || (e.currentTarget.name == "code6"))
+		if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6"))
 		{
 			codeInputNames.forEach((name) => {
 				(document.getElementsByName(name)[0] as HTMLInputElement).value = "";
@@ -63,10 +63,10 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 
 	const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
-		if (e.key == "Tab")
+		if (e.key === "Tab")
 		{
 			e.preventDefault();
-			if ((e.currentTarget.name == "code1") || (e.currentTarget.name == "code2") || (e.currentTarget.name == "code3") || (e.currentTarget.name == "code4") || (e.currentTarget.name == "code5") || (e.currentTarget.name == "code6"))
+			if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6"))
 			{
 				codeInputNames.forEach((name) => {
 					(document.getElementsByName(name)[0] as HTMLInputElement).value = "";
@@ -74,10 +74,10 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 				(document.getElementsByName("code1")[0] as unknown as HTMLInputElement).focus();
 			}
 		}
-		if (e.key == "Backspace")
+		if (e.key === "Backspace")
 		{
 			e.preventDefault();
-			if ((e.currentTarget.name == "code1") || (e.currentTarget.name == "code2") || (e.currentTarget.name == "code3") || (e.currentTarget.name == "code4") || (e.currentTarget.name == "code5") || (e.currentTarget.name == "code6"))
+			if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6"))
 			{
 				const input = e.target as HTMLInputElement;
 				input.value = "";
@@ -120,7 +120,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 	}, []);
 
 	useEffect(() => {
-		if (countdown == 0)
+		if (countdown === 0)
 			window.location.href = `http://localhost:3000`;
 	}, [countdown]);
 

@@ -15,23 +15,48 @@ export const Header = ({
 	roomName: string
 	}) => {
 	return (
-		<div className="panel-heading">
-		<div className="panel-control">
-			<div className="btn-group">
-				<button className="btn btn-default" type="button" data-toggle="collapse" data-target="#demo-chat-body"><i className="fa fa-chevron-down"></i></button>
-				<button type="button" className="btn btn-default" data-toggle="dropdown"><i className="fa fa-gear"></i></button>
-				<ul className="dropdown-menu dropdown-menu-right">
-					<li><a href="#">Available</a></li>
-					<li><a href="#">Busy</a></li>
-					<li><a href="#">Away</a></li>
-					<li className="divider"></li>
-					<li><a id="demo-connect-chat" href="#" className="disabled-link" data-target="#demo-chat-body">Connect</a></li>
-					<li><a id="demo-disconnect-chat" href="#" data-target="#demo-chat-body">Disconect</a></li>
-				</ul>
-			</div>
-		</div>
-		<h3 className="panel-title">Chat</h3>
-	</div>
+		<header className="flex h-1/6 flex-col pt-12">
+      <div className="flex justify-between">
+        <div className="flex h-8 items-center">
+          <span className="ml-1">{isConnected ? '🟢' : '🔴'}</span>
+          <span className="px-2 text-3xl text-white">{'/'}</span>
+          <span className=" text-white">{roomName}</span>
+        </div>
+        <div className="flex">
+          <button
+            onClick={() => handleUsersClick()}
+            className="ml-1 flex h-8 items-center rounded-xl bg-gray-800 px-4"
+          >
+            <span className="mr-1 text-lg text-white">{'👨‍💻'}</span>
+            <span className="ml-1 text-white">{users.length}</span>
+          </button>
+          <button
+            onClick={() => handleLeaveRoom()}
+            className="ml-1 flex h-8 items-center rounded-xl bg-gray-800 px-4"
+          >
+            <span className="mr-1 text-white">{'Leave'}</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+	// 	<div className="panel-heading">
+	// 	<div className="panel-control">
+	// 		<div className="btn-group">
+	// 			<button className="btn btn-default" type="button" data-toggle="collapse" data-target="#demo-chat-body"><i className="fa fa-chevron-down"></i></button>
+	// 			<button type="button" className="btn btn-default" data-toggle="dropdown"><i className="fa fa-gear"></i></button>
+	// 			<ul className="dropdown-menu dropdown-menu-right">
+	// 				<li><a href="#">Available</a></li>
+	// 				<li><a href="#">Busy</a></li>
+	// 				<li><a href="#">Away</a></li>
+	// 				<li className="divider"></li>
+	// 				<li><a id="demo-connect-chat" href="#" className="disabled-link" data-target="#demo-chat-body">Connect</a></li>
+	// 				<li><a id="demo-disconnect-chat" href="#" data-target="#demo-chat-body">Disconect</a></li>
+	// 			</ul>
+	// 		</div>
+	// 	</div>
+	// 	<h3 className="panel-title">Chat</h3>
+	// </div>
 	)
 
 }

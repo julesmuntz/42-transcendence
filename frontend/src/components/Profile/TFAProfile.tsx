@@ -26,7 +26,7 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 
 
 		e.target.value = numericValue;
-		if (e.target.value.length == 1) {
+		if (e.target.value.length === 1) {
 			const nextInput = e.target.nextElementSibling;
 			if (nextInput !== null) {
 				(nextInput as HTMLInputElement).focus();
@@ -37,7 +37,7 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 					code += input.value;
 					console.log(code);
 				});
-				if (code.length == 6)
+				if (code.length === 6)
 					sendCode(code);
 			}
 		}
@@ -50,7 +50,7 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
 
 
-		if ((e.currentTarget.name == "code1") || (e.currentTarget.name == "code2") || (e.currentTarget.name == "code3") || (e.currentTarget.name == "code4") || (e.currentTarget.name == "code5") || (e.currentTarget.name == "code6"))
+		if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6"))
 		{
 			codeInputNames.forEach((name) => {
 				(document.getElementsByName(name)[0] as HTMLInputElement).value = "";
@@ -62,10 +62,10 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 
 	const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
-		if (e.key == "Tab")
+		if (e.key === "Tab")
 		{
 			e.preventDefault();
-			if ((e.currentTarget.name == "code1") || (e.currentTarget.name == "code2") || (e.currentTarget.name == "code3") || (e.currentTarget.name == "code4") || (e.currentTarget.name == "code5") || (e.currentTarget.name == "code6"))
+			if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6"))
 			{
 				codeInputNames.forEach((name) => {
 					(document.getElementsByName(name)[0] as HTMLInputElement).value = "";
@@ -73,10 +73,10 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 				(document.getElementsByName("code1")[0] as unknown as HTMLInputElement).focus();
 			}
 		}
-		if (e.key == "Backspace")
+		if (e.key === "Backspace")
 		{
 			e.preventDefault();
-			if ((e.currentTarget.name == "code1") || (e.currentTarget.name == "code2") || (e.currentTarget.name == "code3") || (e.currentTarget.name == "code4") || (e.currentTarget.name == "code5") || (e.currentTarget.name == "code6"))
+			if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6"))
 			{
 				const input = e.target as HTMLInputElement;
 				input.value = "";

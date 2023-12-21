@@ -39,5 +39,5 @@ else
 
   echo "HOSTNAME=localhost" >> "$ENV_FILE"
   echo "Created $ENV_FILE with example variables."
-
+ 	echo "http://$(hostname):3000" > "url.txt"
 fi
