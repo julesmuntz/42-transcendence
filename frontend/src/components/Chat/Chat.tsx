@@ -22,8 +22,8 @@ export const useRoomQuery = (idRoom: string, isConnected: boolean) => {
 
 export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => {
   return (
-    <div className="mx-auto flex h-screen w-screen justify-center bg-gray-900">
-      <div className="flex h-full w-full flex-col px-2 md:w-8/12 lg:w-6/12 xl:w-4/12">
+    <div className="container">
+    <div className="col-md-12 col-lg-6">
         {children}
       </div>
     </div>
