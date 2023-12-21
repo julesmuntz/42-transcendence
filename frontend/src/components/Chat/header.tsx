@@ -1,6 +1,6 @@
 import React, { useRef }  from 'react'
 import { UserRoom, Room, Message } from "../../shared/chats.interface"
-
+import "./Chat.css"
 export const Header = ({
 	isConnected,
 	users,
@@ -94,38 +94,49 @@ const determineMessageStyle = (
 	}
   };
 
-
-
-export const Messages = ({
+  export const Messages = ({
 	user,
 	messages,
-	}: {
+  }: {
 	user: Pick<UserRoom, 'userId' | 'userName'>
 	messages: Message[]
-  	}) => {
+  }) => {
 	return (
-	  <div className="flex h-4/6 w-full flex-col-reverse overflow-y-scroll">
-		dhjkwsghd
-		{messages?.map((message, index) => {
-		  return (
-			<div key={index}>
-			  <div className={determineMessageStyle(user, message.user.userId).sender}>
-				<span className="text-sm text-gray-400">{message.user.userName}</span>
-				<span className="text-sm text-gray-400">{' ' + '•' + ' '}</span>
-				<span className="text-sm text-gray-400">{message.timeSent}</span>
-			  </div>
-			  <div className={determineMessageStyle(user, message.user.userId).message}>
-				<p className="text-black">{message.message}</p>
-			  </div>
-			</div>
-		  )
-		})}
-	  </div>
-	)
-}
+		<div className="nano has-scrollbar" style={{ height: '380px' }}>
+		  <div className="nano-content pad-all" tabIndex={0} style={{ right: '-17px' }}>
+			<ul className="list-unstyled media-block">
+			  {messages?.map((message, index) => {
+				const isUserMessage = user.userId === message.user.userId;
+				const speechClass = isUserMessage ? 'speech-right' : 'speech';
+				return (
+				  <li key={index} className="mar-btm">
+					<div className={isUserMessage ? 'media-right' : 'media-left'}>
+					  <img src="" className="img-circle img-sm" alt="Profile Picture" />
+					</div>
+					<div className={`media-body pad-hor ${speechClass}`}>
+					  <div className="speech">
+						<a href="#" className="media-heading">{message.user.userName}</a>
+						<p>{message.message}</p>
+						<p className="speech-time">
+						  <i className="fa fa-clock-o fa-fw"></i> {message.timeSent}
+						</p>
+					  </div>
+					</div>
+				  </li>
+				);
+			  })}
+			</ul>
+		  </div>
+		  <div className="nano-pane">
+			<div className="nano-slider" style={{ height: '141px', transform: 'translate(0px, 0px)' }}></div>
+		  </div>
+		</div>
+	);
+  };
+
 
 export const MessageForm = ({ sendMessage }: { sendMessage: (message: string) => void }) => {
-	const textAreaRef = useRef<HTMLTextAreaElement>(null)
+	const textAreaRef = useRef<HTMLInputElement>(null)
 
 	const submit = (e: any) => {
 	  e.preventDefault()
@@ -143,32 +154,21 @@ export const MessageForm = ({ sendMessage }: { sendMessage: (message: string) =>
 	}
 
 	return (
-	  <div className="flex h-1/6 items-center">
-		<form className="flex w-full appearance-none rounded-md bg-gray-800 outline-none focus:outline-none">
-		  <textarea
-			ref={textAreaRef}
-			onKeyDown={(e) => handleKeyDown(e)}
-			id="minput"
-			placeholder="Message"
-			// className="mb-2 max-h-16 flex-grow appearance-none rounded-md border-none bg-gray-800 text-white placeholder-slate-400 focus:outline-none focus:ring-transparent"
-		  ></textarea>
-		  <button onClick={(e) => submit(e)} className="self-end p-2 text-slate-400">
-			<svg
-			  xmlns="http://www.w3.org/2000/svg"
-			  fill="none"
-			  viewBox="0 0 24 24"
-			  strokeWidth={1.5}
-			  stroke="currentColor"
-			  className="h-4 w-4 bg-gray-800"
-			>
-			  <path
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
+		<div className="panel-footer">
+		  <div className="row">
+			<div className="col-xs-9">
+			  <input
+				type="text"
+				placeholder="Enter your text"
+				className="form-control chat-input"
+				ref={textAreaRef}
+				onKeyDown={(e) => handleKeyDown(e)}
 			  />
-			</svg>
-		  </button>
-		</form>
-	  </div>
-	)
-  }
+			</div>
+			<div className="col-xs-3">
+			  <button className="btn btn-primary btn-block" type="submit" onClick={(e) => submit(e)}>Send</button>
+			</div>
+		  </div>
+		</div>
+	  )
+	}
