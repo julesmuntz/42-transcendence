@@ -10,7 +10,7 @@ export default function SearchProfile () {
 	const [Users, setUsers] = useState<Info[]>([]);
 
 	async function handelsearch(e : any) {
-		if (e.target.value != 0)
+		if (e.target.value !== 0)
 		{
 			return(fetch(`http://localhost:3030/users/search/${e.target.value}`, {
 				method: "GET",

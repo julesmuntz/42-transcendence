@@ -7,8 +7,8 @@ html, body {
 body {
 	overflow: hidden;
 	height: 100%;
-	background: rgb(20,167,219);
-	background: linear-gradient(220deg, rgba(20,167,219,1) 0%, rgba(34,85,161,1) 100%);
+	background: rgb(44, 44, 44);
+	background: linear-gradient(220deg, rgb(45, 45, 45) 0%, rgb(15, 15, 15) 100%);
 }
 
 @font-face {

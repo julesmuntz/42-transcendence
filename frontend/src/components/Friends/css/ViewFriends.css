@@ -2,16 +2,17 @@
     padding-top: 20px;
 }
 .main-box {
-    background: #FFFFFF;
-    -webkit-box-shadow: 1px 1px 2px 0 #CCCCCC;
-    -moz-box-shadow: 1px 1px 2px 0 #CCCCCC;
-    -o-box-shadow: 1px 1px 2px 0 #CCCCCC;
-    -ms-box-shadow: 1px 1px 2px 0 #CCCCCC;
-    box-shadow: 1px 1px 2px 0 #CCCCCC;
+    background: rgb(54, 54, 54);
+    -webkit-box-shadow: 1px 1px 2px 0 rgb(44, 44, 44);
+    -moz-box-shadow: 1px 1px 2px 0 rgb(44, 44, 44);
+    -o-box-shadow: 1px 1px 2px 0 rgb(44, 44, 44);
+    -ms-box-shadow: 1px 1px 2px 0 rgb(44, 44, 44);
+    box-shadow: 1px 1px 2px 0 rgb(44, 44, 44);
     margin-bottom: 16px;
     -webikt-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    text-align: initial;
 }
 .table a.table-link.danger {
     color: #e74c3c;
@@ -32,7 +33,7 @@
     margin-left: 60px;
 }
 a {
-    color: #3498db;
+    color: #2676ff;
     outline: none!important;
 }
 .user-list tbody td>img {
@@ -47,7 +48,7 @@ a {
     font-size: 0.875em;
 }
 .table thead tr th {
-    border-bottom: 2px solid #e7ebee;
+    border-bottom: 2px solid rgb(88, 88, 88);
 }
 .table tbody tr td:first-child {
     font-size: 1.125em;
@@ -56,9 +57,14 @@ a {
 .table tbody tr td {
     font-size: 0.875em;
     vertical-align: middle;
-    border-top: 1px solid #e7ebee;
+    border-top: 1px solid rgb(88, 88, 88);
     padding: 12px 8px;
 }
 a:hover{
 text-decoration:none;
+}
+
+.table td, .table th {
+    --bs-table-bg: rgb(54, 54, 54);
+    --bs-table-color: rgb(255, 255, 255);
 }

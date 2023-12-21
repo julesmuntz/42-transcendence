@@ -23,6 +23,20 @@ export default function ViewFriends() {
       });
   }, []);
 
+
+//faire en sorte qu ca actualise  !
+  async function handleButtonDeleteFriends(friendId: number) {
+		fetch(`http://localhost:3030/friends/${friendId}`, {
+		  method: "DELETE",
+		  headers: {
+			Authorization: `Bearer ${userContext.user.authToken}`,
+		  },
+		})
+		.then(() => {
+    });
+  }
+
+
   const joinRoom = (roomId: string) => {
     navigate(`/chat/${roomId}`);
   };
@@ -51,7 +65,6 @@ export default function ViewFriends() {
                       {viewFriends.map((friend) => (
                         <tr key={friend.id}>
                           <td>
-						  <Button onClick={() => joinRoom(friend.idRoom as string)}> join </Button>
                             <img
                               src={friend.user2.avatarDefault}
                               alt={`Profile of ${friend.user2.username}`}
@@ -66,19 +79,13 @@ export default function ViewFriends() {
                             </span>
                           </td>
                           <td style={{ width: "20%" }}>
-                            <a href="#" className="table-link text-warning">
-                              <span className="fa-stack">
-                                <i className="fa fa-square fa-stack-2x"></i>
-                                <i className="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-                              </span>
-                            </a>
-                            <a href="#" className="table-link text-info">
+                            <a className="table-link text-info" onClick={() => joinRoom(friend.idRoom as string)}>
                               <span className="fa-stack">
                                 <i className="fa fa-square fa-stack-2x"></i>
                                 <i className="fa fa-pencil fa-stack-1x fa-inverse"></i>
                               </span>
                             </a>
-                            <a href="#" className="table-link danger">
+                            <a className="table-link danger" onClick={() => handleButtonDeleteFriends(friend.id as number)}>
                               <span className="fa-stack">
                                 <i className="fa fa-square fa-stack-2x"></i>
                                 <i className="fa fa-trash-o fa-stack-1x fa-inverse"></i>

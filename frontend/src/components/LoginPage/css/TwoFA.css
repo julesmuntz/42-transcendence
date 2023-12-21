@@ -69,7 +69,8 @@
 	appearance: textfield;
 	-webkit-appearance: textfield;
 	border: 0;
-	color: rgba(34,85,161,1);
+	color: rgb(255, 255, 255);
+	background-color: rgb(95, 95, 95);
 	border-radius: 6px;
 }
 
