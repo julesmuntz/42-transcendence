@@ -49,7 +49,7 @@ export class ChatsService {
   async getRoomById(idRoom: string): Promise<number> {
 	this.loadRoomsFromDisk();
 	const roomIndex = this.rooms.findIndex((room) => room?.idRoom === idRoom);
-	console.log("roomIndex", roomIndex);
+	// console.log("roomIndex", roomIndex);
     return roomIndex;
   }
 
@@ -64,9 +64,12 @@ export class ChatsService {
   async addUserToRoom(user: UserRoom, idRoom?: string, roomName?: string): Promise<void> {
 	this.loadRoomsFromDisk();
     if (idRoom !== undefined) {
+		console.log("addUserToRoom", idRoom);
       const findRoom = await this.getRoomById(idRoom);
+	  console.log("findRoom", findRoom);
       if (findRoom !== -1) {
         this.rooms[findRoom].users.push(user);
+		console.log("this.rooms[findRoom].users", this.rooms[findRoom].users);
         const host = await this.getRoomHost(idRoom);
         if (host.userId === user.userId) {
           this.rooms[findRoom].host.socketId = user.socketId;

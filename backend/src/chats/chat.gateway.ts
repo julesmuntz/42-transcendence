@@ -13,15 +13,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 
 	@SubscribeMessage('chat')
 	async handleChat(@MessageBody() payload: Message): Promise<Message> {
-		this.logger.log(`Received message: ${payload}}`);
-		this.server.to(payload.idRoom.toString()).emit('chat', payload);
+		this.logger.log(`Received message: ${payload}`);
+		this.server.to(payload.idRoom).emit('chat', payload);
 		return payload;
 	}
 
 	@SubscribeMessage('join_room')
-	async handleSetClientDataEvent(@MessageBody() payload: { user: UserRoom; idRoom: string; roomName: string }) {
-		console.log("join_room", payload);
+	async handleSetClientDataEvent(@MessageBody() payload: { user: UserRoom; idRoom: string;}) {
 		if (payload.user.socketId) {
+			console.log("join_room", payload.user.socketId, payload.idRoom);
 			this.logger.log(`${payload.user.socketId} is joining ${payload.idRoom}`);
 			await this.server.in(payload.user.socketId).socketsJoin(payload.idRoom.toString());
 			await this.chatService.addUserToRoom(payload.user, payload.idRoom);

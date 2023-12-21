@@ -21,11 +21,12 @@ export class ChatsController {
 	async getRoomById(@Param('id') id: string) : Promise<Room>
 	{
 		const rooms = await this.chatsService.getRooms();
-		console.log(id);
+		// console.log(id);
 		const room = await this.chatsService.getRoomById(id);
 		if (room < 0) {
 			throw new NotFoundException("Room does not exit !");
 		} else {
+			console.log(rooms[room].users);
 			return rooms[room]
 		}
 	}

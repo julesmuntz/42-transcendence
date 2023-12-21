@@ -7,7 +7,7 @@ import "./SideNav.css";
 import ViewFriends from "../Friends/ViewFriends";
 import SearchProfile from "../Profile/searchProfile";
 
-import Chat, { loader as chatLoader } from '../Chat/Chat'
+import Chat from '../Chat/Chat'
 
 
 export default function SideBar() {

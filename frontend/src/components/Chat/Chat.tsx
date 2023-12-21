@@ -33,25 +33,27 @@ export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("http://localhost:3030", { autoConnect: false });
 
 export default function Chat() {
-  const userContext = useContext(UserContext);
-  const match = useMatch<ChatLocationGenerics>();
-  const { id: idRoom } = useParams<{ id: string }>();
+	const userContext = useContext(UserContext);
+	const { id: idRoom } = useParams<{ id: string }>();
 
-  const user = { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id };
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [toggleUserList, setToggleUserList] = useState<boolean>(false);
 
-  const { data: room } = useRoomQuery(idRoom as string, isConnected);
-  const navigate = useNavigate();
+	const [isConnected, setIsConnected] = useState(socket.connected);
+	const [messages, setMessages] = useState<Message[]>([]);
+	const [toggleUserList, setToggleUserList] = useState<boolean>(false);
+
+	const { data: room } = useRoomQuery(idRoom as string, isConnected);
+	const navigate = useNavigate();
+	const user = { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id };
+
+	console.log(room);
 
   useEffect(() => {
-    if (!user || !idRoom) {
+    if (!idRoom) {
 		navigate('/');
     } else {
-		console.log("user and idRoom", user, idRoom);
+		// console.log("user and idRoom", { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id }, idRoom);
       socket.on('connect', () => {
-        socket.emit('join_room', { user, idRoom });
+        socket.emit('join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id }, idRoom });
         setIsConnected(true);
       });
       socket.on('disconnect', () => {
@@ -78,7 +80,7 @@ export default function Chat() {
     if (user && idRoom && room) {
       socket.emit('chat', {
         user: {
-          socketId: (user as UserRoom).socketId,
+          socketId: user.socketId,
           userId: user.userId,
           userName: user.userName,
         },
@@ -112,15 +114,3 @@ export default function Chat() {
     </>
   );
 }
-
-export const loader = async () => {
-  return {
-    idRoom: sessionStorage.getItem('idRoom'),
-  };
-};
-
-type ChatLocationGenerics = MakeGenerics<{
-  LoaderData: {
-    idRoom: string;
-  };
-}>;

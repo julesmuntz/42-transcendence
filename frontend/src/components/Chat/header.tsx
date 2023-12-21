@@ -46,10 +46,11 @@ export const Header = ({
 export const UserList = ({ room }: { room: Room }) => {
 	return (
 	  <div className="flex h-4/6 w-full flex-col-reverse overflow-y-scroll">
+		mdwiok
 		{room.users.map((user, index) => {
 		  return (
 			<div key={index} className="mb-4 flex rounded px-4 py-2">
-			  <p className="text-white">{user.userName}</p>
+			  <p className="text-black">{user.userName}</p>
 			  {room.host.userId === user.userId && <span className="ml-2">{'👑'}</span>}
 			</div>
 		  )
@@ -86,6 +87,7 @@ export const Messages = ({
   	}) => {
 	return (
 	  <div className="flex h-4/6 w-full flex-col-reverse overflow-y-scroll">
+		dhjkwsghd
 		{messages?.map((message, index) => {
 		  return (
 			<div key={index}>
@@ -95,7 +97,7 @@ export const Messages = ({
 				<span className="text-sm text-gray-400">{message.timeSent}</span>
 			  </div>
 			  <div className={determineMessageStyle(user, message.user.userId).message}>
-				<p className="text-white">{message.message}</p>
+				<p className="text-black">{message.message}</p>
 			  </div>
 			</div>
 		  )
@@ -130,7 +132,7 @@ export const MessageForm = ({ sendMessage }: { sendMessage: (message: string) =>
 			onKeyDown={(e) => handleKeyDown(e)}
 			id="minput"
 			placeholder="Message"
-			className="mb-2 max-h-16 flex-grow appearance-none rounded-md border-none bg-gray-800 text-white placeholder-slate-400 focus:outline-none focus:ring-transparent"
+			// className="mb-2 max-h-16 flex-grow appearance-none rounded-md border-none bg-gray-800 text-white placeholder-slate-400 focus:outline-none focus:ring-transparent"
 		  ></textarea>
 		  <button onClick={(e) => submit(e)} className="self-end p-2 text-slate-400">
 			<svg
