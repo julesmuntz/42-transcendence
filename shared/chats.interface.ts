@@ -9,6 +9,7 @@ export interface Room {
 	name: string
 	host: UserRoom
 	users: UserRoom[]
+	message: Message[]
 }
 
 export interface Message {

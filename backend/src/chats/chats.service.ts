@@ -1,5 +1,5 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { Room, UserRoom } from '../shared/chats.interface';
+import { Room, UserRoom, Message } from '../shared/chats.interface';
 import * as fs from 'fs';
 
 export class ChatsService {
@@ -32,7 +32,7 @@ export class ChatsService {
 	if (idRoom)
 		idRoom = parseInt(this.rooms[idRoom - 1].idRoom) + 1;
 	const idRoomString = idRoom.toString();
-    this.rooms.push({ idRoom : idRoomString, name: roomName, host, users: [] });
+    this.rooms.push({ idRoom : idRoomString, name: roomName, host, users: [], message: [] });
     await this.saveRoomsToDisk(); // Save the updated state to the file.
     return idRoom.toString();
   }
@@ -109,6 +109,24 @@ export class ChatsService {
     //   }
      await this.saveRoomsToDisk(); // Save the updated state to the file.
     }
+  }
+
+  async addMessageToRoom(payload: Message): Promise<void> {
+	await this.loadRoomsFromDisk();
+	const roomIndex = await this.getRoomById(payload.idRoom);
+	if (roomIndex !== -1) {
+		console.log("addMessageToRoom", payload);
+	  this.rooms[roomIndex].message.push({ user: payload.user, timeSent: payload.timeSent, message: payload.message, roomName: payload.roomName, idRoom: payload.idRoom });
+	  await this.saveRoomsToDisk(); // Save the updated state to the file.
+	}
+  }
+
+  async getMessagesByRoom(idRoom: string): Promise<Message[]> {
+	await this.loadRoomsFromDisk();
+	const findRoom = await this.getRoomById(idRoom);
+	if (findRoom !== -1) {
+	  return this.rooms[findRoom].message;
+	}
   }
 
   async getRooms(): Promise<Room[]> {

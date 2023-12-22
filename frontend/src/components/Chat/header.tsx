@@ -1,4 +1,4 @@
-import React, { useRef }  from 'react'
+import React, { useEffect, useRef, useState }  from 'react'
 import { UserRoom, Room, Message } from "../../shared/chats.interface"
 import "./Chat.css"
 export const Header = ({
@@ -40,23 +40,17 @@ export const Header = ({
     //   </div>
     // </header>
 
-		<div className="panel-heading">
-		<div className="panel-control">
-			<div className="btn-group">
-				<button className="btn btn-default" type="button" data-toggle="collapse" data-target="#demo-chat-body"><i className="fa fa-chevron-down"></i></button>
-				<button type="button" className="btn btn-default" data-toggle="dropdown"><i className="fa fa-gear"></i></button>
-				<ul className="dropdown-menu dropdown-menu-right">
-					<li><a href="#">Available</a></li>
-					<li><a href="#">Busy</a></li>
-					<li><a href="#">Away</a></li>
-					<li className="divider"></li>
-					<li><a id="demo-connect-chat" href="#" className="disabled-link" data-target="#demo-chat-body">Connect</a></li>
-					<li><a id="demo-disconnect-chat" href="#" data-target="#demo-chat-body">Disconect</a></li>
-				</ul>
-			</div>
+	<div className="panel-heading">
+	<div className="panel-control">
+		<div className="btn-group">
+			<button className="btn btn-default" type="button" onClick={() => handleUsersClick()}> <span className="mr-1 text-lg text-white">{'👨‍💻'}</span>
+            <span className="ml-1 text-black">{users.length}</span></button>
+			<button type="button" className="btn btn-default" data-toggle="dropdown"><i
+					className="fa fa-gear"></i></button>
 		</div>
-		<h3 className="panel-title">Chat</h3>
 	</div>
+	<h3 className="panel-title">{roomName} <span className="ml-1">{isConnected ? '🟢' : '🔴'}</span></h3>
+</div>
 	)
 
 }
@@ -94,43 +88,84 @@ const determineMessageStyle = (
 	}
   };
 
+
   export const Messages = ({
 	user,
 	messages,
   }: {
-	user: Pick<UserRoom, 'userId' | 'userName'>
-	messages: Message[]
+	user: Pick<UserRoom, 'userId' | 'userName'>;
+	messages: Message[];
   }) => {
+	const messagesRef = useRef<HTMLDivElement>(null);
+	const [isUserAtBottom, setIsUserAtBottom] = useState(true);
+
+	useEffect(() => {
+	  const messagesContainer = messagesRef.current;
+	  if (messagesContainer && isUserAtBottom) {
+		messagesContainer.scrollTop = messagesContainer.scrollHeight;
+	  }
+	}, [messages, isUserAtBottom]);
+
+	const handleScroll = () => {
+	  const messagesContainer = messagesRef.current;
+	  if (
+		messagesContainer &&
+		messagesContainer.scrollHeight - messagesContainer.scrollTop ===
+		  messagesContainer.clientHeight
+	  ) {
+		setIsUserAtBottom(true);
+	  } else {
+		setIsUserAtBottom(false);
+	  }
+	};
+	const reversedMessages = messages.slice().reverse();
 	return (
-		<div className="nano has-scrollbar" style={{ height: '380px' }}>
-		  <div className="nano-content pad-all" tabIndex={0} style={{ right: '-17px' }}>
-			<ul className="list-unstyled media-block">
-			  {messages?.map((message, index) => {
-				const isUserMessage = user.userId === message.user.userId;
-				const speechClass = isUserMessage ? 'speech-right' : '';
-				return (
-				  <li key={index} className="mar-btm">
-					<div className={isUserMessage ? 'media-right' : 'media-left'}>
-					  {/* <img src="" className="img-circle img-sm" alt="Profile Picture" /> */}
+	  <div
+		className="nano has-scrollbar"
+		style={{ height: '380px', overflowY: 'auto' }}
+	  >
+		<div
+		  className="nano-content pad-all"
+		  tabIndex={0}
+		  style={{ right: '-17px' }}
+		  ref={messagesRef}
+		  onScroll={handleScroll}
+		>
+		  <ul
+			className="list-unstyled media-block"
+			style={{ marginBottom: '0', paddingBottom: '10px' }}
+		  >
+			{reversedMessages.map((message, index) => {
+			  const isUserMessage = user.userId === message.user.userId;
+			  const speechClass = isUserMessage ? 'speech-right' : '';
+			  return (
+				<li key={index} className="mar-btm">
+				  <div className={isUserMessage ? 'media-right' : 'media-left'}>
+					<img src="" className="img-circle img-sm" alt="Profile Picture" />
+				  </div>
+				  <div className={`media-body pad-hor ${speechClass}`}>
+					<div className="speech">
+					  <a href="#" className="media-heading">
+						{message.user.userName}
+					  </a>
+					  <p>{message.message}</p>
+					  <p className="speech-time">
+						<i className="fa fa-clock-o fa-fw"></i> {message.timeSent}
+					  </p>
 					</div>
-					<div className={`media-body pad-hor ${speechClass}`}>
-					  <div className="speech">
-						<a href="#" className="media-heading">{message.user.userName}</a>
-						<p>{message.message}</p>
-						<p className="speech-time">
-						  <i className="fa fa-clock-o fa-fw"></i> {message.timeSent}
-						</p>
-					  </div>
-					</div>
-				  </li>
-				);
-			  })}
-			</ul>
-		  </div>
-		  <div className="nano-pane">
-			<div className="nano-slider" style={{ height: '141px', transform: 'translate(0px, 0px)' }}></div>
-		  </div>
+				  </div>
+				</li>
+			  );
+			})}
+		  </ul>
 		</div>
+		<div className="nano-pane">
+		  <div
+			className="nano-slider"
+			style={{ height: '141px', transform: 'translate(0px, 0px)' }}
+		  ></div>
+		</div>
+	  </div>
 	);
   };
 
@@ -156,7 +191,7 @@ export const MessageForm = ({ sendMessage }: { sendMessage: (message: string) =>
 	return (
 		<div className="panel-footer">
 		  <div className="row">
-			<div className="col-xs-9">
+			<div className="col-xs-9" style={{width: '80%'}}>
 			  <input
 				type="text"
 				placeholder="Enter your text"
@@ -165,7 +200,7 @@ export const MessageForm = ({ sendMessage }: { sendMessage: (message: string) =>
 				onKeyDown={(e) => handleKeyDown(e)}
 			  />
 			</div>
-			<div className="col-xs-3">
+			<div className="col-xs-3"style={{width: '20%'}}>
 			  <button className="btn btn-primary btn-block" type="submit" onClick={(e) => submit(e)}>Send</button>
 			</div>
 		  </div>

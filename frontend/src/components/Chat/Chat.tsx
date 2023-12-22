@@ -22,16 +22,18 @@ export const useRoomQuery = (idRoom: string, isConnected: boolean) => {
 
 export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => {
   return (
-    <div className="container">
-    <div className="col-md-12 col-lg-6">
+	<div className="container">
+	<div className="col-md-12 col-lg-6">
+		<div className="panel">
         {children}
+		</div>
       </div>
     </div>
   );
 };
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("http://localhost:3030", { autoConnect: false });
-
+// check si le user qui est connecter a bien le droit d'acceder a la room !! pour amies est pour channel
 export default function Chat() {
 	const userContext = useContext(UserContext);
 	const { id: idRoom } = useParams<{ id: string }>();
@@ -51,7 +53,6 @@ export default function Chat() {
     if (!idRoom) {
 		navigate('/');
     } else {
-		// console.log("user and idRoom", { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id }, idRoom);
       socket.on('connect', () => {
         socket.emit('join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id }, idRoom });
         setIsConnected(true);
@@ -103,14 +104,18 @@ export default function Chat() {
             handleUsersClick={() => setToggleUserList((toggleUserList) => !toggleUserList)}
             handleLeaveRoom={() => leaveRoom()}
           />
+
           {toggleUserList ? (
             <UserList room={room}></UserList>
           ) : (
+			<>
             <Messages user={user} messages={messages}></Messages>
+			<MessageForm sendMessage={sendMessage}></MessageForm>
+			</>
           )}
-          <MessageForm sendMessage={sendMessage}></MessageForm>
+
         </ChatLayout>
-      )}
+       )}
     </>
   );
 }

@@ -42,7 +42,7 @@
     overflow: hidden;
 }
 .nano>.nano-content {
-    position: relative;
+    position: absolute;
     overflow: scroll;
     overflow-x: hidden;
     top: 0;
@@ -54,7 +54,6 @@
     padding: 15px;
 }
 .mar-btm {
-    text-align: initial;
     margin-bottom: 15px;
 }
 .media-block .media-left {
@@ -97,7 +96,7 @@
 }
 .speech-right>.speech:before {
     left: auto;
-    right: auto;
+    right: 0;
     border-top: 7px solid transparent;
     border-bottom: 7px solid transparent;
     border-left: 7px solid #ffdc91;
