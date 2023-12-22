@@ -1,6 +1,6 @@
 import {useState, createContext} from 'react';
 
-interface Info {
+export interface Info {
 	TFASecret: string;
 	avatarDefault: string;
 	avatarPath: string;
@@ -10,11 +10,22 @@ interface Info {
 	status: string;
 	username: string;
 }
-interface Iuser {
+
+export interface Iuser {
 	info : Info;
 	auth : boolean;
 	authToken : string;
 };
+
+export interface IFriends {
+	id?: number;
+	user1: Info;
+	user2: Info;
+	type: string;
+	idRoom?: string;
+}
+
+
 
 interface ContextProps {
 	user: Iuser;

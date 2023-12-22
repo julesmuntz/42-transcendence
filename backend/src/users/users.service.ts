@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, Like } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
@@ -30,6 +30,10 @@ export class UsersService {
 
 	}
 
+	async search(name: string) : Promise<User[]> {
+		return this.userRepository.find({where: {username: Like(`${name}%`)}});
+	}
+
 	async update(id: number, updateUserDto: UpdateUserDto) : Promise<User> {
 		await this.userRepository.update(id, updateUserDto);
 		return this.userRepository.findOne({ where: { id } });
@@ -40,12 +44,18 @@ export class UsersService {
 	}
 
 	async setTFASecret(secret: string, id: number) : Promise<User> {
-		console.log("id", id);
 		await this.userRepository.update(id, { TFASecret: secret });
 		return this.userRepository.findOne({ where: { id } });
 	}
 
-	async turnOnTFA(userId: number) : Promise<void> {
-		this.userRepository.update(userId, { isTFAEnabled: true});
+	async turnOnTFA(id: number) : Promise<User>{
+		this.userRepository.update(id, { isTFAEnabled: true});
+		return this.userRepository.findOne({ where: { id } });
 	}
+
+	async turnOffTFA(id: number) : Promise<User>{
+		this.userRepository.update(id, { isTFAEnabled: false});
+		return this.userRepository.findOne({ where: { id } });
+	}
+
 }

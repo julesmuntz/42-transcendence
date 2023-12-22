@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 export enum UserStatus {
-  Online = 'online',
-  InGame = 'ingame',
-  Idle = 'idle',
-  Offline = 'offline',
+	Online = 'online',
+	InGame = 'ingame',
+	Idle = 'idle',
+	Offline = 'offline',
 }
 
 @Entity()
@@ -27,7 +27,7 @@ export class User {
 	@Column({
 		type: 'enum',
 		enum: UserStatus,
-		default: UserStatus.Offline,
+		default: UserStatus.Online,
 	})
 	status: UserStatus;
 
@@ -37,12 +37,15 @@ export class User {
 	@Column({ length: 128, nullable: true})
 	avatarPath: string;
 
-	@Column({ length: 256, nullable: true })
-	oauth42Token: string;
 
 	@Column({ nullable: true })
 	TFASecret: string;
 
 	@Column({ default: false })
 	isTFAEnabled: boolean;
+
+	UpdateStatus() {
+
+	}
+
 }

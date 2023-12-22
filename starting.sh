@@ -37,5 +37,7 @@ else
   sessionEncrypt=$(generate_password)
   echo "JWT_SECRET=$sessionEncrypt" >> "$ENV_FILE"
 
+  echo "HOSTNAME=localhost" >> "$ENV_FILE"
   echo "Created $ENV_FILE with example variables."
+ 	echo "http://$(hostname):3000" > "url.txt"
 fi
