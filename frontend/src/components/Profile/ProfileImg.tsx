@@ -10,7 +10,7 @@ export default function ProfileImg() {
 	if (userContext.user.info.status === "offline")
 		statusColor = "gray";
 	else if (userContext.user.info.status === "online")
-		statusColor = "#0b0";
+		statusColor = "#0a5";
 
 	return (
 		<div className="relative-profile-pic">

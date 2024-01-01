@@ -62,7 +62,11 @@ function App() {
 	{
 		if (TFASecret && id)
 		{
-			return (<TwoFA id={id} TFASecret={TFASecret}/>);
+			return (
+				<div className="App">
+					<TwoFA id={id} TFASecret={TFASecret}/>
+				</div>
+			);
 		}
 		return (
 			<div className="App">

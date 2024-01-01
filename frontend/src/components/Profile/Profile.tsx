@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { TFAProfile } from "./TFAProfile";
 import ProfileSecurity from "./ProfileSettings/ProfileSecurity";
+import ProfileInfos from "./ProfileInfos";
 import "./css/Profile.css";
 
 export default function Profile() {
@@ -76,6 +77,7 @@ export default function Profile() {
 			<Container></Container>
 			<Container className="d-flex flex-column justify-content-center align-items-center">
 				<ProfileImg />
+				<ProfileInfos />
 			</Container>
 			<Container>
 				<ProfileSecurity qrset={{qrcode, setQrcode}}/>
