@@ -120,7 +120,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 	}, []);
 
 	useEffect(() => {
-		if (countdown === 0)
+		if (countdown == 0)
 			window.location.href = `http://localhost:3000`;
 	}, [countdown]);
 

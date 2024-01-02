@@ -1,18 +1,19 @@
-import Container from "react-bootstrap/Container";
-import ProfileImg from "./ProfileImg";
-import Button from "react-bootstrap/Button";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../contexts/UserContext";
-import { TFAProfile } from "./TFAProfile";
-import ProfileSecurity from "./ProfileSettings/ProfileSecurity";
-import ProfileInfos from "./ProfileInfos";
-import "./css/Profile.css";
-import "./Profile.css";
+import React, { ReactNode } from 'react';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Button from 'react-bootstrap/Button';
+import { LockFill } from 'react-bootstrap-icons';
+import { useContext } from "react";
+import { UserContext } from "../../../contexts/UserContext";
 
-export default function Profile() {
+interface Props {
+	children?: ReactNode;
+	onClick: any;
+  }
+
+export type Ref = HTMLButtonElement;
+
+export default function ProfileSecurity({ qrset } : {qrset : {qrcode : string, setQrcode : any}}) {
 	const userContext = useContext(UserContext);
-	const [qrcode, setQrcode] = useState("");
-	const [is2FAActive, setIs2FAActive] = useState(false);
 
 	let getQrcode = async () =>
 	{
@@ -41,7 +42,7 @@ export default function Profile() {
 		}).then((stream) => new Response(stream))
 		.then((response) => response.blob())
 		.then((blob) => URL.createObjectURL(blob))
-		.then((url) => setQrcode(url))
+		.then((url) => qrset.setQrcode(url))
 		.catch((err) => console.error(err));
 	};
 
@@ -64,25 +65,35 @@ export default function Profile() {
 		});
 	}
 
-	useEffect(() => {
-		if (qrcode) {
-			setIs2FAActive(true);
-		}
-	}, [qrcode]);
 
-	if (is2FAActive)
-		return(<TFAProfile qrset={{qrcode, setQrcode}} />);
+	const CustomToggle = React.forwardRef<Ref, Props>((props, ref) => (
+		<Button
+		  variant='dark'
+		  ref={ref}
+		  onClick={(e) => {
+			e.preventDefault();
+			props.onClick(e);
+		  }}
+		>
+		  {props.children}
+		</Button>
+	  ));
 
 	return (
-		<Container className="d-flex">
-			<Container></Container>
-			<Container className="d-flex flex-column justify-content-center align-items-center">
-				<ProfileImg />
-				<ProfileInfos />
-			</Container>
-			<Container>
-				<ProfileSecurity qrset={{qrcode, setQrcode}}/>
-			</Container>
-		</Container>
+		<>
+			<Dropdown>
+					<Dropdown.Toggle as={CustomToggle}>
+						<LockFill color="gray" size={25}/>
+					</Dropdown.Toggle>
+					<Dropdown.Menu variant='dark'>
+						{!userContext.user.info.isTFAEnabled ? <Dropdown.Item eventKey="1" onClick={activate2FA}>Activate 2FA</Dropdown.Item> :
+						<>
+							<Dropdown.Item onClick={activate2FA}>Reactivate 2FA</Dropdown.Item>
+							<Dropdown.Item onClick={deactivate2FA}>Deactivate 2FA</Dropdown.Item>
+						</>
+						}
+					</Dropdown.Menu>
+			</Dropdown>
+		</>
 	);
 }

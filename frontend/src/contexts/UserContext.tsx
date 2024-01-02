@@ -10,7 +10,6 @@ export interface Info {
 	status: string;
 	username: string;
 }
-
 export interface Iuser {
 	info : Info;
 	auth : boolean;
@@ -24,8 +23,6 @@ export interface IFriends {
 	type: string;
 	idRoom?: string;
 }
-
-
 
 interface ContextProps {
 	user: Iuser;
