@@ -32,8 +32,11 @@ export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => 
   );
 };
 
-const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("http://localhost:3030", { autoConnect: false });
+const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("3030", { autoConnect: false });
+
 // check si le user qui est connecter a bien le droit d'acceder a la room !! pour amies est pour channel
+// check aussi si le user est pas ban ou mute de la room sais avec la db
+
 export default function Chat() {
 	const userContext = useContext(UserContext);
 	const { id: idRoom } = useParams<{ id: string }>();
@@ -71,6 +74,7 @@ export default function Chat() {
       socket.off('chat');
     };
   }, []);
+
 
   const leaveRoom = () => {
     socket.disconnect();

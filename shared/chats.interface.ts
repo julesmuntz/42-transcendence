@@ -5,7 +5,7 @@ export interface UserRoom {
 }
 
 export interface Room {
-	idRoom: string //moi qui est rajouté
+	idRoom: string
 	name: string
 	host: UserRoom
 	users: UserRoom[]
@@ -17,7 +17,7 @@ export interface Message {
 	timeSent: string
 	message: string
 	roomName: string
-	idRoom: string //moi qui est rajouté
+	idRoom: string
 }
 
 
@@ -28,4 +28,16 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
 	chat: (e: Message) => void
 	join_room: (e: { user: UserRoom; idRoom: string}) => void
+}
+
+
+// friends
+
+
+export interface ServerToClientEventsFriends {
+	action_reload: (e: void) => void
+}
+
+export interface ClientToServerEventsFriends {
+	action_reload: (e: void) => void
 }

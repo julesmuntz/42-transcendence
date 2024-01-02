@@ -71,23 +71,6 @@ export const UserList = ({ room }: { room: Room }) => {
 	)
 }
 
-const determineMessageStyle = (
-	user: Pick<UserRoom, 'userId' | 'userName'>,
-	messageUserId: number
-  ) => {
-	if (user && messageUserId === user.userId) {
-	  return {
-		message: 'bg-slate-500 p-4 ml-24 mb-4 rounded break-words',
-		sender: 'ml-24 pl-4',
-	  };
-	} else {
-	  return {
-		message: 'bg-slate-800 p-4 mr-24 mb-4 rounded break-words',
-		sender: 'mr-24 pl-4',
-	  };
-	}
-  };
-
 
   export const Messages = ({
 	user,

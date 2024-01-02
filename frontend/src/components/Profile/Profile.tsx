@@ -6,7 +6,7 @@ import { UserContext } from "../../contexts/UserContext";
 import { TFAProfile } from "./TFAProfile";
 import ProfileSecurity from "./ProfileSettings/ProfileSecurity";
 import ProfileInfos from "./ProfileInfos";
-import "./css/Profile.css";
+
 import "./Profile.css";
 
 export default function Profile() {

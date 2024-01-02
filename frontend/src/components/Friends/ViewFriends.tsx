@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import "./css/ViewFriends.css"
 import Button from 'react-bootstrap/Button';
 
+//ajouter pour voir les demande d'amis et les accepter ou les refuser.
+//amelioration : faire socket.io pour les amis pour que quand on accepte une demande d'amis sa mette a jour la liste d'amis de l'autre personne
 export default function ViewFriends() {
   const userContext = useContext(UserContext);
   const [viewFriends, setViewFriends] = useState<IFriends[]>([]);

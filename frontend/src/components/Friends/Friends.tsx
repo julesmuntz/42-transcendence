@@ -1,7 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { IFriends, Info, UserContext } from "../../contexts/UserContext";
 import Button from 'react-bootstrap/Button';
+import { Server } from "http";
+import { ClientToServerEventsFriends, ServerToClientEventsFriends} from "../../shared/chats.interface";
+import { io, Socket } from 'socket.io-client';
+//amelioration : faire socket.io pour les amis pour que quand on accepte une demande d'amis sa mette a jour la liste d'amis de l'autre personne
 
+const socket: Socket<ServerToClientEventsFriends, ClientToServerEventsFriends> = io("3030", { autoConnect: false });
 export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: number; UserTarget: Info }) {
 	const userContext = useContext(UserContext);
 	const [UserBlock, setUserBlock] = useState<IFriends | null>(null);
@@ -14,6 +19,14 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	  user2: UserTarget,
 	  type: "invited",
 	};
+
+
+	useEffect(() => {
+		socket.on("action_reload", () => {
+			setRefresh((prev) => !prev);
+		});
+
+	}, []);
 
 	useEffect(() => {
 		fetch(`http://localhost:3030/friends/viewblock/${IdUserTarget}`, {
@@ -80,7 +93,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 
 	async function handleButtonInviteFriends(userId: number) {
 		if (userId !== userContext.user.info.id) {
-		  fetch(`http://localhost:3030/friends/`, {
+		fetch(`http://localhost:3030/friends/`, {
 			method: "POST",
 			headers: {
 			  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -95,7 +108,9 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			setViewInvite(null);
 			setUserBlock(null);
 			setRefresh((prev) => !prev);
-		  });		}
+		});
+		socket.emit("action_reload");
+		}
 	  }
 
 	  async function handleButtonBlocketFriends(userId: number) {
@@ -111,7 +126,9 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			setViewInvite(null);
 			setUserBlock(null);
 			setRefresh((prev) => !prev);
-		  });		}
+		  });
+		  socket.emit("action_reload");
+		}
 	  }
 
 	  async function handleButtonAddFriends(friendId: number) {
@@ -126,7 +143,9 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			setViewInvite(null);
 			setUserBlock(null);
 			setRefresh((prev) => !prev);
-		  });	  }
+		  });
+		  socket.emit("action_reload");
+		}
 
 	  async function handleButtonDeleteFriends(friendId: number) {
 		fetch(`http://localhost:3030/friends/${friendId}`, {
@@ -140,7 +159,9 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			setViewInvite(null);
 			setUserBlock(null);
 			setRefresh((prev) => !prev);
-		  });	  }
+		  });
+		  socket.emit("action_reload");
+		}
 
 	if (UserBlock) {
 	  return (

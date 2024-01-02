@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import TwoFA from './components/LoginPage/TwoFA';
 
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 interface JwtPayload {
 	users: {
@@ -92,30 +93,3 @@ function App() {
 }
 
 export default App;
-
-
-// this was in the beginning of the App function:
-// const [socket, setSocket] = React.useState<Socket>();
-  // const [messages, setMessages] = React.useState<string[]>([]);
-
-  // const send = (value: string) => {
-  //   socket?.emit("message", value);
-  // }
-  // React.useEffect(() => {
-  //   const newSocket = io("http://localhost:8001");
-  //   console.log(newSocket);
-  //   setSocket(newSocket);
-  // }, [setSocket]);
-
-  // const messageListener = (message: string) => {
-  //   setMessages([...messages, message]);
-  // };
-  // React.useEffect(() => {
-  //   socket?.on('message', messageListener);
-  //   return () => {socket?.off("message", messageListener)};
-  // }, [messageListener, socket]);
-
-
-// this was inside the div returned:
-      /* <MessageInput send={send}/>
-      <Messages messages={messages} /> */
