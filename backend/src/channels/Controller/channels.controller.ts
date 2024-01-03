@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, Req } from '@nestjs/common';
 import { ChannelsService } from '../Service/channels.service';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { UpdateChannelDto } from '../dto/update-channel.dto';
@@ -9,8 +9,12 @@ export class ChannelsController {
 	constructor(private readonly channelsService: ChannelsService) {}
 
 	@Post()
-	async create(@Body() createChannelDto: CreateChannelDto) : Promise<Channel> {
-		return this.channelsService.create(createChannelDto);
+	async create(@Body() createChannelDto: CreateChannelDto, @Req() req : any) : Promise<Channel> {
+		const channel = await this.channelsService.create(createChannelDto);
+		if (channel) {
+			//ajouter le createur comme host du channel channel-member
+			return channel;
+		}
 	}
 
 	@Get()

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
-enum ChannelType {
+export enum ChannelType {
 	Public = 'public',
 	Protected = 'protected',
 	Private = 'private',

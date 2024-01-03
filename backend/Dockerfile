@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY package*.json .
 
-RUN npm install && npm install --save @nestjs/typeorm typeorm pg\
+RUN npm install && npm install --save @nestjs/typeorm typeorm@0.3.17 pg\
 	class-validator @nestjs/passport passport passport-42\
 	&& npm install @types/passport-42 && npm i --save @nestjs/config\
 	&& npm install @nestjs/mapped-types express-session otplib qrcode\

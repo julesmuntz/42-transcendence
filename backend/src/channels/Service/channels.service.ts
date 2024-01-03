@@ -37,7 +37,7 @@ export class ChannelsService {
 
 
 // create channel service
-// channel public, protected, private
+// channel public, protected, private doit etre enregistre comme host 
 // si public, pas de password
 // si protected, password
 // si private, password, plus un champ pour les invités
