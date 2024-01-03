@@ -34,3 +34,10 @@ export class ChannelsService {
 		await this.channelRepository.delete(id);
 	}
 }
+
+
+// create channel service
+// channel public, protected, private
+// si public, pas de password
+// si protected, password
+// si private, password, plus un champ pour les invités

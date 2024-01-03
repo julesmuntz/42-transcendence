@@ -6,7 +6,7 @@ import { ClientToServerEventsFriends, ServerToClientEventsFriends} from "../../s
 import { io, Socket } from 'socket.io-client';
 //amelioration : faire socket.io pour les amis pour que quand on accepte une demande d'amis sa mette a jour la liste d'amis de l'autre personne
 
-const socket: Socket<ServerToClientEventsFriends, ClientToServerEventsFriends> = io("3030", { autoConnect: false });
+const socket: Socket<ServerToClientEventsFriends, ClientToServerEventsFriends> = io("3030");
 export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: number; UserTarget: Info }) {
 	const userContext = useContext(UserContext);
 	const [UserBlock, setUserBlock] = useState<IFriends | null>(null);

@@ -34,7 +34,7 @@ function App() {
 	const token = Cookies.get('access_token');
 	const TFASecret = Cookies.get('TFASecret');
 	const id = Cookies.get("id");
-
+	console.log(`localhost`);
 	useEffect(() => {
 
 		const getUser = async (id : number, token: string) => {

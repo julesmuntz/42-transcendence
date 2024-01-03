@@ -40,6 +40,8 @@ services:
     volumes:
       - ./backend/src:/app/src
       - ./shared:/app/src/shared
+    environment:
+      - HOSTNAME=paul-f4Ar1s4
     depends_on:
       - database
     networks:
@@ -54,6 +56,8 @@ services:
     volumes:
       - ./frontend/src:/app/src
       - ./shared:/app/src/shared
+    environment:
+      - HOSTNAME=paul-f4Ar1s4
     depends_on:
       - database
     networks:
