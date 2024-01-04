@@ -91,7 +91,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 	}
 
 	const sendCode = async (e: any) => {
-		await fetch(`http://paul-f4Ar7s1:3030/2fa/authenticate`, {
+		await fetch(`http://paul-f4Ar1s4:3030/2fa/authenticate`, {
 			method: "POST",
 			credentials: "include",
 			headers: {
@@ -104,7 +104,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 			}),
 		})
 			.then(() => {
-				window.location.href = `http://paul-f4Ar7s1:3000`;
+				window.location.href = `http://paul-f4Ar1s4:3000`;
 			})
 			.catch(() => {
 				console.log("ERROR fetch");
@@ -121,7 +121,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 
 	useEffect(() => {
 		if (countdown == 0)
-			window.location.href = `http://paul-f4Ar7s1:3000`;
+			window.location.href = `http://paul-f4Ar1s4:3000`;
 	}, [countdown]);
 
 	return (

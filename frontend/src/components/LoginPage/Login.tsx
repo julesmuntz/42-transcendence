@@ -6,7 +6,7 @@ export default function Login() {
 	async function redirectToBack(e : any)
 	{
 		e.preventDefault();
-		window.location.href = `http://paul-f4Ar7s1:3030/auth/callback`;
+		window.location.href = `http://paul-f4Ar1s4:3030/auth/callback`;
 	}
 
 	return (

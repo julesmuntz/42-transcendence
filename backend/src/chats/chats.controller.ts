@@ -13,7 +13,6 @@ export class ChatsController {
 	@Public()
 	@Get('rooms')
 	async getAllRooms() : Promise<Room[]> {
-		this.chatsService.addRoom("test", { userId: 1, userName: "test", socketId: "" });
 		console.log(this.chatsService.getRooms());
 		return this.chatsService.getRooms();
 	}

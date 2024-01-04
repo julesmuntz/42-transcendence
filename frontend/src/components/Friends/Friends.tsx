@@ -6,7 +6,6 @@ import { ClientToServerEventsFriends, ServerToClientEventsFriends} from "../../s
 import { io, Socket } from 'socket.io-client';
 //amelioration : faire socket.io pour les amis pour que quand on accepte une demande d'amis sa mette a jour la liste d'amis de l'autre personne
 
-const socket: Socket<ServerToClientEventsFriends, ClientToServerEventsFriends> = io("http://paul-f4ar7s1:3030");
 export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: number; UserTarget: Info }) {
 	const userContext = useContext(UserContext);
 	const [UserBlock, setUserBlock] = useState<IFriends | null>(null);
@@ -20,17 +19,8 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	  type: "invited",
 	};
 
-
 	useEffect(() => {
-
-		socket.on("action_reload", () => {
-			setRefresh((prev) => !prev);
-		});
-	socket.connect();
-	}, []);
-
-	useEffect(() => {
-		fetch(`http://paul-f4Ar7s1:3030/friends/viewblock/${IdUserTarget}`, {
+		fetch(`http://paul-f4Ar1s4:3030/friends/viewblock/${IdUserTarget}`, {
 			method: "GET",
 			headers: {
 			  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -51,7 +41,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	}, [UserBlock, refresh]);
 
 	useEffect(() => {
-	  fetch(`http://paul-f4Ar7s1:3030/friends/viewinvite/${IdUserTarget}`, {
+	  fetch(`http://paul-f4Ar1s4:3030/friends/viewinvite/${IdUserTarget}`, {
 		method: "GET",
 		headers: {
 		  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -72,7 +62,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	}, [ViewInvite, refresh]);
 
 	useEffect(() => {
-		fetch(`http://paul-f4Ar7s1:3030/friends/viewfriends/${IdUserTarget}`, {
+		fetch(`http://paul-f4Ar1s4:3030/friends/viewfriends/${IdUserTarget}`, {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${userContext.user.authToken}`,
@@ -94,7 +84,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 
 	async function handleButtonInviteFriends(userId: number) {
 		if (userId !== userContext.user.info.id) {
-		fetch(`http://paul-f4Ar7s1:3030/friends/`, {
+		fetch(`http://paul-f4Ar1s4:3030/friends/`, {
 			method: "POST",
 			headers: {
 			  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -110,13 +100,12 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			setUserBlock(null);
 			setRefresh((prev) => !prev);
 		});
-		socket.emit("action_reload");
 		}
 	  }
 
 	  async function handleButtonBlocketFriends(userId: number) {
 		if (userId !== userContext.user.info.id) {
-		  fetch(`http://paul-f4Ar7s1:3030/friends/bloquet/${userId}`, {
+		  fetch(`http://paul-f4Ar1s4:3030/friends/bloquet/${userId}`, {
 			method: "PATCH",
 			headers: {
 			  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -128,12 +117,11 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			setUserBlock(null);
 			setRefresh((prev) => !prev);
 		  });
-		  socket.emit("action_reload");
 		}
 	  }
 
 	  async function handleButtonAddFriends(friendId: number) {
-		fetch(`http://paul-f4Ar7s1:3030/friends/accept/${friendId}`, {
+		fetch(`http://paul-f4Ar1s4:3030/friends/accept/${friendId}`, {
 		  method: "PATCH",
 		  headers: {
 			Authorization: `Bearer ${userContext.user.authToken}`,
@@ -145,11 +133,10 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			setUserBlock(null);
 			setRefresh((prev) => !prev);
 		  });
-		  socket.emit("action_reload");
 		}
 
 	  async function handleButtonDeleteFriends(friendId: number) {
-		fetch(`http://paul-f4Ar7s1:3030/friends/${friendId}`, {
+		fetch(`http://paul-f4Ar1s4:3030/friends/${friendId}`, {
 		  method: "DELETE",
 		  headers: {
 			Authorization: `Bearer ${userContext.user.authToken}`,
@@ -161,7 +148,6 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			setUserBlock(null);
 			setRefresh((prev) => !prev);
 		  });
-		  socket.emit("action_reload");
 		}
 
 	if (UserBlock) {

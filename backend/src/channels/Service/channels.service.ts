@@ -25,6 +25,10 @@ export class ChannelsService {
 		return this.channelRepository.findOne({where: {id}});
 	}
 
+	async findOneByName(name: string) : Promise<Channel> {
+		return this.channelRepository.findOne({where: {name}});
+	}
+
 	async update(id: number, updateChannelDto: UpdateChannelDto) : Promise<Channel> {
 		await this.channelRepository.update(id, updateChannelDto);
 		return this.channelRepository.findOne({where: {id}});
@@ -37,7 +41,7 @@ export class ChannelsService {
 
 
 // create channel service
-// channel public, protected, private doit etre enregistre comme host 
+// channel public, protected, private doit etre enregistre comme host
 // si public, pas de password
 // si protected, password
 // si private, password, plus un champ pour les invités

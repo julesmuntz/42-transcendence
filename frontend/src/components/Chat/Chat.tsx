@@ -12,7 +12,7 @@ export const useRoomQuery = (idRoom: string, isConnected: boolean) => {
   const query = useQuery({
     queryKey: ['rooms', idRoom],
     queryFn: (): Promise<Room> =>
-      axios.get(`http://paul-f4Ar7s1:3030/chats/rooms/${idRoom}`).then((response) => response.data),
+      axios.get(`http://paul-f4Ar1s4:3030/chats/rooms/${idRoom}`).then((response) => response.data),
     refetchInterval: 60000,
     enabled: isConnected,
   });
@@ -57,7 +57,7 @@ export default function Chat() {
 		navigate('/');
     } else {
       socket.on('connect', () => {
-        socket.emit('join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id }, idRoom });
+        socket.emit('join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id as string }, idRoom });
         setIsConnected(true);
       });
       socket.on('disconnect', () => {
@@ -85,7 +85,7 @@ export default function Chat() {
     if (user && idRoom && room) {
       socket.emit('chat', {
         user: {
-          socketId: user.socketId,
+          socketId: user.socketId as string,
           userId: user.userId,
           userName: user.userName,
         },

@@ -7,24 +7,15 @@ import Friends from "../Friends/Friends";
 import { ClientToServerEventsFriends, ServerToClientEventsFriends} from "../../shared/chats.interface";
 import { io, Socket } from 'socket.io-client';
 
-const socket: Socket<ServerToClientEventsFriends, ClientToServerEventsFriends> = io("http://paul-f4ar7s1:3030");
 export default function SearchProfile () {
 	const userContext = useContext(UserContext);
 	const [Users, setUsers] = useState<Info[]>([]);
 	const [refresh, setRefresh] = useState(false);
 
-
-	useEffect(() => {
-		socket.on("action_reload", () => {
-			setRefresh((prev) => !prev);
-		});
-	socket.connect();
-	}, []);
-
 	async function handelsearch(e : any) {
 		if (e.target.value)
 		{
-			return(fetch(`http://paul-f4Ar7s1:3030/users/search/${e.target.value}`, {
+			return(fetch(`http://paul-f4Ar1s4:3030/users/search/${e.target.value}`, {
 				method: "GET",
 				headers: {
 					"Authorization": `Bearer ${userContext.user.authToken}`
@@ -36,7 +27,6 @@ export default function SearchProfile () {
 					setRefresh((prev) => !prev);
 				})
 			);
-			socket.emit("action_reload");
 		}
 		else
 			setUsers([]);

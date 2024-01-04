@@ -25,4 +25,5 @@ export class Channel {
 
 	@Column({ length: 256, nullable: true })
 	passwordHash: string;
+
 }

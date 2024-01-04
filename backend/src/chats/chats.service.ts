@@ -73,7 +73,8 @@ export class ChatsService {
 		await this.saveRoomsToDisk();
         const host = await this.getRoomHost(idRoom);
         if (host.userId === user.userId) {
-          this.rooms[findRoom].host.socketId = user.socketId;
+			this.rooms[findRoom].host.userName = user.userName;
+			this.rooms[findRoom].host.socketId = user.socketId;
         }
         await this.saveRoomsToDisk(); // Save the updated state to the file.
       }
