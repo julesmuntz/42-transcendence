@@ -8,6 +8,7 @@ import Game from "../Game/Game";
 import ViewFriends from "../Friends/ViewFriends";
 import SearchProfile from "../Search/SearchProfile";
 import CreateChannel from "../channel/createChannel";
+import Chat from "../Chat/Chat";
 
 
 export default function SideBar() {
@@ -53,6 +54,7 @@ export default function SideBar() {
 				<Route path="/friend" element={<ViewFriends />}></Route>
 				<Route path="/search" element={<SearchProfile />}></Route>
 				<Route path="/game" element={<Game />}></Route>
+				<Route path="/chat/:id" element={<Chat />}></Route>
 				<Route path="/channel" element={<CreateChannel />}></Route>
 			</Routes>
 		</BrowserRouter>

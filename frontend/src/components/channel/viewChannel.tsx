@@ -1,38 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { UserContext } from '../../contexts/UserContext';
+import { useNavigate } from 'react-router-dom'
+import Button from 'react-bootstrap/Button';
 
-// interface Channel {
-// 	id: number;
-// 	name: string;
-// 	type: string;
-// }
+interface Channel {
+	id: number;
+	name: string;
+	type: string;
+}
 
 export default function ViewChannel() {
 
-	// const [channel, setChannel] = useState<Channel[]>([]);
+	const [channel, setChannel] = useState<Channel[]>([]);
+	const userContext = useContext(UserContext);
+	const navigate = useNavigate();
 
-	// useEffect(() => {
-	// 	fetch('http://paul-f4Ar1s4:3030/channels', {
-	// 		method: 'GET',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 		},
-	// 	}).then((res) => res.json())
-	// 	.then((ret) => {
-	// 		setChannel(ret);
-	// 	});
-	// }, []);
+	useEffect(() => {
+		fetch('http://paul-f4Ar7s7:3030/channels', {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${userContext.user.authToken}`,
+				'Content-Type': 'application/json',
+			},
+		}).then((res) => res.json())
+		.then((ret) => {
+			setChannel(ret);
+		});
+	}, []);
 
-	// return (
-	// 	<div>
-	// 		<h1>View Channel</h1>
-	// 		{channel.map((channel) => (
-	// 			<div key={channel.id}>
-	// 				<h2>{channel.name}</h2>
-	// 				<p>{channel.type}</p>
-	// 			</div>
-	// 		))}
-	// 	</div>
-	// );
+	const joinRoom = (roomId: string) => {
+		navigate(`/chat/${roomId}`);
+	};
+	if (channel.length > 0)
+		return (
+			<div>
+				<h1>View Channel</h1>
+				{channel.map((channel) => (
+					<div key={channel.id}>
+						<Button variant="primary" onClick={() => joinRoom(channel.name.toString())}>
+						<h2>{channel.name}</h2> </Button>
+						<p>{channel.type}</p>
+					</div>
+				))}
+			</div>
+		);
+	// console.log('ViewChannel');
 	return (
 		<div>
 			<h1>View Channel</h1>

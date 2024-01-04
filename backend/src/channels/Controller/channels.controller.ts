@@ -7,6 +7,7 @@ import { ChannelMemberService } from 'channels/Service/channel-member.service';
 import { ChatsService } from 'chats/chats.service';
 import { UsersService } from 'users/users.service';
 import { CreateChannelMenberDto } from 'channels/dto/create-channel-menber.dto';
+import { Public } from 'auth/decorator/public.decorator';
 
 @Controller('channels')
 export class ChannelsController {
@@ -34,12 +35,9 @@ export class ChannelsController {
 							'socketId': '',
 						});
 						if (room) {
-							const update = await this.channelsService.update(channel.id, {
-								'roomId': room,
-							});
-							if (update) {
-								return channel;
-							}
+							return channel;
+						} else {
+							console.log("Error: room not created !");
 						}
 					}
 				}

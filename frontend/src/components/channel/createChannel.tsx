@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { UserContext } from "../../contexts/UserContext";
+import ViewChannel from "./viewChannel";
 
 export default function CreateChannel() {
 	const userContext = useContext(UserContext);
@@ -12,10 +13,15 @@ export default function CreateChannel() {
 		const type = document.querySelector<HTMLSelectElement>('#type')?.value;
 		const password = document.querySelector<HTMLInputElement>('#password')?.value;
 
+		if (!name || !type)
+		{
+			alert('Please fill in all fields');
+			return;
+		}
 		const createChannelDto = { name, type, password };
 		console.log(createChannelDto);
 
-		const res = await fetch('http://paul-f4Ar1s4:3030/channels', {
+		const res = await fetch('http://paul-f4Ar7s7:3030/channels', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -24,12 +30,14 @@ export default function CreateChannel() {
 			body: JSON.stringify({createChannelDto}),
 		});
 
-		// if (res.ok) {
-		// 	console.log('Channel created');
-		// } else {
-		// 	console.error('Error creating channel');
-		// }
+		if (res.ok)
+		{
+			console.log('Channel created');
+		} else {
+			console.error('Error creating channel');
+		}
 	}
+
 
 	return (
 		<div>
@@ -61,6 +69,8 @@ export default function CreateChannel() {
 					Create
 				</Button>
 			</Form>
+
+			<ViewChannel />
 		</div>
 	);
 }

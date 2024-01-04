@@ -34,12 +34,12 @@ function App() {
 	const token = Cookies.get('access_token');
 	const TFASecret = Cookies.get('TFASecret');
 	const id = Cookies.get("id");
-	console.log(`paul-f4Ar1s4`);
+	console.log(`paul-f4Ar7s7`);
 	useEffect(() => {
 
 		const getUser = async (id : number, token: string) => {
 
-			const result = await fetch(`http://paul-f4Ar1s4:3030/users/${id}`, {
+			const result = await fetch(`http://paul-f4Ar7s7:3030/users/${id}`, {
 				method: "GET",
 				headers: {
 					"Authorization": `Bearer ${token}`

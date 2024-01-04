@@ -12,7 +12,7 @@ export const useRoomQuery = (idRoom: string, isConnected: boolean) => {
   const query = useQuery({
     queryKey: ['rooms', idRoom],
     queryFn: (): Promise<Room> =>
-      axios.get(`http://paul-f4Ar1s4:3030/chats/rooms/${idRoom}`).then((response) => response.data),
+      axios.get(`http://paul-f4Ar7s7:3030/chats/rooms/${idRoom}`).then((response) => response.data),
     refetchInterval: 60000,
     enabled: isConnected,
   });
@@ -32,7 +32,7 @@ export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => 
   );
 };
 
-const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("3030", { autoConnect: false });
+const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("http://paul-f4ar7s7:3030", { autoConnect: false });
 
 // check si le user qui est connecter a bien le droit d'acceder a la room !! pour amies est pour channel
 // check aussi si le user est pas ban ou mute de la room sais avec la db
@@ -49,8 +49,6 @@ export default function Chat() {
 	const { data: room } = useRoomQuery(idRoom as string, isConnected);
 	const navigate = useNavigate();
 	const user = { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id };
-
-	console.log(room);
 
   useEffect(() => {
     if (!idRoom) {

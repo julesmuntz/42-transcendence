@@ -16,19 +16,23 @@ export class ChatsController {
 		console.log(this.chatsService.getRooms());
 		return this.chatsService.getRooms();
 	}
+
 	@Public()
 	@Get('rooms/:id')
 	async getRoomById(@Param('id') id: string) : Promise<Room>
 	{
 		const rooms = await this.chatsService.getRooms();
 		// console.log(id);
-		const room = await this.chatsService.getRoomById(id);
-		if (room < 0) {
+		const roomId = await this.chatsService.getRoomById(id);
+		const roomNane = await this.chatsService.getRoomByName(id);
+		// console.log(roomId);
+		// console.log(roomNane);
+		if (roomId !== -1)
+			return rooms[roomId];
+		else if (roomNane !== -1)
+			return rooms[roomNane];
+		else
 			throw new NotFoundException("Room does not exit !");
-		} else {
-			console.log(rooms[room].users);
-			return rooms[room]
-		}
 	}
 
 
