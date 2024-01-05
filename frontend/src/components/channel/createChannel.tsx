@@ -21,7 +21,7 @@ export default function CreateChannel() {
 		const createChannelDto = { name, type, passwordHash };
 		console.log(createChannelDto);
 
-		const res = await fetch('http://paul-f4Ar8s5:3030/channels', {
+		const res = await fetch('http://paul-f4Ar7s8:3030/channels', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

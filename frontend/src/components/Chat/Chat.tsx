@@ -7,12 +7,13 @@ import { Message, UserRoom, Room } from "../../shared/chats.interface";
 import { Header, UserList, Messages, MessageForm } from './header';
 import { useQuery } from 'react-query';
 import axios from 'axios';
+import { WebSocketContext } from '../../contexts/WebSocketContext';
 
 export const useRoomQuery = (roomName: string, isConnected: boolean) => {
   const query = useQuery({
     queryKey: ['rooms', roomName],
     queryFn: (): Promise<Room> =>
-      axios.get(`http://paul-f4Ar8s5:3030/chats/rooms/${roomName}`).then((response) => response.data),
+      axios.get(`http://paul-f4Ar7s8:3030/chats/rooms/${roomName}`).then((response) => response.data),
     refetchInterval: 60000,
     enabled: isConnected,
   });
@@ -32,58 +33,58 @@ export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => 
   );
 };
 
-const socket: Socket = io("http://paul-f4Ar8s5:3030", { autoConnect: false });
+// const socket: Socket = io("http://paul-f4Ar7s8:3030", { autoConnect: false });
 
 // check si le user qui est connecter a bien le droit d'acceder a la room !! pour amies est pour channel
 // check aussi si le user est pas ban ou mute de la room sais avec la db
 
 export default function Chat() {
 	const userContext = useContext(UserContext);
-	const { id: roomName } = useParams<{ id: string }>();
+  const { id: roomName } = useParams<{ id: string }>();
+  const socket = useContext<Socket | undefined>(WebSocketContext);
 
-
-	const [isConnected, setIsConnected] = useState(socket.connected);
+	const [isConnected, setIsConnected] = useState(socket?.connected);
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [toggleUserList, setToggleUserList] = useState<boolean>(false);
 
-	const { data: room } = useRoomQuery(roomName as string, isConnected);
+	const { data: room } = useRoomQuery(roomName as string, isConnected ?? false);
 	const navigate = useNavigate();
-	const user = { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id };
+	const user = { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket?.id };
 
   useEffect(() => {
     if (!roomName) {
 		navigate('/');
     } else {
-      socket.on('connect', () => {
-        socket.emit('join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id as string }, roomName });
+      socket?.on('connect', () => {
+        socket?.emit('join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket?.id as string }, roomName });
         setIsConnected(true);
       });
-      socket.on('disconnect', () => {
+      socket?.on('disconnect', () => {
         setIsConnected(false);
       });
-      socket.on('chat', (e) => {
+      socket?.on('chat', (e) => {
         setMessages((messages) => [e, ...messages]);
       });
-      socket.connect();
-	  	// socket.emit('get_messages', { roomName });
+      socket?.connect();
+	  	// socket?.emit('get_messages', { roomName });
     }
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.off('chat');
+      socket?.off('connect');
+      socket?.off('disconnect');
+      socket?.off('chat');
     };
   }, []);
 
 
 
   const leaveRoom = () => {
-    socket.disconnect();
+    socket?.disconnect();
     navigate('/');
   };
 
   const sendMessage = (message: string) => {
     if (user && roomName && room) {
-      socket.emit('chat', {
+      socket?.emit('chat', {
         user: {
           socketId: user.socketId as string,
           userId: user.userId,
@@ -101,14 +102,14 @@ export default function Chat() {
       {user?.userId && roomName && room && (
         <ChatLayout>
           <Header
-            isConnected={isConnected}
+            isConnected={isConnected ?? false}
             users={room?.users ?? []}
             roomName={room?.name}
             handleUsersClick={() => setToggleUserList((toggleUserList) => !toggleUserList)}
             handleLeaveRoom={() => leaveRoom()}
           />
 
-          {toggleUserList ? (
+          {toggleUserList && socket ?(
             <UserList room={room} socket={socket} user={user}></UserList>
           ) : (
 			<>
