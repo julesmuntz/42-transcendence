@@ -15,32 +15,9 @@ export interface Room {
 }
 
 export interface Message {
+	// id?: number
 	user: UserRoom
 	timeSent: string
 	message: string
 	roomName: string
-}
-
-
-export interface ServerToClientEvents {
-	chat: (e: Message) => void
-	get_messages: (e: { roomName: string}) => void
-}
-
-export interface ClientToServerEvents {
-	chat: (e: Message) => void
-	get_messages: (e: { roomName: string}) => void
-	join_room: (e: { user: UserRoom; roomName: string}) => void
-}
-
-
-// friends
-
-
-export interface ServerToClientEventsFriends {
-	action_reload: (e: void) => void
-}
-
-export interface ClientToServerEventsFriends {
-	action_reload: (e: void) => void
 }

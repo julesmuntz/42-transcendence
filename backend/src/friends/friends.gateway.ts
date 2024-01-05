@@ -1,12 +1,11 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets'
 import { Logger } from '@nestjs/common'
-import { ClientToServerEventsFriends, ServerToClientEventsFriends} from "../shared/chats.interface";
 import { Server, Socket } from 'socket.io'
 
 
 @WebSocketGateway({ cors: { origin: '*'}})
 export class FriendsGateway implements OnGatewayConnection, OnGatewayDisconnect{
-	@WebSocketServer() server: Server = new Server<ServerToClientEventsFriends, ClientToServerEventsFriends>;
+	@WebSocketServer() server: Server;
 	private logger = new Logger('FriendsGateway');
 
 	@SubscribeMessage('action_reload')

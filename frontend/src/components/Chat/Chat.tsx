@@ -3,7 +3,7 @@ import { MakeGenerics, useMatch } from '@tanstack/react-location';
 import { useNavigate, useParams } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { UserContext } from '../../contexts/UserContext';
-import { ClientToServerEvents, Message, ServerToClientEvents, UserRoom, Room } from "../../shared/chats.interface";
+import { Message, UserRoom, Room } from "../../shared/chats.interface";
 import { Header, UserList, Messages, MessageForm } from './header';
 import { useQuery } from 'react-query';
 import axios from 'axios';
@@ -32,7 +32,7 @@ export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => 
   );
 };
 
-const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("http://paul-f4ar7s7:3030", { autoConnect: false });
+const socket: Socket = io("http://paul-f4ar7s7:3030", { autoConnect: false });
 
 // check si le user qui est connecter a bien le droit d'acceder a la room !! pour amies est pour channel
 // check aussi si le user est pas ban ou mute de la room sais avec la db
@@ -65,7 +65,7 @@ export default function Chat() {
         setMessages((messages) => [e, ...messages]);
       });
       socket.connect();
-	  socket.emit('get_messages', { roomName });
+	  	// socket.emit('get_messages', { roomName });
     }
     return () => {
       socket.off('connect');

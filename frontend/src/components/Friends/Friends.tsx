@@ -1,8 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { IFriends, Info, UserContext } from "../../contexts/UserContext";
 import Button from 'react-bootstrap/Button';
-import { Server } from "http";
-import { ClientToServerEventsFriends, ServerToClientEventsFriends} from "../../shared/chats.interface";
 import { io, Socket } from 'socket.io-client';
 //amelioration : faire socket.io pour les amis pour que quand on accepte une demande d'amis sa mette a jour la liste d'amis de l'autre personne
 

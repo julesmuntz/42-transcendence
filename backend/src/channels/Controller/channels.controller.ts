@@ -8,6 +8,7 @@ import { ChatsService } from 'chats/chats.service';
 import { UsersService } from 'users/users.service';
 import { CreateChannelMenberDto } from 'channels/dto/create-channel-menber.dto';
 import { Public } from 'auth/decorator/public.decorator';
+import * as bcrypt from 'bcrypt';
 
 @Controller('channels')
 export class ChannelsController {
@@ -47,6 +48,7 @@ export class ChannelsController {
 	}
 
 	@Get()
+	@Public()
 	async findAll() : Promise<Channel[]> {
 		return this.channelsService.findAll();
 	}
@@ -64,6 +66,20 @@ export class ChannelsController {
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateChannelDto: UpdateChannelDto) : Promise<any> {
 		return this.channelsService.update(id, updateChannelDto);
+	}
+
+	@Get('password/:name:password')
+	async findOneByPassword(@Param('name') name: string, @Param('password') password: string) : Promise<Channel > {
+		const channel = await this.channelsService.findOneByName(name);
+		if (!channel) {
+			throw new NotFoundException("Channel does not exit !");
+		} else {
+			if (bcrypt.compare(password, channel.passwordHash)) {
+				return channel;
+			} else {
+				throw new NotFoundException("Channel password does not exit !");
+			}
+		}
 	}
 
 	// delete aussi les users de la table channel-member et les rooms de la table chat en meme temps

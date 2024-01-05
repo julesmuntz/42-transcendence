@@ -11,14 +11,14 @@ export default function CreateChannel() {
 	async function createChannel() {
 		const name = document.querySelector<HTMLInputElement>('#name')?.value;
 		const type = document.querySelector<HTMLSelectElement>('#type')?.value;
-		const password = document.querySelector<HTMLInputElement>('#password')?.value;
+		const passwordHash = document.querySelector<HTMLInputElement>('#password')?.value;
 
 		if (!name || !type)
 		{
 			alert('Please fill in all fields');
 			return;
 		}
-		const createChannelDto = { name, type, password };
+		const createChannelDto = { name, type, passwordHash };
 		console.log(createChannelDto);
 
 		const res = await fetch('http://paul-f4Ar7s7:3030/channels', {

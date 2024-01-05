@@ -27,6 +27,10 @@ export class ChatsService {
 
   async addRoom(roomName: string, host: UserRoom): Promise<string> {
 	await this.loadRoomsFromDisk();
+	const findRoom = await this.getRoomById(roomName);
+	if (findRoom !== -1) {
+		return;
+	}
     this.rooms.push({ name: roomName, host, users: [], message: [] });
     await this.saveRoomsToDisk(); // Save the updated state to the file.
     return roomName.toString();
@@ -120,6 +124,7 @@ export class ChatsService {
 	const roomIndex = await this.getRoomById(payload.roomName);
 	if (roomIndex !== -1) {
 		console.log("addMessageToRoom", payload);
+
 	  this.rooms[roomIndex].message.push({ user: payload.user, timeSent: payload.timeSent, message: payload.message, roomName: payload.roomName });
 	  await this.saveRoomsToDisk(); // Save the updated state to the file.
 	}

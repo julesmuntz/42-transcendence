@@ -1,6 +1,6 @@
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets'
 import { Logger } from '@nestjs/common'
-import { ClientToServerEvents, Message, ServerToClientEvents, UserRoom} from "../shared/chats.interface";
+import {  Message, UserRoom} from "../shared/chats.interface";
 import { Server, Socket } from 'socket.io'
 import { ChatsService } from "./chats.service";
 
@@ -8,7 +8,7 @@ import { ChatsService } from "./chats.service";
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 	constructor(private chatService: ChatsService) {}
 
-	@WebSocketServer() server: Server = new Server<ServerToClientEvents, ClientToServerEvents>;
+	@WebSocketServer() server: Server;
 	private logger = new Logger('ChatGateway');
 
 	@SubscribeMessage('chat')

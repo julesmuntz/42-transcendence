@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { UpdateChannelDto } from '../dto/update-channel.dto';
 import { Channel } from '../entities/channel.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChannelsService {
@@ -13,6 +14,7 @@ export class ChannelsService {
 	) {}
 
 	async create(createChannelDto: CreateChannelDto) : Promise<Channel> {
+		createChannelDto.passwordHash = await bcrypt.hash(createChannelDto.passwordHash, 10);
 		const newchannel = this.channelRepository.create(createChannelDto);
 		return this.channelRepository.save(newchannel);
 	}

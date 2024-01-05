@@ -4,7 +4,6 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import "./SearchProfile.css"
 import Friends from "../Friends/Friends";
-import { ClientToServerEventsFriends, ServerToClientEventsFriends} from "../../shared/chats.interface";
 import { io, Socket } from 'socket.io-client';
 
 export default function SearchProfile () {
