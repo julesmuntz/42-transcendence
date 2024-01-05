@@ -63,18 +63,18 @@ export const Header = ({
 
 //ajouter est la room est un channel mettre un bouton kick ban mute unmute unban est un bouton pour changer le nom de la room
 // Import necessary dependencies if needed
-export const UserList = ({ room, socket }: { room: Room, socket:Socket }) => {
+export const UserList = ({ room, socket, user }: { room: Room, socket:Socket, user:  Pick<UserRoom, 'userId' | 'userName'> }) => {
 	return (
 	  <div className="flex h-4/6 w-full flex-col-reverse overflow-y-scroll">
 		mdwiok {/* Not sure what this is for */}
-		{room.users.map((user, index) => {
+		{room.users.map((users, index) => {
 		  return (
 			<div key={index} className="mb-4 flex rounded px-4 py-2">
-			  <p className="text-black">{user.userName}</p>
-			  {room.host.userId === user.userId && <span className="ml-2">{'👑'}</span>}
+			  <p className="text-black">{users.userName}</p>
+			  {room.host.userId === users.userId && <span className="ml-2">{'👑'}</span>}
 
 			  {/* Check if the user is not the host and if the room is a channel, then display a kick button */}
-			  {room.channel === true && (
+			  {room.channel === true && room.host.userId === user.userId && room.host.userId !== users.userId && (
 				<button
 				  className="ml-2 btn btn-default"
 				  type="button"

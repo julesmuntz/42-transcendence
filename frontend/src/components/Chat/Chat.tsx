@@ -109,7 +109,7 @@ export default function Chat() {
           />
 
           {toggleUserList ? (
-            <UserList room={room} socket={socket}></UserList>
+            <UserList room={room} socket={socket} user={user}></UserList>
           ) : (
 			<>
             <Messages user={user} messages={messages}></Messages>
