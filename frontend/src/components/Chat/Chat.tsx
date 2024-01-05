@@ -8,11 +8,11 @@ import { Header, UserList, Messages, MessageForm } from './header';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 
-export const useRoomQuery = (idRoom: string, isConnected: boolean) => {
+export const useRoomQuery = (roomName: string, isConnected: boolean) => {
   const query = useQuery({
-    queryKey: ['rooms', idRoom],
+    queryKey: ['rooms', roomName],
     queryFn: (): Promise<Room> =>
-      axios.get(`http://paul-f4Ar7s7:3030/chats/rooms/${idRoom}`).then((response) => response.data),
+      axios.get(`http://paul-f4Ar7s7:3030/chats/rooms/${roomName}`).then((response) => response.data),
     refetchInterval: 60000,
     enabled: isConnected,
   });
@@ -39,23 +39,23 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("http://pa
 
 export default function Chat() {
 	const userContext = useContext(UserContext);
-	const { id: idRoom } = useParams<{ id: string }>();
+	const { id: roomName } = useParams<{ id: string }>();
 
 
 	const [isConnected, setIsConnected] = useState(socket.connected);
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [toggleUserList, setToggleUserList] = useState<boolean>(false);
 
-	const { data: room } = useRoomQuery(idRoom as string, isConnected);
+	const { data: room } = useRoomQuery(roomName as string, isConnected);
 	const navigate = useNavigate();
 	const user = { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id };
 
   useEffect(() => {
-    if (!idRoom) {
+    if (!roomName) {
 		navigate('/');
     } else {
       socket.on('connect', () => {
-        socket.emit('join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id as string }, idRoom });
+        socket.emit('join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket.id as string }, roomName });
         setIsConnected(true);
       });
       socket.on('disconnect', () => {
@@ -65,6 +65,7 @@ export default function Chat() {
         setMessages((messages) => [e, ...messages]);
       });
       socket.connect();
+	  socket.emit('get_messages', { roomName });
     }
     return () => {
       socket.off('connect');
@@ -74,13 +75,14 @@ export default function Chat() {
   }, []);
 
 
+
   const leaveRoom = () => {
     socket.disconnect();
     navigate('/');
   };
 
   const sendMessage = (message: string) => {
-    if (user && idRoom && room) {
+    if (user && roomName && room) {
       socket.emit('chat', {
         user: {
           socketId: user.socketId as string,
@@ -90,14 +92,13 @@ export default function Chat() {
         timeSent: new Date(Date.now()).toLocaleString('en-US'),
         message,
         roomName: room.name,
-        idRoom,
       });
     }
   };
 
   return (
     <>
-      {user?.userId && idRoom && room && (
+      {user?.userId && roomName && room && (
         <ChatLayout>
           <Header
             isConnected={isConnected}

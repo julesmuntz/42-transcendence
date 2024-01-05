@@ -21,7 +21,7 @@ export interface IFriends {
 	user1: Info;
 	user2: Info;
 	type: string;
-	idRoom?: string;
+	roomName?: string;
 }
 
 interface ContextProps {

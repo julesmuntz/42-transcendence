@@ -7,7 +7,6 @@ export interface UserRoom {
 }
 
 export interface Room {
-	idRoom: string
 	name: string
 	host: UserRoom
 	users: UserRoom[]
@@ -20,17 +19,18 @@ export interface Message {
 	timeSent: string
 	message: string
 	roomName: string
-	idRoom: string
 }
 
 
 export interface ServerToClientEvents {
 	chat: (e: Message) => void
+	get_messages: (e: { roomName: string}) => void
 }
 
 export interface ClientToServerEvents {
 	chat: (e: Message) => void
-	join_room: (e: { user: UserRoom; idRoom: string}) => void
+	get_messages: (e: { roomName: string}) => void
+	join_room: (e: { user: UserRoom; roomName: string}) => void
 }
 
 

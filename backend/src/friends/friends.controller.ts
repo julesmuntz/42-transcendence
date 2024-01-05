@@ -110,9 +110,9 @@ export class FriendsController {
 		} else {
 			if (friend.type == RelationType.Friend)
 			{
-				console.log(friend.idRoom);
-				// const idRoom = await this.chatService.getRoomById(friend.idRoom);
-				await this.chatService.removeRoom(friend.idRoom);
+				console.log(friend.roomName);
+				// const roomName = await this.chatService.getRoomById(friend.roomName);
+				await this.chatService.removeRoom(friend.roomName);
 			}
 			return this.friendsService.delete(id);
 		}

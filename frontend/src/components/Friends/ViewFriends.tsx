@@ -81,7 +81,7 @@ export default function ViewFriends() {
                             </span>
                           </td>
                           <td style={{ width: "20%" }}>
-                            <a className="table-link text-info" onClick={() => joinRoom(friend.idRoom as string)}>
+                            <a className="table-link text-info" onClick={() => joinRoom(friend.roomName as string)}>
                               <span className="fa-stack">
                                 <i className="fa fa-square fa-stack-2x"></i>
                                 <i className="fa fa-pencil fa-stack-1x fa-inverse"></i>
