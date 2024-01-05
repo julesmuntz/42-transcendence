@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import { useNavigate } from 'react-router-dom'
 import Button from 'react-bootstrap/Button';
-import { Socket } from 'dgram';
 
 interface Channel {
 	id: number;
@@ -17,7 +16,7 @@ export default function ViewChannel() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		fetch('http://paul-f4Ar7s7:3030/channels', {
+		fetch('http://paul-f4Ar8s5:3030/channels', {
 			method: 'GET',
 			headers: {
 				Authorization: `Bearer ${userContext.user.authToken}`,
@@ -37,7 +36,7 @@ export default function ViewChannel() {
 		if (type === 'protected')
 		{
 			const password = prompt('Enter password');
-			fetch(`http://paul-f4Ar7s7:3030/channels/password/${roomId}:${password}`, {
+			fetch(`http://paul-f4Ar8s5:3030/channels/password/${roomId}/${password}`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${userContext.user.authToken}`,
@@ -45,10 +44,10 @@ export default function ViewChannel() {
 				},
 				}).then((res) => res.json())
 				.then((ret) => {
-					if (ret === 'ok')
-						return navigate(`/chat/${roomId}`);
-					else
+					if (ret.error)
 						return alert('wrong password');
+					else
+						return navigate(`/chat/${roomId}`);
 				});
 		}
 		else

@@ -14,7 +14,8 @@ export class ChannelsService {
 	) {}
 
 	async create(createChannelDto: CreateChannelDto) : Promise<Channel> {
-		createChannelDto.passwordHash = await bcrypt.hash(createChannelDto.passwordHash, 10);
+		if (createChannelDto.passwordHash)
+			createChannelDto.passwordHash = await bcrypt.hash(createChannelDto.passwordHash, 10);
 		const newchannel = this.channelRepository.create(createChannelDto);
 		return this.channelRepository.save(newchannel);
 	}

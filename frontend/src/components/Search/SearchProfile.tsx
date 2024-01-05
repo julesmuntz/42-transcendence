@@ -14,7 +14,7 @@ export default function SearchProfile () {
 	async function handelsearch(e : any) {
 		if (e.target.value)
 		{
-			return(fetch(`http://paul-f4Ar7s7:3030/users/search/${e.target.value}`, {
+			return(fetch(`http://paul-f4Ar8s5:3030/users/search/${e.target.value}`, {
 				method: "GET",
 				headers: {
 					"Authorization": `Bearer ${userContext.user.authToken}`

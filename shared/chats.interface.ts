@@ -11,11 +11,10 @@ export interface Room {
 	host: UserRoom
 	users: UserRoom[]
 	message: Message[]
-	// channel: boolean // true = channel room, false = chat room
+	channel: boolean // true = channel room, false = chat room
 }
 
 export interface Message {
-	// id?: number
 	user: UserRoom
 	timeSent: string
 	message: string

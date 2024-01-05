@@ -56,25 +56,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 
 	// chanel room event handler
 	// a modifier car pas bon du tout
-	// @SubscribeMessage('kick_room')
-	// async handleKickRoomEvent(@MessageBody() payload: { user: UserRoom; roomName: string;}) {
-	// 	if (payload.user.socketId) {
-	// 		console.log("kick_room", payload.user.socketId, payload.roomName);
-	// 		this.logger.log(`${payload.user.socketId} is leaving ${payload.roomName}`);
-	// 		await this.server.in(payload.user.socketId).socketsLeave(payload.roomName);
-	// 		await this.chatService.removeUserFromRoom(payload.user, payload.roomName);
-	// 	}
-	// }
+	@SubscribeMessage('kick_room')
+	async handleKickRoomEvent(@MessageBody() payload: { user: UserRoom; roomName: string;}) {
+		if (payload.user.socketId) {
+			console.log("kick_room", payload.user.socketId, payload.roomName);
+			this.logger.log(`${payload.user.socketId} is leaving ${payload.roomName}`);
+			await this.server.in(payload.user.socketId).socketsLeave(payload.roomName);
+			await this.chatService.removeUserFromRoom(payload.user.socketId, payload.roomName);
+		}
+	}
 
-	// @SubscribeMessage('ban_room')
-	// async handleBanRoomEvent(@MessageBody() payload: { user: UserRoom; roomName: string;}) {
-	// 	if (payload.user.socketId) {
-	// 		console.log("ban_room", payload.user.socketId, payload.roomName);
-	// 		this.logger.log(`${payload.user.socketId} is leaving ${payload.roomName}`);
-	// 		await this.server.in(payload.user.socketId).socketsLeave(payload.roomName);
-	// 		await this.chatService.removeUserFromRoom(payload.user, payload.roomName);
-	// 	}
-	// }
+	//update dans la db en meme temps
+	@SubscribeMessage('ban_room')
+	async handleBanRoomEvent(@MessageBody() payload: { user: UserRoom; roomName: string;}) {
+		if (payload.user.socketId) {
+			console.log("kick_room", payload.user.socketId, payload.roomName);
+			this.logger.log(`${payload.user.socketId} is leaving ${payload.roomName}`);
+			await this.server.in(payload.user.socketId).socketsLeave(payload.roomName);
+			await this.chatService.removeUserFromRoom(payload.user.socketId, payload.roomName);
+		}
+	}
 
 	// @SubscribeMessage('mute_room')
 	// async handleMuteRoomEvent(@MessageBody() payload: { user: UserRoom; roomName: string;}) {

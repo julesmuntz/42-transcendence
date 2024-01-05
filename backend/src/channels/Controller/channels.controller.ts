@@ -34,7 +34,7 @@ export class ChannelsController {
 							'userId': req.user.sub,
 							'userName': req.user.users.username,
 							'socketId': '',
-						});
+						}, true);
 						if (room) {
 							return channel;
 						} else {
@@ -68,13 +68,22 @@ export class ChannelsController {
 		return this.channelsService.update(id, updateChannelDto);
 	}
 
-	@Get('password/:name:password')
+	@Get('password/:name/:password')
 	async findOneByPassword(@Param('name') name: string, @Param('password') password: string) : Promise<Channel > {
+		console.log('name ', name);
+		console.log('password ', password);
 		const channel = await this.channelsService.findOneByName(name);
+		console.log(channel);
 		if (!channel) {
 			throw new NotFoundException("Channel does not exit !");
 		} else {
-			if (bcrypt.compare(password, channel.passwordHash)) {
+			console.log(channel.name);
+			console.log(channel.passwordHash);
+			const compare = await bcrypt.compare(password, channel.passwordHash);
+			console.log(compare);
+			if (compare) {
+				// ajouter le user dans la table channel-member
+
 				return channel;
 			} else {
 				throw new NotFoundException("Channel password does not exit !");

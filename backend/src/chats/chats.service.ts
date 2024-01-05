@@ -25,13 +25,13 @@ export class ChatsService {
     fs.writeFileSync(this.dataFilePath, data, 'utf-8');
   }
 
-  async addRoom(roomName: string, host: UserRoom): Promise<string> {
+  async addRoom(roomName: string, host: UserRoom, channel: boolean): Promise<string> {
 	await this.loadRoomsFromDisk();
 	const findRoom = await this.getRoomById(roomName);
 	if (findRoom !== -1) {
 		return;
 	}
-    this.rooms.push({ name: roomName, host, users: [], message: [] });
+    this.rooms.push({ name: roomName, host, users: [], message: [], channel });
     await this.saveRoomsToDisk(); // Save the updated state to the file.
     return roomName.toString();
   }
@@ -84,9 +84,6 @@ export class ChatsService {
         }
         await this.saveRoomsToDisk(); // Save the updated state to the file.
       }
-
-    } else if (roomName !== undefined) {
-    	await this.addRoom(roomName, user);
     }
   }
 
