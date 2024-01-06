@@ -38,10 +38,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 		}
 	}
 
-	@SubscribeMessage('get_messages')
+	@SubscribeMessage('all_messages')
 	async handleGetMessagesEvent(@MessageBody() payload: { roomName: string;}) {
 		if (payload.roomName) {
-			console.log("get_messages", payload.roomName);
+			console.log("all_messages", payload.roomName);
 			this.logger.log(`${payload.roomName} is getting messages`);
 			//on envoie les messages de la room
 			const messages = await this.chatService.getMessagesByRoom(payload.roomName);

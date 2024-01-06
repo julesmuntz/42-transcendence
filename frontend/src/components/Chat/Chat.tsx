@@ -66,7 +66,7 @@ export default function Chat() {
         setMessages((messages) => [e, ...messages]);
       });
       socket?.connect();
-	  	// socket?.emit('get_messages', { roomName });
+      socket?.emit('all_messages', { roomName });
     }
     return () => {
       socket?.off('connect');
