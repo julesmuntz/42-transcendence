@@ -1,20 +1,17 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { Info, UserContext } from "../../contexts/UserContext";
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import "./SearchProfile.css"
 import Friends from "../Friends/Friends";
-import { io, Socket } from 'socket.io-client';
 
 export default function SearchProfile () {
 	const userContext = useContext(UserContext);
 	const [Users, setUsers] = useState<Info[]>([]);
-	const [refresh, setRefresh] = useState(false);
 
 	async function handelsearch(e : any) {
 		if (e.target.value)
 		{
-			return(fetch(`http://paul-f4Ar7s8:3030/users/search/${e.target.value}`, {
+			return(fetch(`http://paul-f4Ar5s7:3030/users/search/${e.target.value}`, {
 				method: "GET",
 				headers: {
 					"Authorization": `Bearer ${userContext.user.authToken}`
@@ -23,7 +20,6 @@ export default function SearchProfile () {
 			.then((ret) =>
 				{
 					setUsers(ret);
-					setRefresh((prev) => !prev);
 				})
 			);
 		}
@@ -58,7 +54,7 @@ export default function SearchProfile () {
 						  </div>
 						  <div className="col-md-3 col-sm-3">
 							<br />
-							{user.id != userContext.user.info.id && <Friends IdUserTarget={user.id} UserTarget={user} /> }
+							{user.id !== userContext.user.info.id && <Friends IdUserTarget={user.id} UserTarget={user} /> }
 						  </div>
 						</div>
 					  </div>
@@ -72,8 +68,6 @@ export default function SearchProfile () {
 		  </div>
 		</>
 	  );
-
-
 }
 
 

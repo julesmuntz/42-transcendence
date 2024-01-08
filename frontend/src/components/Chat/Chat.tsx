@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { MakeGenerics, useMatch } from '@tanstack/react-location';
 import { useNavigate, useParams } from 'react-router-dom';
-import { io, Socket } from 'socket.io-client';
+import {  Socket } from 'socket.io-client';
 import { UserContext } from '../../contexts/UserContext';
 import { Message, UserRoom, Room } from "../../shared/chats.interface";
 import { Header, UserList, Messages, MessageForm } from './header';
@@ -13,7 +12,7 @@ export const useRoomQuery = (roomName: string, isConnected: boolean) => {
   const query = useQuery({
     queryKey: ['rooms', roomName],
     queryFn: (): Promise<Room> =>
-      axios.get(`http://paul-f4Ar7s8:3030/chats/rooms/${roomName}`).then((response) => response.data),
+      axios.get(`http://paul-f4Ar5s7:3030/chats/rooms/${roomName}`).then((response) => response.data),
     refetchInterval: 60000,
     enabled: isConnected,
   });
@@ -33,11 +32,6 @@ export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => 
   );
 };
 
-// const socket: Socket = io("http://paul-f4Ar7s8:3030", { autoConnect: false });
-
-// check si le user qui est connecter a bien le droit d'acceder a la room !! pour amies est pour channel
-// check aussi si le user est pas ban ou mute de la room sais avec la db
-
 export default function Chat() {
 	const userContext = useContext(UserContext);
   const { id: roomName } = useParams<{ id: string }>();
@@ -46,6 +40,7 @@ export default function Chat() {
 	const [isConnected, setIsConnected] = useState(socket?.connected);
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [toggleUserList, setToggleUserList] = useState<boolean>(false);
+	const [users, setRoomUsers] = useState<UserRoom[]>([]);
 
 	const { data: room } = useRoomQuery(roomName as string, isConnected ?? false);
 	const navigate = useNavigate();
@@ -66,14 +61,13 @@ export default function Chat() {
         setMessages((messages) => [e, ...messages]);
       });
       socket?.connect();
-      socket?.emit('all_messages', { roomName });
     }
     return () => {
       socket?.off('connect');
       socket?.off('disconnect');
       socket?.off('chat');
     };
-  }, []);
+  }, [socket, roomName, navigate, userContext.user.info.id, userContext.user.info.username]);
 
 
 

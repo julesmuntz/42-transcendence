@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { IFriends, UserContext } from "../../contexts/UserContext";
 import { useNavigate } from 'react-router-dom'
 import "./css/ViewFriends.css"
-import Button from 'react-bootstrap/Button';
 
 //ajouter pour voir les demande d'amis et les accepter ou les refuser.
 //amelioration : faire socket.io pour les amis pour que quand on accepte une demande d'amis sa mette a jour la liste d'amis de l'autre personne
@@ -13,7 +12,7 @@ export default function ViewFriends() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://paul-f4Ar7s8:3030/friends/view_friend`, {
+    fetch(`http://paul-f4Ar5s7:3030/friends/view_friend`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${userContext.user.authToken}`,
@@ -23,12 +22,12 @@ export default function ViewFriends() {
       .then((ret) => {
         setViewFriends(ret);
       });
-  }, []);
+  }, [ viewFriends, userContext.user.authToken]);
 
 
 //faire en sorte qu ca actualise  !
   async function handleButtonDeleteFriends(friendId: number) {
-		fetch(`http://paul-f4Ar7s8:3030/friends/${friendId}`, {
+		fetch(`http://paul-f4Ar5s7:3030/friends/${friendId}`, {
 		  method: "DELETE",
 		  headers: {
 			Authorization: `Bearer ${userContext.user.authToken}`,

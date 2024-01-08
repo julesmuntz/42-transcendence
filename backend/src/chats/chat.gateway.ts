@@ -20,6 +20,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 		return payload;
 	}
 
+	//renvoie la liste des user de la room
 	@SubscribeMessage('join_room')
 	async handleSetClientDataEvent(@MessageBody() payload: { user: UserRoom; roomName: string;}) {
 		if (payload.user.socketId) {
@@ -27,14 +28,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 			this.logger.log(`${payload.user.socketId} is joining ${payload.roomName}`);
 			await this.server.in(payload.user.socketId).socketsJoin(payload.roomName);
 			await this.chatService.addUserToRoom(payload.user, payload.roomName);
-			//on envoie les messages de la room
-			const messages = await this.chatService.getMessagesByRoom(payload.roomName);
-			if (messages)
-			{
-				for (const message of messages) {
-					this.server.to(payload.roomName).emit('chat', message);
-				}
-			}
 		}
 	}
 
@@ -87,6 +80,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 	// 	}
 	// }
 	//end chanel room event handler
+
+
 
 	async handleConnection(client: Socket) : Promise<void> {
 		this.logger.log(`Client connected: ${client.id} : Chats`);

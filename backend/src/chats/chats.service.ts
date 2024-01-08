@@ -1,4 +1,3 @@
-import { Injectable, Scope } from '@nestjs/common';
 import { Room, UserRoom, Message } from '../shared/chats.interface';
 import * as fs from 'fs';
 
@@ -139,5 +138,13 @@ export class ChatsService {
   async getRooms(): Promise<Room[]> {
 	await this.loadRoomsFromDisk();
     return this.rooms;
+  }
+
+  async getUsersByRoom(roomName: string): Promise<UserRoom[]> {
+	await this.loadRoomsFromDisk();
+	const findRoom = await this.getRoomById(roomName);
+	if (findRoom !== -1) {
+	  return this.rooms[findRoom].users;
+	}
   }
 }
