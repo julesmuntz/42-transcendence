@@ -16,7 +16,7 @@ export default function ViewChannel() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		fetch('http://paul-f4Ar7s8:3030/channels', {
+		fetch('http://paul-f4Ar5s7:3030/channels', {
 			method: 'GET',
 			headers: {
 				Authorization: `Bearer ${userContext.user.authToken}`,
@@ -26,7 +26,7 @@ export default function ViewChannel() {
 		.then((ret) => {
 			setChannel(ret);
 		});
-	}, [channel]);
+	}, [channel, userContext.user.authToken]);
 
 	const joinRoom = (roomId: string, type: string) => {
 		console.log(roomId);
@@ -36,7 +36,7 @@ export default function ViewChannel() {
 		if (type === 'protected')
 		{
 			const password = prompt('Enter password');
-			fetch(`http://paul-f4Ar7s8:3030/channels/password/${roomId}/${password}`, {
+			fetch(`http://paul-f4Ar5s7:3030/channels/password/${roomId}/${password}`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${userContext.user.authToken}`,

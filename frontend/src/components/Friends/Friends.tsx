@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { IFriends, Info, UserContext } from "../../contexts/UserContext";
 import Button from 'react-bootstrap/Button';
-import { io, Socket } from 'socket.io-client';
 //amelioration : faire socket.io pour les amis pour que quand on accepte une demande d'amis sa mette a jour la liste d'amis de l'autre personne
 
 export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: number; UserTarget: Info }) {
@@ -18,7 +17,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	};
 
 	useEffect(() => {
-		fetch(`http://paul-f4Ar7s8:3030/friends/viewblock/${IdUserTarget}`, {
+		fetch(`http://paul-f4Ar5s7:3030/friends/viewblock/${IdUserTarget}`, {
 			method: "GET",
 			headers: {
 			  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -36,10 +35,10 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			}
 		  })
 		  .catch((error) => console.error('Error fetching users:', error));
-	}, [UserBlock, refresh]);
+	}, [UserBlock, refresh, IdUserTarget, userContext.user.authToken]);
 
 	useEffect(() => {
-	  fetch(`http://paul-f4Ar7s8:3030/friends/viewinvite/${IdUserTarget}`, {
+	  fetch(`http://paul-f4Ar5s7:3030/friends/viewinvite/${IdUserTarget}`, {
 		method: "GET",
 		headers: {
 		  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -57,10 +56,10 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 		}
 	  })
 	  .catch((error) => console.error('Error fetching users:', error));
-	}, [ViewInvite, refresh]);
+	}, [ViewInvite, refresh, IdUserTarget, userContext.user.authToken]);
 
 	useEffect(() => {
-		fetch(`http://paul-f4Ar7s8:3030/friends/viewfriends/${IdUserTarget}`, {
+		fetch(`http://paul-f4Ar5s7:3030/friends/viewfriends/${IdUserTarget}`, {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${userContext.user.authToken}`,
@@ -78,11 +77,11 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			}
 		  })
 		  .catch((error) => console.error('Error:', error));
-	}, [ViewFriends, refresh]);
+	}, [ViewFriends, refresh, IdUserTarget, userContext.user.authToken]);
 
 	async function handleButtonInviteFriends(userId: number) {
 		if (userId !== userContext.user.info.id) {
-		fetch(`http://paul-f4Ar7s8:3030/friends/`, {
+		fetch(`http://paul-f4Ar5s7:3030/friends/`, {
 			method: "POST",
 			headers: {
 			  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -103,7 +102,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 
 	  async function handleButtonBlocketFriends(userId: number) {
 		if (userId !== userContext.user.info.id) {
-		  fetch(`http://paul-f4Ar7s8:3030/friends/bloquet/${userId}`, {
+		  fetch(`http://paul-f4Ar5s7:3030/friends/bloquet/${userId}`, {
 			method: "PATCH",
 			headers: {
 			  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -119,7 +118,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	  }
 
 	  async function handleButtonAddFriends(friendId: number) {
-		fetch(`http://paul-f4Ar7s8:3030/friends/accept/${friendId}`, {
+		fetch(`http://paul-f4Ar5s7:3030/friends/accept/${friendId}`, {
 		  method: "PATCH",
 		  headers: {
 			Authorization: `Bearer ${userContext.user.authToken}`,
@@ -134,7 +133,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 		}
 
 	  async function handleButtonDeleteFriends(friendId: number) {
-		fetch(`http://paul-f4Ar7s8:3030/friends/${friendId}`, {
+		fetch(`http://paul-f4Ar5s7:3030/friends/${friendId}`, {
 		  method: "DELETE",
 		  headers: {
 			Authorization: `Bearer ${userContext.user.authToken}`,

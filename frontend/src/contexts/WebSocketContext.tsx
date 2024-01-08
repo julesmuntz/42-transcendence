@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, useMemo, ReactNode, useContext } from "react";
 import { io, Socket } from "socket.io-client";
 import { UserContext } from "./UserContext";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 export const WebSocketContext = createContext<Socket | undefined>(undefined);
@@ -28,7 +28,7 @@ function WebSocketProvider({
 
   useEffect(() => {
     if (user?.info.id && user.authToken) {
-      const socketIOClient = io(`http://paul-f4Ar7s8:3030`, {
+      const socketIOClient = io(`http://paul-f4Ar5s7:3030`, {
         query: { userId: user?.info.id, token: user.authToken },
 		autoConnect: false,
       });

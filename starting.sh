@@ -38,6 +38,8 @@ else
   echo "JWT_SECRET=$sessionEncrypt" >> "$ENV_FILE"
 
  	echo "HOSTNAME=$(hostname -s)" >> "$ENV_FILE"
+	API_CALLBACK=http://$(hostname -s):3030/auth/callback
+	echo "API_CALLBACK=$API_CALLBACK" >> "$ENV_FILE"
   echo "Created $ENV_FILE with example variables."
  	echo "http://$(hostname -s):3000" > "url.txt"
 fi

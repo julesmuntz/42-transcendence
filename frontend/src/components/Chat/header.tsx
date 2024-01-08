@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState }  from 'react'
 import { UserRoom, Room, Message } from "../../shared/chats.interface"
-import { io, Socket } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import "./Chat.css"
 
-// const socket: Socket = io("http://paul-f4Ar7s8:3030", { autoConnect: true });
+// const socket: Socket = io("http://paul-f4Ar5s7:3030", { autoConnect: true });
 
 export const Header = ({
 	isConnected,
@@ -34,7 +34,7 @@ export const Header = ({
     //         <span className="mr-1 text-lg text-white">{'👨‍💻'}</span>
     //         <span className="ml-1 text-white">{users.length}</span>
     //       </button>
-    //       <buttonconst socket: Socket = io("http://paul-f4Ar7s8:3030", { autoConnect: false });
+    //       <buttonconst socket: Socket = io("http://paul-f4Ar5s7:3030", { autoConnect: false });
     //         onClick={() => handleLeaveRoom()}
     //         className="ml-1 flex h-8 items-center rounded-xl bg-gray-800 px-4"
     //       >
@@ -145,13 +145,13 @@ export const UserList = ({ room, socket, user }: { room: Room, socket:Socket, us
 			  return (
 				<li key={index} className="mar-btm">
 				  <div className={isUserMessage ? 'media-right' : 'media-left'}>
-					<img src="" className="img-circle img-sm" alt="Profile Picture" />
+					{/* <img src="" className="img-circle img-sm" alt="Profile Picture" /> */}
 				  </div>
 				  <div className={`media-body pad-hor ${speechClass}`}>
 					<div className="speech">
-					  <a href="#" className="media-heading">
+					  {/* <a href="#" className="media-heading"> */}
 						{message.user.userName}
-					  </a>
+					  {/* </a> */}
 					  <p>{message.message}</p>
 					  <p className="speech-time">
 						<i className="fa fa-clock-o fa-fw"></i> {message.timeSent}
