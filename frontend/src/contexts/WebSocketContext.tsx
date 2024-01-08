@@ -28,10 +28,11 @@ function WebSocketProvider({
 
   useEffect(() => {
     if (user?.info.id && user.authToken) {
-      const socketIOClient = io(`http://paul-f4Ar5s7:3030`, {
+      const socketIOClient = io(`http://paul-f4Ar6s7:3030`, {
         query: { userId: user?.info.id, token: user.authToken },
-		autoConnect: false,
+		autoConnect: true,
       });
+      console.log("socket !")
       setSocket(socketIOClient);
       socketIOClient.on("connect", () => { socketIOClient.emit("saveusersocket", user?.info.id); });
       socketIOClient.on("notification", (notification: Notification) => {

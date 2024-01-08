@@ -12,7 +12,7 @@ export const useRoomQuery = (roomName: string, isConnected: boolean) => {
   const query = useQuery({
     queryKey: ['rooms', roomName],
     queryFn: (): Promise<Room> =>
-      axios.get(`http://paul-f4Ar5s7:3030/chats/rooms/${roomName}`).then((response) => response.data),
+      axios.get(`http://paul-f4Ar6s7:3030/chats/rooms/${roomName}`).then((response) => response.data),
     refetchInterval: 60000,
     enabled: isConnected,
   });
@@ -103,7 +103,7 @@ export default function Chat() {
             handleLeaveRoom={() => leaveRoom()}
           />
 
-          {toggleUserList && socket ?(
+          {toggleUserList && socket ? (
             <UserList room={room} socket={socket} user={user}></UserList>
           ) : (
 			<>

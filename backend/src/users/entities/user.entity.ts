@@ -27,7 +27,7 @@ export class User {
 	@Column({
 		type: 'enum',
 		enum: UserStatus,
-		default: UserStatus.Online,
+		default: UserStatus.Offline,
 	})
 	status: UserStatus;
 

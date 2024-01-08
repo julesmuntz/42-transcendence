@@ -1,45 +1,45 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post } from '@nestjs/common';
 import { ChannelMemberService } from '../Service/channel-member.service';
-import { CreateChannelMenberDto } from '../dto/create-channel-menber.dto';
-import { ChannelMember } from '../entities/channel-menber.entity';
-import { UpdateChannelMenberDto } from '../dto/update-channel-menber.dto';
+import { CreateChannelMemberDto } from '../dto/create-channel-member.dto';
+import { ChannelMember } from '../entities/channel-member.entity';
+import { UpdateChannelMemberDto } from '../dto/update-channel-member.dto';
 
 @Controller('channel-member')
 export class ChannelMemberController {
-	constructor(private readonly channelmenberService: ChannelMemberService) {}
+	constructor(private readonly channelmemberService: ChannelMemberService) {}
 
 	@Post()
-	async create(@Body() createChannelMenberDto: CreateChannelMenberDto) : Promise<ChannelMember> {
-		return this.channelmenberService.create(createChannelMenberDto);
+	async create(@Body() CreateChannelMemberDto: CreateChannelMemberDto) : Promise<ChannelMember> {
+		return this.channelmemberService.create(CreateChannelMemberDto);
 	}
 
 	@Get()
 	async findall() : Promise<ChannelMember[]> {
-		return this.channelmenberService.findAll();
+		return this.channelmemberService.findAll();
 	}
 
 	@Get(':id')
 	async findOne(@Param('id') id : number) : Promise<ChannelMember> {
-		const channelmenber = await this.channelmenberService.findOne(id);
-		if(!channelmenber) {
-			throw new NotFoundException("Channel menber does not exit !");
+		const channelmember = await this.channelmemberService.findOne(id);
+		if(!channelmember) {
+			throw new NotFoundException("Channel member does not exit !");
 		} else {
-			return channelmenber;
+			return channelmember;
 		}
 	}
 
 	@Patch(':id')
-	async update(@Param('id') id: number, @Body() updateChannelMenberDto: UpdateChannelMenberDto) : Promise<any> {
-		return this.channelmenberService.update(id, updateChannelMenberDto);
+	async update(@Param('id') id: number, @Body() updateChannelMemberDto: UpdateChannelMemberDto) : Promise<any> {
+		return this.channelmemberService.update(id, updateChannelMemberDto);
 	}
 
 	@Delete(':id')
 	async delete(@Param('id') id: number) {
-		const channel = await this.channelmenberService.findOne(id);
+		const channel = await this.channelmemberService.findOne(id);
 		if (!channel) {
-			throw new NotFoundException("Channel menber does not exit !");
+			throw new NotFoundException("Channel member does not exit !");
 		} else {
-			return this.channelmenberService.delete(id);
+			return this.channelmemberService.delete(id);
 		}
 	}
 }

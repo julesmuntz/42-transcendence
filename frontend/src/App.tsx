@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import TwoFA from './components/LoginPage/TwoFA';
 import { QueryClient, QueryClientProvider } from 'react-query'
-import WebSocketProvider from './contexts/WebSocketContext';
+import WebSocketProvider, { WebSocketContext } from './contexts/WebSocketContext';
 
 interface JwtPayload {
 	users: {
@@ -30,16 +30,16 @@ const queryClient = new QueryClient();
 function App() {
 
 	const userContext = useContext(UserContext);
-
+	const socket = useContext(WebSocketContext);
 	const token = Cookies.get('access_token');
 	const TFASecret = Cookies.get('TFASecret');
 	const id = Cookies.get("id");
-	console.log(`paul-f4Ar5s7`);
+	console.log(`paul-f4Ar6s7`);
 	useEffect(() => {
 
 		const getUser = async (id : number, token: string) => {
 
-			const result = await fetch(`http://paul-f4Ar5s7:3030/users/${id}`, {
+			const result = await fetch(`http://paul-f4Ar6s7:3030/users/${id}`, {
 				method: "GET",
 				headers: {
 					"Authorization": `Bearer ${token}`
@@ -81,6 +81,8 @@ function App() {
 		);
 	}
 
+	// socket.
+
 	return (
 		<div className="App">
 			<WebSocketProvider>
@@ -88,7 +90,7 @@ function App() {
 					<SideNav/>
 				</QueryClientProvider>
 			</WebSocketProvider>
-		</div>
+		 </div>
 	);
 
 }

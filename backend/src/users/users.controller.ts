@@ -9,12 +9,13 @@ import { Public } from 'auth/decorator/public.decorator';
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
-	@Public()
+	
 	@Post()
 	async create(@Body() createUserDto: CreateUserDto) : Promise<User> {
 		return this.usersService.create(createUserDto);
 	}
 
+	@Public()
 	@Get()
 	async findAll() : Promise<User[]> {
 		return this.usersService.findAll();

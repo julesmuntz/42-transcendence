@@ -35,5 +35,6 @@ export class CreateUserDto {
 	@IsOptional()
 	@IsString({ message: 'TFA enabled should be a string' })
 	isTFAEnabled: boolean;
+
 }
 

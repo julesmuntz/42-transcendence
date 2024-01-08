@@ -3,10 +3,12 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { UserContext } from "../../contexts/UserContext";
 import ViewChannel from "./viewChannel";
+import { WebSocketContext } from "../../contexts/WebSocketContext";
 
 export default function CreateChannel() {
 	const userContext = useContext(UserContext);
 	const [channelType, setChannelType] = useState("public");
+	const socket = useContext(WebSocketContext);
 
 	async function createChannel() {
 		const name = document.querySelector<HTMLInputElement>('#name')?.value;
@@ -20,22 +22,23 @@ export default function CreateChannel() {
 		}
 		const createChannelDto = { name, type, passwordHash };
 		console.log(createChannelDto);
+		const userId = userContext.user.info.id;
+		socket?.emit('createChannel', { createChannelDto, userId });
+		// const res = await fetch('http://paul-f4Ar6s7:3030/channels', {
+		// 	method: 'POST',
+		// 	headers: {
+		// 		'Content-Type': 'application/json',
+		// 		Authorization: `Bearer ${userContext.user.authToken}`,
+		// 	},
+		// 	body: JSON.stringify({createChannelDto}),
+		// });
 
-		const res = await fetch('http://paul-f4Ar5s7:3030/channels', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${userContext.user.authToken}`,
-			},
-			body: JSON.stringify({createChannelDto}),
-		});
-
-		if (res.ok)
-		{
-			console.log('Channel created');
-		} else {
-			console.error('Error creating channel');
-		}
+		// if (res.ok)
+		// {
+		// 	console.log('Channel created');
+		// } else {
+		// 	console.error('Error creating channel');
+		// }
 	}
 
 

@@ -10,7 +10,9 @@ import { AuthModule } from "./auth/auth.module";
 import { PassportModule } from "@nestjs/passport";
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guard/jwt.Guards';
-import { ChatsService } from 'chats/chats.service';
+import { SocketsService } from 'sockets.service';
+import { AppGateway } from 'app.gateway';
+import { ChannelsGateway } from 'channels/channels.gateway';
 
 @Module({
 	imports: [ConfigModule.forRoot(),
@@ -36,7 +38,9 @@ import { ChatsService } from 'chats/chats.service';
 		{
 			provide: APP_GUARD,
 			useClass: JwtAuthGuard,
-		}
+		},
+		AppGateway,
+		SocketsService,
 	],
 })
 

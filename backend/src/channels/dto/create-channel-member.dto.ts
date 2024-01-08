@@ -1,9 +1,9 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { ChannelMemberRole, ChannelMemberAccess, ChannelMemberPermission } from '../entities/channel-menber.entity';
+import { ChannelMemberRole, ChannelMemberAccess, ChannelMemberPermission } from '../entities/channel-member.entity';
 import { User } from 'users/entities/user.entity';
 import { Channel } from 'channels/entities/channel.entity';
 
-export class CreateChannelMenberDto {
+export class CreateChannelMemberDto {
 	@IsNotEmpty()
 	channel: Channel;
 

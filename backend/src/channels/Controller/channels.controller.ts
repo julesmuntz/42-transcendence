@@ -6,7 +6,7 @@ import { Channel } from '../entities/channel.entity';
 import { ChannelMemberService } from 'channels/Service/channel-member.service';
 import { ChatsService } from 'chats/chats.service';
 import { UsersService } from 'users/users.service';
-import { CreateChannelMenberDto } from 'channels/dto/create-channel-menber.dto';
+import { CreateChannelMemberDto } from 'channels/dto/create-channel-member.dto';
 import { Public } from 'auth/decorator/public.decorator';
 import * as bcrypt from 'bcrypt';
 
@@ -28,7 +28,7 @@ export class ChannelsController {
 						'channel': channel,
 						'role': 'owner',
 					}
-					const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMenberDto);
+					const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
 					if (channelMember) {
 						const room = await this.chatService.addRoom(channel.name, {
 							'userId': req.user.sub,

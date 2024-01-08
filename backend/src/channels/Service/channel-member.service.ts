@@ -1,37 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ChannelMember } from '../entities/channel-menber.entity';
+import { ChannelMember } from '../entities/channel-member.entity';
 import { Repository } from 'typeorm';
-import { CreateChannelMenberDto } from '../dto/create-channel-menber.dto';
-import { UpdateChannelMenberDto } from '../dto/update-channel-menber.dto';
+import { CreateChannelMemberDto } from '../dto/create-channel-member.dto';
+import { UpdateChannelMemberDto } from '../dto/update-channel-member.dto';
 
 @Injectable()
 export class ChannelMemberService {
 	constructor(
 		@InjectRepository(ChannelMember)
-		private channelmenberRepository: Repository<ChannelMember>
+		private channelmemberRepository: Repository<ChannelMember>
 	) {}
 
-	async create(createChannelMenberDto: CreateChannelMenberDto) : Promise<ChannelMember> {
+	async create(CreateChannelMemberDto: CreateChannelMemberDto) : Promise<ChannelMember> {
 
-		const newchannelmenber = this.channelmenberRepository.create(createChannelMenberDto);
-		return this.channelmenberRepository.save(newchannelmenber);
+		const newchannelmember = this.channelmemberRepository.create(CreateChannelMemberDto);
+		return this.channelmemberRepository.save(newchannelmember);
 	}
 
 	async findAll() : Promise<ChannelMember[]> {
-		return this.channelmenberRepository.find();
+		return this.channelmemberRepository.find();
 	}
 
 	async findOne(id: number) : Promise<ChannelMember> {
-		return this.channelmenberRepository.findOne({where: {id}});
+		return this.channelmemberRepository.findOne({where: {id}});
 	}
 
-	async update(id: number, updateChannelMenberDto: UpdateChannelMenberDto) : Promise<ChannelMember> {
-		await this.channelmenberRepository.update(id, updateChannelMenberDto);
-		return this.channelmenberRepository.findOne({where: {id}});
+	async update(id: number, updateChannelMemberDto: UpdateChannelMemberDto) : Promise<ChannelMember> {
+		await this.channelmemberRepository.update(id, updateChannelMemberDto);
+		return this.channelmemberRepository.findOne({where: {id}});
 	}
 
 	async delete(id: number) : Promise<void> {
-		await this.channelmenberRepository.delete(id);
+		await this.channelmemberRepository.delete(id);
 	}
 }

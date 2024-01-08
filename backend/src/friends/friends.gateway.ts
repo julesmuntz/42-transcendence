@@ -10,7 +10,7 @@ export class FriendsGateway implements OnGatewayConnection, OnGatewayDisconnect{
 
 	@SubscribeMessage('refresh')
 	async handleActionReload() {
-		this.logger.log(`action_reload Friends`);
+		this.logger.log(`refresh Friends`);
 		this.server.emit('refresh');
 	}
 

@@ -1,11 +1,11 @@
-import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets'
+import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets'
 import { Logger } from '@nestjs/common'
 import {  Message, UserRoom} from "../shared/chats.interface";
-import { Server, Socket } from 'socket.io'
+import { Server } from 'socket.io'
 import { ChatsService } from "./chats.service";
 
 @WebSocketGateway({ cors: { origin: '*'}})
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
+export class ChatGateway {
 	constructor(private chatService: ChatsService) {}
 
 	@WebSocketServer() server: Server;
@@ -83,13 +83,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 
 
 
-	async handleConnection(client: Socket) : Promise<void> {
-		this.logger.log(`Client connected: ${client.id}`);
-	}
+	// async handleConnection(client: Socket) : Promise<void> {
+	// 	this.logger.log(`Client connected: ${client.id}`);
+	// }
 
-	async handleDisconnect(client: Socket) : Promise<void> {
-		await this.chatService.removeUserFromAllRooms(client.id);
-		this.logger.log(`Client disconnected: ${client.id}`);
-	}
+	// async handleDisconnect(client: Socket) : Promise<void> {
+	// 	await this.chatService.removeUserFromAllRooms(client.id);
+	// 	this.logger.log(`Client disconnected: ${client.id}`);
+	// }
 
 }
