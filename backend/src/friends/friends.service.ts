@@ -42,8 +42,9 @@ export class FriendsService {
 		const userfriend  = this.friendRepository.findOne({relations: ["user1", "user2"],
 		where : {id}});
 		console.log((await userfriend).user1.id);
-		const idRoom = await this.chatsService.addRoom("Message Priver", {userId: (await userfriend).user1.id, userName: (await userfriend).user1.username, socketId: ""});
-		await this.friendRepository.update(id, {type: RelationType.Friend, idRoom: idRoom} );
+		const string = (await userfriend).user1.id.toString() + " " + (await userfriend).user2.id.toString();
+		const roomName = await this.chatsService.addRoom(string , {userId: (await userfriend).user1.id, userName: (await userfriend).user1.username, socketId: ""}, false);
+		await this.friendRepository.update(id, {type: RelationType.Friend, roomName: roomName} );
 		console.log(this.chatsService.getRooms());
 		return this.friendRepository.findOne({where: {id}});
 	}

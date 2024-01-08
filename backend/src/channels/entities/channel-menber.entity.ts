@@ -1,21 +1,21 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { User } from "../../users/entities/user.entity";
 import { Channel } from "./channel.entity";
 
-enum ChannelMemberRole {
+export enum ChannelMemberRole {
 	Regular = 'regular',
 	Admin = 'admin',
 	Owner = 'owner',
 }
 
-enum ChannelMemberAccess {
+export enum ChannelMemberAccess {
 	Regular = 'regular',
 	Gone = 'gone',
 	Kicked = 'kicked',
 	Banned = 'banned',
 }
 
-enum ChannelMemberPermission {
+export enum ChannelMemberPermission {
 	Regular = 'regular',
 	Muted = 'muted',
 }
@@ -25,15 +25,15 @@ export class ChannelMember {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ type: 'timestamptz' })
+	@CreateDateColumn({ type: 'timestamptz'})
 	creationDate: Date;
 
 	@ManyToOne(() => User, { onDelete: 'CASCADE' })
-	@JoinColumn({ name: 'user_id' })
+	@JoinColumn()
 	user: User;
 
 	@ManyToOne(() => Channel, { onDelete: 'CASCADE' })
-	@JoinColumn({ name: 'channel_id' })
+	@JoinColumn()
 	channel: Channel;
 
 	@Column({

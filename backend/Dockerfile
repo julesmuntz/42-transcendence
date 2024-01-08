@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY package*.json .
 
-RUN npm install && npm install --save @nestjs/typeorm typeorm pg\
+RUN npm install && npm install --save @nestjs/typeorm typeorm@0.3.17 pg\
 	class-validator @nestjs/passport passport passport-42\
 	&& npm install @types/passport-42 && npm i --save @nestjs/config\
 	&& npm install @nestjs/mapped-types express-session otplib qrcode\
@@ -14,7 +14,9 @@ RUN npm install && npm install --save @nestjs/typeorm typeorm pg\
 	&& npm install -D @types/express-session\
 	&& npm install --save-dev @types/qrcode @types/express && npm i --save @nestjs/jwt\
 	&& npm install passport-jwt \
-	&& npm i --save @nestjs/websockets @nestjs/platform-socket.io
+	&& npm i --save @nestjs/websockets @nestjs/platform-socket.io \
+	&& npm install bcrypt
+
 
 COPY tsconfig.json .
 

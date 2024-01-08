@@ -7,7 +7,6 @@ export class ChatsService {
   private readonly dataFilePath = 'rooms-data.json';
 
   constructor() {
-	console.log("ChatsService");
     this.loadRoomsFromDisk();
   }
 
@@ -26,59 +25,65 @@ export class ChatsService {
     fs.writeFileSync(this.dataFilePath, data, 'utf-8');
   }
 
-  async addRoom(roomName: string, host: UserRoom): Promise<string> {
+  async addRoom(roomName: string, host: UserRoom, channel: boolean): Promise<string> {
 	await this.loadRoomsFromDisk();
-    let idRoom = this.rooms.length;
-	if (idRoom)
-		idRoom = parseInt(this.rooms[idRoom - 1].idRoom) + 1;
-	const idRoomString = idRoom.toString();
-    this.rooms.push({ idRoom : idRoomString, name: roomName, host, users: [], message: [] });
+	const findRoom = await this.getRoomById(roomName);
+	if (findRoom !== -1) {
+		return;
+	}
+    this.rooms.push({ name: roomName, host, users: [], message: [], channel });
     await this.saveRoomsToDisk(); // Save the updated state to the file.
-    return idRoom.toString();
+    return roomName.toString();
   }
 
-  async removeRoom(idRoom: string): Promise<void> {
+  async removeRoom(roomName: string): Promise<void> {
 	await this.loadRoomsFromDisk();
-    const findRoom = await this.getRoomById(idRoom);
+    const findRoom = await this.getRoomById(roomName);
     if (findRoom !== -1) {
-      this.rooms = this.rooms.filter((room) => room.idRoom !== idRoom);
+      this.rooms = this.rooms.filter((room) => room.name !== roomName);
       this.saveRoomsToDisk(); // Save the updated state to the file.
     }
   }
 
-  async getRoomById(idRoom: string): Promise<number> {
+  async getRoomById(roomName: string): Promise<number> {
 	await this.loadRoomsFromDisk();
-	const roomIndex = this.rooms.findIndex((room) => room?.idRoom === idRoom);
+	const roomIndex = this.rooms.findIndex((room) => room?.name === roomName);
 	// console.log("roomIndex", roomIndex);
     return roomIndex;
   }
 
-  async getRoomHost(idRoom: string): Promise<UserRoom> {
+  async getRoomByName(roomName: string): Promise<number> {
 	await this.loadRoomsFromDisk();
-    const findRoom = await this.getRoomById(idRoom);
+	const roomIndex = this.rooms.findIndex((room) => room?.name === roomName);
+	// console.log("roomIndex", roomIndex);
+	return roomIndex;
+  }
+
+  async getRoomHost(roomName: string): Promise<UserRoom> {
+	await this.loadRoomsFromDisk();
+    const findRoom = await this.getRoomById(roomName);
     if (findRoom !== -1) {
       return this.rooms[findRoom].host;
     }
   }
 
-  async addUserToRoom(user: UserRoom, idRoom?: string, roomName?: string): Promise<void> {
+  async addUserToRoom(user: UserRoom, roomName?: string): Promise<void> {
 	await this.loadRoomsFromDisk();
-    if (idRoom !== undefined) {
-		console.log("addUserToRoom", idRoom);
-      const findRoom = await this.getRoomById(idRoom);
+    if (roomName !== undefined) {
+		console.log("addUserToRoom", roomName);
+      const findRoom = await this.getRoomById(roomName);
 	  console.log("findRoom", findRoom);
       if (findRoom !== -1) {
         this.rooms[findRoom].users.push(user);
 		console.log("this.rooms[findRoom].users", this.rooms[findRoom].users);
 		await this.saveRoomsToDisk();
-        const host = await this.getRoomHost(idRoom);
+        const host = await this.getRoomHost(roomName);
         if (host.userId === user.userId) {
-          this.rooms[findRoom].host.socketId = user.socketId;
+			this.rooms[findRoom].host.userName = user.userName;
+			this.rooms[findRoom].host.socketId = user.socketId;
         }
         await this.saveRoomsToDisk(); // Save the updated state to the file.
       }
-    } else if (roomName !== undefined) {
-      await this.addRoom(roomName, user);
     }
   }
 
@@ -95,17 +100,17 @@ export class ChatsService {
   async removeUserFromAllRooms(socketId: string): Promise<void> {
     const rooms = await this.findRoomsByUserSocketId(socketId)
     for (const room of rooms) {
-      await this.removeUserFromRoom(socketId, room.idRoom)
+      await this.removeUserFromRoom(socketId, room.name)
     }
   }
 
-  async removeUserFromRoom(socketId: string, idRoom: string): Promise<void> {
+  async removeUserFromRoom(socketId: string, roomName: string): Promise<void> {
 	await this.loadRoomsFromDisk();
-    const roomIndex = await this.getRoomById(idRoom);
+    const roomIndex = await this.getRoomById(roomName);
     if (roomIndex !== -1) {
       this.rooms[roomIndex].users = this.rooms[roomIndex].users.filter((user) => user.socketId !== socketId);
     //   if (this.rooms[roomIndex].users.length === 0) {
-    //     await this.removeRoom(idRoom);
+    //     await this.removeRoom(roomName);
     //   }
      await this.saveRoomsToDisk(); // Save the updated state to the file.
     }
@@ -113,17 +118,19 @@ export class ChatsService {
 
   async addMessageToRoom(payload: Message): Promise<void> {
 	await this.loadRoomsFromDisk();
-	const roomIndex = await this.getRoomById(payload.idRoom);
+	const roomIndex = await this.getRoomById(payload.roomName);
 	if (roomIndex !== -1) {
 		console.log("addMessageToRoom", payload);
-	  this.rooms[roomIndex].message.push({ user: payload.user, timeSent: payload.timeSent, message: payload.message, roomName: payload.roomName, idRoom: payload.idRoom });
+
+	  this.rooms[roomIndex].message.push({ user: payload.user, timeSent: payload.timeSent, message: payload.message, roomName: payload.roomName });
 	  await this.saveRoomsToDisk(); // Save the updated state to the file.
 	}
   }
 
-  async getMessagesByRoom(idRoom: string): Promise<Message[]> {
+  async getMessagesByRoom(roomName: string): Promise<Message[]> {
 	await this.loadRoomsFromDisk();
-	const findRoom = await this.getRoomById(idRoom);
+	const findRoom = await this.getRoomById(roomName);
+	console.log("getMessagesByRoom ", findRoom);
 	if (findRoom !== -1) {
 	  return this.rooms[findRoom].message;
 	}

@@ -49,6 +49,7 @@ export class TFAController {
 		@Body() body: { id: number, TFASecret: string, TFACode: string }
 	) {
 		console.log(body);
+		console.log('totoooo');
 		const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, body.TFASecret);
 		if (!isCodeValid) {
 			throw new UnauthorizedException("Wrong authentication code");

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
-enum ChannelType {
+export enum ChannelType {
 	Public = 'public',
 	Protected = 'protected',
 	Private = 'private',
@@ -25,4 +25,5 @@ export class Channel {
 
 	@Column({ length: 256, nullable: true })
 	passwordHash: string;
+
 }
