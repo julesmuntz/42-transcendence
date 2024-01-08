@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import "./css/ViewFriends.css"
 import Button from 'react-bootstrap/Button';
 
+//ajouter pour voir les demande d'amis et les accepter ou les refuser.
+//amelioration : faire socket.io pour les amis pour que quand on accepte une demande d'amis sa mette a jour la liste d'amis de l'autre personne
 export default function ViewFriends() {
   const userContext = useContext(UserContext);
   const [viewFriends, setViewFriends] = useState<IFriends[]>([]);
@@ -11,7 +13,7 @@ export default function ViewFriends() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://localhost:3030/friends/view_friend`, {
+    fetch(`http://paul-f4Ar7s8:3030/friends/view_friend`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${userContext.user.authToken}`,
@@ -26,7 +28,7 @@ export default function ViewFriends() {
 
 //faire en sorte qu ca actualise  !
   async function handleButtonDeleteFriends(friendId: number) {
-		fetch(`http://localhost:3030/friends/${friendId}`, {
+		fetch(`http://paul-f4Ar7s8:3030/friends/${friendId}`, {
 		  method: "DELETE",
 		  headers: {
 			Authorization: `Bearer ${userContext.user.authToken}`,
@@ -79,7 +81,7 @@ export default function ViewFriends() {
                             </span>
                           </td>
                           <td style={{ width: "20%" }}>
-                            <a className="table-link text-info" onClick={() => joinRoom(friend.idRoom as string)}>
+                            <a className="table-link text-info" onClick={() => joinRoom(friend.roomName as string)}>
                               <span className="fa-stack">
                                 <i className="fa fa-square fa-stack-2x"></i>
                                 <i className="fa fa-pencil fa-stack-1x fa-inverse"></i>

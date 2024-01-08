@@ -22,9 +22,10 @@
 }
 
 img.profile-photo-lg{
-	height: 80px;
-	width: 80px;
-	border-radius: 50%;
+	aspect-ratio: 1 / 1;
+	width: 100px;
+	padding: 10px;
+	object-fit: cover;
 }
 
 input[type="search" i] {

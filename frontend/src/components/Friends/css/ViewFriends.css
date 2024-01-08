@@ -63,8 +63,3 @@ a {
 a:hover{
 text-decoration:none;
 }
-
-.table td, .table th {
-    --bs-table-bg: rgb(54, 54, 54);
-    --bs-table-color: rgb(255, 255, 255);
-}

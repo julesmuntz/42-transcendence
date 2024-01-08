@@ -44,8 +44,8 @@ export class User {
 	@Column({ default: false })
 	isTFAEnabled: boolean;
 
-	UpdateStatus() {
-
+	UpdateAvatar() {
+		if (this.avatarPath === null)
+			this.avatarPath = this.avatarDefault;
 	}
-
 }

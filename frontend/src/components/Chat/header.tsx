@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState }  from 'react'
 import { UserRoom, Room, Message } from "../../shared/chats.interface"
+import { io, Socket } from 'socket.io-client';
 import "./Chat.css"
+
+// const socket: Socket = io("http://paul-f4Ar7s8:3030", { autoConnect: true });
+
 export const Header = ({
 	isConnected,
 	users,
@@ -30,7 +34,7 @@ export const Header = ({
     //         <span className="mr-1 text-lg text-white">{'👨‍💻'}</span>
     //         <span className="ml-1 text-white">{users.length}</span>
     //       </button>
-    //       <button
+    //       <buttonconst socket: Socket = io("http://paul-f4Ar7s8:3030", { autoConnect: false });
     //         onClick={() => handleLeaveRoom()}
     //         className="ml-1 flex h-8 items-center rounded-xl bg-gray-800 px-4"
     //       >
@@ -55,37 +59,37 @@ export const Header = ({
 
 }
 
-export const UserList = ({ room }: { room: Room }) => {
+
+
+//ajouter est la room est un channel mettre un bouton kick ban mute unmute unban est un bouton pour changer le nom de la room
+// Import necessary dependencies if needed
+export const UserList = ({ room, socket, user }: { room: Room, socket:Socket, user:  Pick<UserRoom, 'userId' | 'userName'> }) => {
 	return (
 	  <div className="flex h-4/6 w-full flex-col-reverse overflow-y-scroll">
-		mdwiok
-		{room.users.map((user, index) => {
+		mdwiok {/* Not sure what this is for */}
+		{room.users.map((users, index) => {
 		  return (
 			<div key={index} className="mb-4 flex rounded px-4 py-2">
-			  <p className="text-black">{user.userName}</p>
-			  {room.host.userId === user.userId && <span className="ml-2">{'👑'}</span>}
+			  <p className="text-black">{users.userName}</p>
+			  {room.host.userId === users.userId && <span className="ml-2">{'👑'}</span>}
+
+			  {/* Check if the user is not the host and if the room is a channel, then display a kick button */}
+			  {room.channel === true && room.host.userId === user.userId && room.host.userId !== users.userId && (
+				<button
+				  className="ml-2 btn btn-default"
+				  type="button"
+				  onClick={() => {
+					socket.emit('kick_room', { user: user, roomName: room.name });
+				  }}
+				>
+				  <span className="mr-1 text-lg text-white">{'👢'}</span>
+				</button>
+			  )}
 			</div>
-		  )
+		  );
 		})}
 	  </div>
-	)
-}
-
-const determineMessageStyle = (
-	user: Pick<UserRoom, 'userId' | 'userName'>,
-	messageUserId: number
-  ) => {
-	if (user && messageUserId === user.userId) {
-	  return {
-		message: 'bg-slate-500 p-4 ml-24 mb-4 rounded break-words',
-		sender: 'ml-24 pl-4',
-	  };
-	} else {
-	  return {
-		message: 'bg-slate-800 p-4 mr-24 mb-4 rounded break-words',
-		sender: 'mr-24 pl-4',
-	  };
-	}
+	);
   };
 
 
