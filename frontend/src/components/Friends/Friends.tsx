@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { IFriends, Info, UserContext } from "../../contexts/UserContext";
 import Button from 'react-bootstrap/Button';
+import { WebSocketContext } from "../../contexts/WebSocketContext";
+import {  Socket } from 'socket.io-client';
 //amelioration : faire socket.io pour les amis pour que quand on accepte une demande d'amis sa mette a jour la liste d'amis de l'autre personne
 
 export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: number; UserTarget: Info }) {
@@ -9,12 +11,19 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	const [ViewInvite, setViewInvite] = useState<IFriends | null>(null);
 	const [ViewFriends, setViewFriends] = useState<IFriends | null>(null);
 	const [refresh, setRefresh] = useState(false);
+	const socket = useContext<Socket | undefined>(WebSocketContext);
 
 	const createFriendDto: IFriends = {
 	  user1: userContext.user.info,
 	  user2: UserTarget,
 	  type: "invited",
 	};
+	useEffect(() => {
+	  socket?.on("refresh", () => {
+		setRefresh((prev) => !prev);
+	  });
+	}
+	, [socket]);
 
 	useEffect(() => {
 		fetch(`http://paul-f4Ar5s7:3030/friends/viewblock/${IdUserTarget}`, {
@@ -92,10 +101,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			}),
 		  })
 		  .then(() => {
-			setViewFriends(null);
-			setViewInvite(null);
-			setUserBlock(null);
-			setRefresh((prev) => !prev);
+			socket?.emit("refresh");
 		});
 		}
 	  }
@@ -109,10 +115,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			},
 		  })
 		  .then(() => {
-			setViewFriends(null);
-			setViewInvite(null);
-			setUserBlock(null);
-			setRefresh((prev) => !prev);
+			socket?.emit("refresh");
 		  });
 		}
 	  }
@@ -125,10 +128,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 		  },
 		})
 		.then(() => {
-			setViewFriends(null);
-			setViewInvite(null);
-			setUserBlock(null);
-			setRefresh((prev) => !prev);
+			socket?.emit("refresh");
 		  });
 		}
 
@@ -140,10 +140,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 		  },
 		})
 		.then(() => {
-			setViewFriends(null);
-			setViewInvite(null);
-			setUserBlock(null);
-			setRefresh((prev) => !prev);
+			socket?.emit("refresh");
 		  });
 		}
 

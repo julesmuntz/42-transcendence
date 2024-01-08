@@ -84,12 +84,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 
 
 	async handleConnection(client: Socket) : Promise<void> {
-		this.logger.log(`Client connected: ${client.id} : Chats`);
+		this.logger.log(`Client connected: ${client.id}`);
 	}
 
 	async handleDisconnect(client: Socket) : Promise<void> {
 		await this.chatService.removeUserFromAllRooms(client.id);
-		this.logger.log(`Client disconnected: ${client.id} : Chats`);
+		this.logger.log(`Client disconnected: ${client.id}`);
 	}
 
 }

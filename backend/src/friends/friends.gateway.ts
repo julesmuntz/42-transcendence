@@ -8,10 +8,10 @@ export class FriendsGateway implements OnGatewayConnection, OnGatewayDisconnect{
 	@WebSocketServer() server: Server;
 	private logger = new Logger('FriendsGateway');
 
-	@SubscribeMessage('action_reload')
+	@SubscribeMessage('refresh')
 	async handleActionReload() {
 		this.logger.log(`action_reload Friends`);
-		this.server.emit('action_reload');
+		this.server.emit('refresh');
 	}
 
 	async handleConnection(client: Socket) : Promise<void> {

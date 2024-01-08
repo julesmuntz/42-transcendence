@@ -13,7 +13,7 @@ export class ChannelMemberService {
 	) {}
 
 	async create(createChannelMenberDto: CreateChannelMenberDto) : Promise<ChannelMember> {
-		
+
 		const newchannelmenber = this.channelmenberRepository.create(createChannelMenberDto);
 		return this.channelmenberRepository.save(newchannelmenber);
 	}
