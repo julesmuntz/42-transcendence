@@ -3,6 +3,7 @@ import { UserContext, useEmits } from '../../contexts/UserContext';
 import { useNavigate } from 'react-router-dom'
 import Button from 'react-bootstrap/Button';
 import { WebSocketContext } from '../../contexts/WebSocketContext';
+import { userInfo } from 'os';
 
 interface Channel {
 	id: number;
@@ -10,18 +11,18 @@ interface Channel {
 	type: string;
 }
 
-export default function ViewChannelPublic() {
+export default function ViewChannelPrivate() {
 
 	const [channel, setChannel] = useState<Channel[]>([]);
 	const socket = useContext(WebSocketContext);
 	const userContext = useContext(UserContext);
 	const navigate = useNavigate();
 
-	useEmits(socket, 'getChannelListPublic', null);
+	useEmits(socket, 'getChannelListPrivate', null);
 
 	useEffect(() => {
 
-		socket?.on('channelPublic', (data: Channel[]) => {
+		socket?.on('channelPrivate', (data: Channel[]) => {
 			setChannel(data);
 		});
 
@@ -31,8 +32,10 @@ export default function ViewChannelPublic() {
 		socket?.on('deleteChannel', (data: Channel) => {
 			setChannel((channel) => channel.filter((channel) => channel.id !== data.id));
 		});
+		console.log(channel);
+		console.log(userContext.user.info);
 		return () => {
-			socket?.off('channelPublic');
+			socket?.off('channelPrivate');
 			socket?.off('updateChannelList');
 			socket?.off('deleteChannel');
 		};
@@ -41,21 +44,8 @@ export default function ViewChannelPublic() {
 
 	const joinRoom = (roomId: string, type: string) => {
 		console.log(roomId);
-		if (type === 'protected') {
-			const password = prompt('Enter password');
-			fetch(`http://paul-f4Ar7s8:3030/channels/password/${roomId}/${password}`, {
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${userContext.user.authToken}`,
-					'Content-Type': 'application/json',
-				},
-			}).then((res) => res.json())
-				.then((ret) => {
-					if (ret.error)
-						return alert('wrong password');
-					else
-						return navigate(`/chat/${roomId}`);
-				});
+		if (type === 'private' && userContext.user.info.id !== parseInt(roomId)) {
+			return alert('You need an invite.');
 		}
 		else
 			navigate(`/chat/${roomId}`);

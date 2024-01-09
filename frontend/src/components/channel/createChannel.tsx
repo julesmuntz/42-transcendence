@@ -4,24 +4,26 @@ import Button from "react-bootstrap/Button";
 import { UserContext } from "../../contexts/UserContext";
 import { WebSocketContext } from "../../contexts/WebSocketContext";
 import ViewChannelPublic from "./ViewChannelPublic";
+import ViewChannelPrivate from "./ViewChannelPrivate";
+import { userInfo } from "os";
+import { channel } from "diagnostics_channel";
 
 export default function CreateChannel() {
 	const userContext = useContext(UserContext);
 	const [channelType, setChannelType] = useState("public");
 	const socket = useContext(WebSocketContext);
 
+
 	async function createChannel() {
 		const name = document.querySelector<HTMLInputElement>('#name')?.value;
 		const type = document.querySelector<HTMLSelectElement>('#type')?.value;
 		const passwordHash = document.querySelector<HTMLInputElement>('#password')?.value;
 
-		if (!name || !type)
-		{
+		if (!name || !type) {
 			alert('Please fill in all fields');
 			return;
 		}
-		if (name.length > 32)
-		{
+		if (name.length > 32) {
 			alert('Name must be less than 32 characters');
 			return;
 		}
@@ -64,6 +66,7 @@ export default function CreateChannel() {
 			</Form>
 
 			<ViewChannelPublic />
+			<ViewChannelPrivate />
 		</div>
 	);
 }

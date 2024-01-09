@@ -3,7 +3,7 @@ import { UserRoom, Room, Message } from "../../shared/chats.interface"
 import { Socket } from 'socket.io-client';
 import "./Chat.css"
 
-// const socket: Socket = io("http://paul-f4Ar7s7:3030", { autoConnect: true });
+// const socket: Socket = io("http://paul-f4Ar7s8:3030", { autoConnect: true });
 
 export const Header = ({
 	isConnected,
@@ -34,7 +34,7 @@ export const Header = ({
     //         <span className="mr-1 text-lg text-white">{'👨‍💻'}</span>
     //         <span className="ml-1 text-white">{users.length}</span>
     //       </button>
-    //       <buttonconst socket: Socket = io("http://paul-f4Ar7s7:3030", { autoConnect: false });
+    //       <buttonconst socket: Socket = io("http://paul-f4Ar7s8:3030", { autoConnect: false });
     //         onClick={() => handleLeaveRoom()}
     //         className="ml-1 flex h-8 items-center rounded-xl bg-gray-800 px-4"
     //       >

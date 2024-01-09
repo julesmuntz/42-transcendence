@@ -91,6 +91,17 @@ export class ChannelsGateway {
 		}
 	}
 
+	@SubscribeMessage('getChannelListPrivate')
+	async handleGetChannelListPrivate() {
+		const channels = await this.channelsService.findAllType(ChannelType.Private);
+		console.log("getChannelListPrivate");
+		if (channels) {
+			this.logger.log(`emit server channelPrivate`);
+			this.server.emit('channelPrivate', channels);
+			return channels;
+		}
+	}
+
 	@SubscribeMessage('getChannelListProtected')
 	async handleGetChannelListProtected() {
 		const channels = await this.channelsService.findAllType(ChannelType.Protected);
