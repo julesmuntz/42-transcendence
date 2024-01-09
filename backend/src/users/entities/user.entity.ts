@@ -44,6 +44,9 @@ export class User {
 	@Column({ default: false })
 	isTFAEnabled: boolean;
 
+	@Column({ length: 255, nullable: true})
+	socketId: string;
+
 	UpdateAvatar() {
 		if (this.avatarPath === null)
 			this.avatarPath = this.avatarDefault;

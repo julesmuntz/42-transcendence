@@ -58,4 +58,7 @@ export class UsersService {
 		return this.userRepository.findOne({ where: { id } });
 	}
 
+	async findOneBySocketId(socketId: string) : Promise<User> {
+		return this.userRepository.findOne({ where: { socketId } });
+	}
 }

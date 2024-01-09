@@ -17,21 +17,21 @@ export default function ViewChannelProtected() {
 	const userContext = useContext(UserContext);
 	const navigate = useNavigate();
 
-	useEmits(socket, 'getChannelListPrivate', null);
+	useEmits(socket, 'getChannelListProtected', null);
 
 	useEffect(() => {
-		socket?.on('channelPrivate', (data: Channel[]) => {
+		socket?.on('channelProtected', (data: Channel[]) => {
 			setChannel(data);
 		});
-		socket?.on('updateChannelListPrivate', (data: Channel) => {
+		socket?.on('updateChannelListProtected', (data: Channel) => {
 			setChannel((channel) => [...channel, data]);
 		});
 		socket?.on('deleteChannel', (data: Channel) => {
 			setChannel((channel) => channel.filter((channel) => channel.id !== data.id));
 		});
 		return () => {
-			socket?.off('channelPrivate');
-			socket?.off('updateChannelListPrivate');
+			socket?.off('channelProtected');
+			socket?.off('updateChannelListProtected');
 			socket?.off('deleteChannel');
 		};
 

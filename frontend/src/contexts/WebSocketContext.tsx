@@ -28,7 +28,7 @@ function WebSocketProvider({
 
   useEffect(() => {
     if (user?.info.id && user.authToken) {
-      const socketIOClient = io(`http://paul-f4Ar7s8:3030`, {
+      const socketIOClient = io(`http://paul-f4Ar7s7:3030`, {
         query: { userId: user?.info.id, token: user.authToken },
 		autoConnect: true,
       });

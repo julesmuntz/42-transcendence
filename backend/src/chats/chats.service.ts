@@ -69,7 +69,7 @@ export class ChatsService {
   async addUserToRoom(user: UserRoom, roomName?: string): Promise<void> {
 	await this.loadRoomsFromDisk();
     if (roomName !== undefined) {
-		console.log("addUserToRoom", roomName);
+		// console.log("addUserToRoom", roomName);
       const findRoom = await this.getRoomById(roomName);
 	//   console.log("findRoom", findRoom);
       if (findRoom !== -1) {

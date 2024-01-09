@@ -76,7 +76,7 @@ export default function Chat() {
 		//   window.removeEventListener('popstate', handleBeforeUnload);
 
 		};
-	}, [socket, roomName, navigate, userContext.user.info.id, userContext.user.info.username]);
+	}, [socket, roomName, navigate]);
 
 
 
