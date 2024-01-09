@@ -2,8 +2,8 @@ import React, { useContext, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { UserContext } from "../../contexts/UserContext";
-import ViewChannel from "./viewChannel";
 import { WebSocketContext } from "../../contexts/WebSocketContext";
+import ViewChannelPublic from "./ViewChannelPublic";
 
 export default function CreateChannel() {
 	const userContext = useContext(UserContext);
@@ -20,25 +20,15 @@ export default function CreateChannel() {
 			alert('Please fill in all fields');
 			return;
 		}
+		if (name.length > 32)
+		{
+			alert('Name must be less than 32 characters');
+			return;
+		}
 		const createChannelDto = { name, type, passwordHash };
 		console.log(createChannelDto);
 		const userId = userContext.user.info.id;
 		socket?.emit('createChannel', { createChannelDto, userId });
-		// const res = await fetch('http://paul-f4Ar6s7:3030/channels', {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 		Authorization: `Bearer ${userContext.user.authToken}`,
-		// 	},
-		// 	body: JSON.stringify({createChannelDto}),
-		// });
-
-		// if (res.ok)
-		// {
-		// 	console.log('Channel created');
-		// } else {
-		// 	console.error('Error creating channel');
-		// }
 	}
 
 
@@ -73,7 +63,7 @@ export default function CreateChannel() {
 				</Button>
 			</Form>
 
-			<ViewChannel />
+			<ViewChannelPublic />
 		</div>
 	);
 }

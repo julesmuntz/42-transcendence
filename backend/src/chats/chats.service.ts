@@ -71,10 +71,12 @@ export class ChatsService {
     if (roomName !== undefined) {
 		console.log("addUserToRoom", roomName);
       const findRoom = await this.getRoomById(roomName);
-	  console.log("findRoom", findRoom);
+	//   console.log("findRoom", findRoom);
       if (findRoom !== -1) {
+		if (this.rooms[findRoom].users.find((user) => user.userId === user.userId))
+			return;
         this.rooms[findRoom].users.push(user);
-		console.log("this.rooms[findRoom].users", this.rooms[findRoom].users);
+		// console.log("this.rooms[findRoom].users", this.rooms[findRoom].users);
 		await this.saveRoomsToDisk();
         const host = await this.getRoomHost(roomName);
         if (host.userId === user.userId) {

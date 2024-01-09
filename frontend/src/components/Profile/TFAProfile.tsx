@@ -89,7 +89,7 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 	}
 
 	const sendCode = async (e : any) => {
-		await fetch(`http://paul-f4Ar6s7:3030/2fa/turn-on`, {
+		await fetch(`http://paul-f4Ar7s7:3030/2fa/turn-on`, {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`,
@@ -107,7 +107,7 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 				const newUser = ret;
 				qrset.setQrcode("");
 				userContext.login(newUser, userContext.user.authToken);
-				window.location.href = `http://paul-f4Ar6s7:3000`;
+				window.location.href = `http://paul-f4Ar7s7:3000`;
 			}
 			);
 	}

@@ -32,7 +32,7 @@ import { ChannelsGateway } from 'channels/channels.gateway';
 	GamesModule,
 	ChatsModule,
 	ChannelsModule,
-	PassportModule.register({ session: true })],
+	],
 	controllers: [],
 	providers: [
 		{

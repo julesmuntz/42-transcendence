@@ -1,4 +1,4 @@
-import {useState, createContext} from 'react';
+import {useState, createContext, useEffect} from 'react';
 
 export interface Info {
 	TFASecret: string;
@@ -28,6 +28,12 @@ interface ContextProps {
 	user: Iuser;
 	login: (info : Info, authToken: string) => void;
 	logout: () => void;
+}
+
+export function useEmits(socket: any, event: string, data: any) {
+	useEffect(() => {
+		socket?.emit(event, data);
+	}, [socket, event, data]);
 }
 
 export const UserContext = createContext<ContextProps>({ user: {info: {} as Info, auth: false, authToken: ''}, login: () => null, logout: () => null });

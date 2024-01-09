@@ -8,35 +8,31 @@ import { ChatsService } from 'chats/chats.service';
 import { CreateChannelMemberDto } from 'channels/dto/create-channel-member.dto';
 import { Logger } from '@nestjs/common';
 import { Server } from 'socket.io'
-import { InjectDataSource } from '@nestjs/typeorm';
+import { ChannelType } from './entities/channel.entity';
 
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChannelsGateway {
 	constructor(
-		@InjectDataSource()
 		private readonly channelsService: ChannelsService,
 		// private readonly socketService: SocketsService,
 		private readonly userService: UsersService,
 		private readonly channelUser: ChannelMemberService,
 		private readonly chatService: ChatsService,
 	)
-	{ }
-	
+	{}
+
 	@WebSocketServer() server: Server;
 	private logger = new Logger('ChannelsGateway');
 
-	//check avant de cree que il exsite pas !
+	// create channel
 	@SubscribeMessage('createChannel')
-	async handleCreatingEvent(@MessageBody() playload: { createChannelDto: CreateChannelDto; userId: string }) {
-		this.logger.log(`Received message: ${playload}`);
-		// console.log(this.socketService.getSocket(playload.userId));
-		console.log(playload.createChannelDto.name);
-		const channelExist = await this.channelsService.findOneByName(playload.createChannelDto.name);
+	async handleCreatingEvent(@MessageBody() payload: { createChannelDto: CreateChannelDto; userId: string })  {
+		const channelExist = await this.channelsService.findOneByName(payload.createChannelDto.name);
 		if (!channelExist) {
-			const channel = await this.channelsService.create(playload.createChannelDto);
+			const channel = await this.channelsService.create(payload.createChannelDto);
 			if (channel) {
-				const user = await this.userService.findOne(parseInt(playload.userId));
+				const user = await this.userService.findOne(parseInt(payload.userId));
 				if (user) {
 					const createChannelMemberDto = {
 						'user': user,
@@ -46,12 +42,13 @@ export class ChannelsGateway {
 					const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
 					if (channelMember) {
 						const room = await this.chatService.addRoom(channel.name, {
-							'userId': parseInt(playload.userId),
+							'userId': parseInt(payload.userId),
 							'userName': user.username,
 							'socketId': '',
 						}, true);
 						if (room) {
-							// si cree emit au client les updade de channel; 
+							this.logger.log(`Channel ${channel.name} created`);
+							this.server.emit('updateChannelList', channel);
 							return channel;
 						} else {
 							console.log("Error: room not created !");
@@ -60,6 +57,50 @@ export class ChannelsGateway {
 				}
 			}
 		}
-		console.log("Channel already exist !");
+		// console.log("Channel already exist !");
 	}
+
+	// suprimer channel
+	@SubscribeMessage('deleteChannel')
+	async handleDeletingEvent(@MessageBody() payload: { channelId: number }) {
+		const channel = await this.channelsService.findOne(payload.channelId);
+		if (channel) {
+			const channelMember = await this.channelUser.findAllByChannel(channel);
+			if (channelMember) {
+				channelMember.forEach(async (element) => {
+					await this.channelUser.delete(element.id);
+				});
+			}
+			await this.channelsService.delete(channel.id);
+			await this.chatService.removeRoom(channel.name);
+			this.logger.log(`Channel ${channel.name} deleted`);
+			this.server.emit('deleteChannel', channel);
+			return channel;
+		}
+	}
+
+	//get all channel
+	@SubscribeMessage('getChannelListPublic')
+	async handleGetChannelListPublic() {
+		const channels = await this.channelsService.findAllType(ChannelType.Public);
+		console.log("getChannelListPublic");
+		if (channels) {
+			this.logger.log(`emit server channelPublic`);
+			this.server.emit('channelPublic', channels);
+			return channels;
+		}
+	}
+
+	@SubscribeMessage('getChannelListProtected')
+	async handleGetChannelListProtected() {
+		const channels = await this.channelsService.findAllType(ChannelType.Protected);
+		console.log("getChannelListProtected");
+		if (channels) {
+			this.logger.log(`emit server channelProtected`);
+			this.server.emit('channelProtected', channels);
+			return channels;
+		}
+	}
+
+
 }

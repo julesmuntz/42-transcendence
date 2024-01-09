@@ -1,11 +1,11 @@
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets'
 import { Logger } from '@nestjs/common'
 import {  Message, UserRoom} from "../shared/chats.interface";
-import { Server } from 'socket.io'
+import { Server, Socket } from 'socket.io'
 import { ChatsService } from "./chats.service";
 
 @WebSocketGateway({ cors: { origin: '*'}})
-export class ChatGateway {
+export class ChatGateway{
 	constructor(private chatService: ChatsService) {}
 
 	@WebSocketServer() server: Server;
@@ -24,7 +24,6 @@ export class ChatGateway {
 	@SubscribeMessage('join_room')
 	async handleSetClientDataEvent(@MessageBody() payload: { user: UserRoom; roomName: string;}) {
 		if (payload.user.socketId) {
-			console.log("join_room", payload.user.socketId, payload.roomName);
 			this.logger.log(`${payload.user.socketId} is joining ${payload.roomName}`);
 			await this.server.in(payload.user.socketId).socketsJoin(payload.roomName);
 			await this.chatService.addUserToRoom(payload.user, payload.roomName);
@@ -81,15 +80,19 @@ export class ChatGateway {
 	// }
 	//end chanel room event handler
 
-
+	@SubscribeMessage('leave_room')
+	async handleLeaveRoomEvent(client: Socket) {
+		console.log("leave_room", client.id);
+		await this.chatService.removeUserFromAllRooms(client.id);
+	}
 
 	// async handleConnection(client: Socket) : Promise<void> {
-	// 	this.logger.log(`Client connected: ${client.id}`);
+	// 	this.logger.log(`Client connected: ${client.id} chat`);
 	// }
 
 	// async handleDisconnect(client: Socket) : Promise<void> {
 	// 	await this.chatService.removeUserFromAllRooms(client.id);
-	// 	this.logger.log(`Client disconnected: ${client.id}`);
+	// 	this.logger.log(`Client disconnected: ${client.id} chat `);
 	// }
 
 }

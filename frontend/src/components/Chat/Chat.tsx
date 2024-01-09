@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {  Socket } from 'socket.io-client';
-import { UserContext } from '../../contexts/UserContext';
+import { UserContext, useEmits } from '../../contexts/UserContext';
 import { Message, UserRoom, Room } from "../../shared/chats.interface";
 import { Header, UserList, Messages, MessageForm } from './header';
 import { useQuery } from 'react-query';
@@ -12,7 +12,7 @@ export const useRoomQuery = (roomName: string, isConnected: boolean) => {
   const query = useQuery({
     queryKey: ['rooms', roomName],
     queryFn: (): Promise<Room> =>
-      axios.get(`http://paul-f4Ar6s7:3030/chats/rooms/${roomName}`).then((response) => response.data),
+      axios.get(`http://paul-f4Ar7s7:3030/chats/rooms/${roomName}`).then((response) => response.data),
     refetchInterval: 60000,
     enabled: isConnected,
   });
@@ -34,8 +34,9 @@ export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => 
 
 export default function Chat() {
 	const userContext = useContext(UserContext);
-  const { id: roomName } = useParams<{ id: string }>();
-  const socket = useContext<Socket | undefined>(WebSocketContext);
+	const socket = useContext<Socket | undefined>(WebSocketContext);
+
+	const { id: roomName } = useParams<{ id: string }>();
 
 	const [isConnected, setIsConnected] = useState(socket?.connected);
 	const [messages, setMessages] = useState<Message[]>([]);
@@ -46,28 +47,36 @@ export default function Chat() {
 	const navigate = useNavigate();
 	const user = { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket?.id };
 
-  useEffect(() => {
-    if (!roomName) {
-		navigate('/');
-    } else {
-      socket?.on('connect', () => {
-        socket?.emit('join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket?.id as string }, roomName });
-        setIsConnected(true);
-      });
-      socket?.on('disconnect', () => {
-        setIsConnected(false);
-      });
-      socket?.on('chat', (e) => {
-        setMessages((messages) => [e, ...messages]);
-      });
-      socket?.connect();
-    }
-    return () => {
-      socket?.off('connect');
-      socket?.off('disconnect');
-      socket?.off('chat');
-    };
-  }, [socket, roomName, navigate, userContext.user.info.id, userContext.user.info.username]);
+	useEmits(socket, 'join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket?.id as string }, roomName });
+
+	useEffect(() => {
+		if (!roomName) {
+			navigate('/');
+		} else {
+		// socket?.on('connect', () => {
+		//     socket?.emit('join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket?.id as string }, roomName });
+		//     setIsConnected(true);
+		//   });
+		const handleBeforeUnload = () => {
+			socket?.emit('leave_room');
+		};
+
+		socket?.on('chat', (e) => {
+			setMessages((messages) => [e, ...messages]);
+		});
+		  window.addEventListener('beforeunload', handleBeforeUnload);
+		  window.addEventListener('popstate', handleBeforeUnload);
+
+		}
+		return () => {
+		  socket?.off('connect');
+		  socket?.off('chat');
+
+		//   window.removeEventListener('beforeunload', handleBeforeUnload);
+		//   window.removeEventListener('popstate', handleBeforeUnload);
+
+		};
+	}, [socket, roomName, navigate, userContext.user.info.id, userContext.user.info.username]);
 
 
 

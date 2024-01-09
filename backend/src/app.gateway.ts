@@ -9,6 +9,7 @@ import { Socket, Server } from 'socket.io';
 import { SocketsService } from './sockets.service';
 import { User, UserStatus } from 'users/entities/user.entity';
 import { DataSource } from 'typeorm';
+import { Logger } from '@nestjs/common';
 
 @WebSocketGateway({ cors: true })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -18,21 +19,24 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	) { }
 
 	@WebSocketServer() server: Server;
-
+	private logger = new Logger('AppGateway');
 	handleConnection(socket: Socket) {
-		console.log("Server: connection established");
+		this.logger.log("Server: connection established");
 		socket.emit('message', 'Server: connection established');
 	}
 
 	async handleDisconnect(socket: Socket) {
-		console.log("Server: connection stoping");
+		this.logger.log("Server: connection stopped");
 		const user = this.socketService.removeSocket(socket);
-		if (!user) return undefined;
+		if (!user)
+			return undefined;
 		const connectedUser = await this.dataSource.manager.findOneBy(User, {
 			id: parseInt(user.userId),
 		});
-		if (!connectedUser) return undefined;
+		if (!connectedUser)
+			return undefined;
 		await this.dataSource.manager.update(User, connectedUser.id, { status: UserStatus.Offline });
+		this.logger.log(`User ${connectedUser.username} is now offline`);
 	}
 
 	@SubscribeMessage('saveusersocket')
@@ -42,9 +46,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			const connectedUser = await this.dataSource.manager.findOneBy(User, {
 				id: parseInt(userId),
 			});
-			if (!connectedUser) return undefined;
+			if (!connectedUser)
+				return undefined;
 			await this.dataSource.manager.update(User, connectedUser.id, { status: UserStatus.Online });
-			console.log("user status online ");
+			this.logger.log(`User ${connectedUser.username} is now online`);
 		}
 	}
 }
