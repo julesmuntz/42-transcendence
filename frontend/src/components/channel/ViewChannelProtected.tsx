@@ -63,7 +63,7 @@ export default function ViewChannelProtected() {
 	if (channel.length > 0)
 		return (
 			<div>
-				<h1>View Channel</h1>
+				<h1>Protected Channels</h1>
 				{channel.map((channel) => (
 					<div key={channel.id}>
 						<Button variant="primary" onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}>
@@ -75,7 +75,7 @@ export default function ViewChannelProtected() {
 		);
 	return (
 		<div>
-			<h1>View Channel</h1>
+			<h1>Protected Channels</h1>
 		</div>
 	);
 }

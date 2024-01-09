@@ -10,7 +10,7 @@ interface Channel {
 	type: string;
 }
 
-export default function ViewChannelProtected() {
+export default function ViewChannelPrivate() {
 
 	const [channel, setChannel] = useState<Channel[]>([]);
 	const socket = useContext(WebSocketContext);
@@ -60,10 +60,39 @@ export default function ViewChannelProtected() {
 			navigate(`/chat/${roomId}`);
 	};
 
+	async function getUserIdByUsername(target: string): Promise<number | null> {
+		const response = await fetch(`http://paul-f4Ar7s7:3030/users/search/${target}`, {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${userContext.user.authToken}`,
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = await response.json();
+		console.log('Response data:', data);
+		if (data.error || data.length === 0) {
+			return null;
+		}
+		return data[0].id;
+	}
+
+	async function inviteToChannel(channelId: number) {
+		const userName = prompt('Enter username');
+		const userId = await getUserIdByUsername(userName || '');
+		console.log(userId);
+		console.log(userName);
+		if (userId) {
+			socket?.emit('inviteChannels', { userId, channelId });
+		}
+		else {
+			alert('User not found');
+		}
+	}
+
 	if (channel.length > 0)
 		return (
 			<div>
-				<h1>View Channel</h1>
+				<h1>Private Channels</h1>
 				{channel.map((channel) => (
 					<div key={channel.id}>
 						<Button variant="primary" onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}>
@@ -71,11 +100,19 @@ export default function ViewChannelProtected() {
 						<p>{channel.type}</p>
 					</div>
 				))}
+
+				{channel.map((channel) => (
+					<div key={channel.id}>
+						<Button variant="primary" onClick={() => inviteToChannel(channel.id)}>
+							<h2>{"Invite to " + channel.name}</h2> </Button>
+						<p>{ }</p>
+					</div>
+				))}
 			</div>
 		);
 	return (
 		<div>
-			<h1>View Channel</h1>
+			<h1>Private Channels</h1>
 		</div>
 	);
 }

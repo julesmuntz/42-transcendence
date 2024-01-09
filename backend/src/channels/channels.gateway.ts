@@ -129,6 +129,7 @@ export class ChannelsGateway {
 
 	@SubscribeMessage('inviteChannels')
 	async handleInviteChannels(@MessageBody() payload: { userId: number; channelId: number; }) {
+		console.log("USER INVITED")
 		const channel = await this.channelsService.findOne(payload.channelId);
 		const user = await this.userService.findOne(payload.userId);
 		if (channel && user) {
@@ -141,7 +142,7 @@ export class ChannelsGateway {
 			}
 			const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
 			if (channelMember) {
-				this.logger.log(`Channel ${channel.name} invited to ${user.username}`);
+				this.logger.log(`User "${user.username}" invited to Channel "${channel.name}"`);
 				this.server.to(user.socketId).emit('channelsPrivate', channel);
 				return channel;
 			}
