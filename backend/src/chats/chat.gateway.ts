@@ -52,7 +52,7 @@ export class ChatGateway{
 	async handleKickRoomEvent(@MessageBody() payload: { user: UserRoom; roomName: string;}) {
 		if (payload.user.socketId) {
 			console.log("kick_room", payload.user.socketId, payload.roomName);
-			this.logger.log(`${payload.user.socketId} is leaving ${payload.roomName}`);
+			this.logger.log(`${payload.user.socketId} is kicked ${payload.roomName}`);
 			await this.server.in(payload.user.socketId).socketsLeave(payload.roomName);
 			await this.chatService.removeUserFromRoom(payload.user.socketId, payload.roomName);
 		}
@@ -82,17 +82,7 @@ export class ChatGateway{
 
 	@SubscribeMessage('leave_room')
 	async handleLeaveRoomEvent(client: Socket) {
-		console.log("leave_room", client.id);
 		await this.chatService.removeUserFromAllRooms(client.id);
+		this.logger.log(`${client.id} is leaving all rooms`);
 	}
-
-	// async handleConnection(client: Socket) : Promise<void> {
-	// 	this.logger.log(`Client connected: ${client.id} chat`);
-	// }
-
-	// async handleDisconnect(client: Socket) : Promise<void> {
-	// 	await this.chatService.removeUserFromAllRooms(client.id);
-	// 	this.logger.log(`Client disconnected: ${client.id} chat `);
-	// }
-
 }
