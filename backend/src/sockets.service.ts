@@ -36,7 +36,6 @@ export class SocketsService {
   }
 
   getSocket(userId: string): Socket | undefined {
-    // console.log(this.socketUsers.get(userId)?.socket);
     return this.socketUsers.get(userId)?.socket;
   }
 

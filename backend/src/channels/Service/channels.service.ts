@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { UpdateChannelDto } from '../dto/update-channel.dto';
-import { Channel } from '../entities/channel.entity';
+import { Channel, ChannelType } from '../entities/channel.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -32,6 +32,10 @@ export class ChannelsService {
 		return this.channelRepository.findOne({where: {name}});
 	}
 
+	async findAllType(type : ChannelType) : Promise<Channel[]> {
+		return this.channelRepository.find({where: {type}});
+	}
+
 	async update(id: number, updateChannelDto: UpdateChannelDto) : Promise<Channel> {
 		await this.channelRepository.update(id, updateChannelDto);
 		return this.channelRepository.findOne({where: {id}});
@@ -41,10 +45,3 @@ export class ChannelsService {
 		await this.channelRepository.delete(id);
 	}
 }
-
-
-// create channel service
-// channel public, protected, private doit etre enregistre comme host
-// si public, pas de password
-// si protected, password
-// si private, password, plus un champ pour les invités

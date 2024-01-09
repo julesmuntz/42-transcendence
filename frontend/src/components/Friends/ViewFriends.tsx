@@ -12,7 +12,7 @@ export default function ViewFriends() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://paul-f4Ar6s7:3030/friends/view_friend`, {
+    fetch(`http://paul-f4Ar7s7:3030/friends/view_friend`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${userContext.user.authToken}`,
@@ -27,7 +27,7 @@ export default function ViewFriends() {
 
 //faire en sorte qu ca actualise  !
   async function handleButtonDeleteFriends(friendId: number) {
-		fetch(`http://paul-f4Ar6s7:3030/friends/${friendId}`, {
+		fetch(`http://paul-f4Ar7s7:3030/friends/${friendId}`, {
 		  method: "DELETE",
 		  headers: {
 			Authorization: `Bearer ${userContext.user.authToken}`,
@@ -38,7 +38,7 @@ export default function ViewFriends() {
   }
 
 
-  const joinRoom = (roomId: string) => {
+  const joinnRoom = (roomId: string) => {
     navigate(`/chat/${roomId}`);
   };
 
@@ -80,7 +80,7 @@ export default function ViewFriends() {
                             </span>
                           </td>
                           <td style={{ width: "20%" }}>
-                            <a className="table-link text-info" onClick={() => joinRoom(friend.roomName as string)}>
+                            <a className="table-link text-info" onClick={() => joinnRoom(friend.roomName as string)}>
                               <span className="fa-stack">
                                 <i className="fa fa-square fa-stack-2x"></i>
                                 <i className="fa fa-pencil fa-stack-1x fa-inverse"></i>
