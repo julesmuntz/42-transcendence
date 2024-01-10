@@ -20,8 +20,8 @@ export default function ViewChannelPrivate() {
 	useEmits(socket, 'getChannelListPrivate', null);
 
 	useEffect(() => {
-		socket?.on('channelPrivate', (data: Channel[]) => {
-			setChannel(data);
+		socket?.on('channelPrivate', (data: Channel) => {
+			setChannel(data ? [data] : []);
 		});
 		socket?.on('updateChannelListPrivate', (data: Channel) => {
 			setChannel((channel) => [...channel, data]);
@@ -42,7 +42,7 @@ export default function ViewChannelPrivate() {
 		console.log(roomId);
 		if (type === 'protected') {
 			const password = prompt('Enter password');
-			fetch(`http://paul-f4Ar7s9:3030/channels/password/${roomId}/${password}`, {
+			fetch(`http://paul-f4Ar7s11:3030/channels/password/${roomId}/${password}`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${userContext.user.authToken}`,
@@ -61,7 +61,7 @@ export default function ViewChannelPrivate() {
 	};
 
 	async function getUserIdByUsername(target: string): Promise<number | null> {
-		const response = await fetch(`http://paul-f4Ar7s9:3030/users/search/${target}`, {
+		const response = await fetch(`http://paul-f4Ar7s11:3030/users/search/${target}`, {
 			method: 'GET',
 			headers: {
 				Authorization: `Bearer ${userContext.user.authToken}`,

@@ -6,7 +6,7 @@ import { ChatsService } from "./chats.service";
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {
-	constructor(private chatService: ChatsService) { }
+	constructor(private chatService: ChatsService, ) { }
 
 	@WebSocketServer() server: Server;
 	private logger = new Logger('ChatGateway');
@@ -25,22 +25,23 @@ export class ChatGateway {
 		if (payload.user.socketId) {
 			this.logger.log(`${payload.user.socketId} is joining ${payload.roomName}`);
 			await this.server.in(payload.user.socketId).socketsJoin(payload.roomName);
+			// const user = this.
 			await this.chatService.addUserToRoom(payload.user, payload.roomName);
 			const messages = await this.chatService.getMessagesByRoom(payload.roomName);
 			if (messages) {
 				for (let message of messages)
 					await this.server.to(payload.user.socketId).emit('chat', message);
 			}
-			this.server.to(payload.roomName).emit('connect_chat');
+			this.handleUserListEvent(payload.roomName);
 		}
 	}
 
 	//renvoie la liste des user de la room
-	@SubscribeMessage('user_list')
-	async handleUserListEvent(@MessageBody() payload: { roomName: string; }) {
-		const users = await this.chatService.getUsersByRoom(payload.roomName);
+	async handleUserListEvent(roomName: string) {
+		this.logger.log(`get user list of ${roomName}`);
+		const users = await this.chatService.getUsersByRoom(roomName);
 		if (users) {
-			this.server.to(payload.roomName).emit('user_list', users);
+			this.server.to(roomName).emit('user_list', users);
 		}
 	}
 

@@ -21,6 +21,7 @@ export const Messages = ({
 	}, [messages, isUserAtBottom]);
 
 	const handleScroll = () => {
+		console.log('toto');
 		const messagesContainer = messagesRef.current;
 		if (
 			messagesContainer &&
@@ -32,7 +33,9 @@ export const Messages = ({
 			setIsUserAtBottom(false);
 		}
 	};
+
 	const reversedMessages = messages.slice().reverse();
+
 	return (
 		<div
 			className="nano has-scrollbar"
@@ -41,9 +44,8 @@ export const Messages = ({
 			<div
 				className="nano-content pad-all"
 				tabIndex={0}
-				style={{ right: '-17px' }}
 				ref={messagesRef}
-				onScroll={handleScroll}
+				// onScroll={handleScroll}
 			>
 				<ul
 					className="list-unstyled media-block"

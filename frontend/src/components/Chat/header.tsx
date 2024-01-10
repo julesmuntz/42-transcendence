@@ -3,8 +3,6 @@ import { UserRoom, Room, Message } from "../../shared/chats.interface"
 import { Socket } from 'socket.io-client';
 import "./Chat.css"
 
-// const socket: Socket = io("http://paul-f4Ar7s9:3030", { autoConnect: true });
-
 export const Header = ({
 	isConnected,
 	users,
@@ -23,7 +21,7 @@ export const Header = ({
 			<div className="panel-control">
 				<div className="btn-group">
 					<button className="btn btn-default" type="button" onClick={() => handleUsersClick()}> <span className="mr-1 text-lg text-white">{'👨‍💻'}</span>
-						<span className="ml-1 text-black">{users.length}</span></button>
+						<span className="ml-1 text-white">{users.length}</span></button>
 					<button type="button" className="btn btn-default" data-toggle="dropdown"><i
 						className="fa fa-gear"></i></button>
 				</div>
@@ -36,31 +34,16 @@ export const Header = ({
 
 //ajouter est la room est un channel mettre un bouton kick ban mute unmute unban est un bouton pour changer le nom de la room
 // Import necessary dependencies if needed
-export const UserList = ({ room, socket, user }: { room: Room, socket: Socket, user: Pick<UserRoom, 'userId' | 'userName'> }) => {
+export const UserList = ({ user, hostId }: { user: UserRoom[], hostId: number }) => {
 	return (
 		<div className="flex h-4/6 w-full flex-col-reverse overflow-y-scroll">
-			{room.users.map((users, index) => {
+			{user.map((users, index) => {
 				return (
 					<div key={index} className="mb-4 flex rounded px-4 py-2">
-						<p className="text-black">{users.userName}</p>
-						{room.host.userId === users.userId && <span className="ml-2">{'👑'}</span>}
-
-						{/* Check if the user is not the host and if the room is a channel, then display a kick button */}
-						{room.channel === true && room.host.userId === user.userId && room.host.userId !== users.userId && (
-							<button
-								className="ml-2 btn btn-default"
-								type="button"
-								onClick={() => {
-									socket.emit('kick_room', { user: user, roomName: room.name });
-								}}
-							>
-								<span className="mr-1 text-lg text-white">{'👢'}</span>
-							</button>
-						)}
+						<p className="text-black">{users.userName} {hostId === users.userId && <span className="ml-2">{'👑'}</span>}</p>
 					</div>
 				);
 			})}
 		</div>
 	);
 };
-

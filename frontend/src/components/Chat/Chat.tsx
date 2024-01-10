@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 import { UserContext } from '../../contexts/UserContext';
-import { Message, Room } from "../../shared/chats.interface";
+import { Message, Room, UserRoom } from "../../shared/chats.interface";
 import { Header, UserList } from './header';
 import { ChatLayout, useRoomQuery } from './ChatLayout';
 import { MessageForm, Messages } from './footer';
@@ -11,18 +11,17 @@ import { WebSocketContext } from '../../contexts/WebSocketContext';
 export default function Chat() {
   const userContext = useContext(UserContext);
   const socket = useContext<Socket | undefined>(WebSocketContext);
-  
+
   const { id: roomName } = useParams<{ id: string }>();
-  
-  const [isConnected, setIsConnected] = useState(false);
+
+  const [isConnected, setIsConnected] = useState(socket?.connected);
   const [messages, setMessages] = useState<Message[]>([]);
   const [toggleUserList, setToggleUserList] = useState<boolean>(false);
-  
+
   const { data: room } = useRoomQuery(roomName as string, isConnected ?? false);
+  const [getUser, setUser] = useState<UserRoom[]>([]);
   const navigate = useNavigate();
   const user = { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket?.id };
-
-
 
   useEffect(() => {
     if (!roomName) {
@@ -35,11 +34,14 @@ export default function Chat() {
       socket?.on('chat', (e) => {
         setMessages((messages) => [e, ...messages]);
       });
+	  socket?.on('user_list', (e) => {
+		setUser((getUser) => [e, ...getUser]);
+	  });
     }
     return () => {
       socket?.off('chat');
       socket?.off('connect_chat');
-      // socket?.off('disconnect_chat');
+      socket?.off('user_list');
     };
   }, [socket, roomName, navigate]);
 
@@ -71,14 +73,14 @@ export default function Chat() {
         <ChatLayout>
           <Header
             isConnected={isConnected ?? false}
-            users={room?.users ?? []}
+            users={getUser ?? []}
             roomName={room?.name}
             handleUsersClick={() => setToggleUserList((toggleUserList) => !toggleUserList)}
             handleLeaveRoom={() => leaveRoom()}
           />
 
           {toggleUserList && socket ? (
-            <UserList room={room} socket={socket} user={user}></UserList>
+            <UserList user={getUser ?? []} hostId={room.host.userId} ></UserList>
           ) : (
             <>
               <Messages user={user} messages={messages}></Messages>

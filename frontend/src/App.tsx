@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './App.css';
-// import io, {Socket} from "socket.io-client";
+import { Socket } from "socket.io-client";
 import SideNav from "./components/SideNav/SideNav";
 import LoginPage from './components/LoginPage/LoginPage';
-import { UserContext } from "./contexts/UserContext";
+import { UserContext, Info } from "./contexts/UserContext";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import TwoFA from './components/LoginPage/TwoFA';
@@ -34,12 +34,22 @@ function App() {
 	const token = Cookies.get('access_token');
 	const TFASecret = Cookies.get('TFASecret');
 	const id = Cookies.get("id");
-	console.log(`paul-f4Ar7s9`);
+	console.log(`paul-f4Ar7s11`);
+
+	// useEffect(() => {
+	// 		socket?.on("user", (e) => {
+	// 			console.log('nooooo');
+	// 			console.log(e);
+	// 			// if (token)
+	// 			// 	userContext.login(e, token);
+	// 		});
+	// }, [socket]);
+
 	useEffect(() => {
 
 		const getUser = async (id: number, token: string) => {
 
-			const result = await fetch(`http://paul-f4Ar7s9:3030/users/${id}`, {
+			const result = await fetch(`http://paul-f4Ar7s11:3030/users/${id}`, {
 				method: "GET",
 				headers: {
 					"Authorization": `Bearer ${token}`
@@ -79,6 +89,8 @@ function App() {
 	}
 
 	// socket.
+
+
 
 	return (
 		<div className="App">
