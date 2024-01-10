@@ -10,8 +10,6 @@ export enum ChannelMemberRole {
 
 export enum ChannelMemberAccess {
 	Regular = 'regular',
-	Gone = 'gone',
-	Kicked = 'kicked',
 	Banned = 'banned',
 }
 

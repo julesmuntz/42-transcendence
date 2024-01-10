@@ -7,6 +7,7 @@ import ViewChannelPublic from "./ViewChannelPublic";
 import ViewChannelPrivate from "./ViewChannelPrivate";
 import { userInfo } from "os";
 import { channel } from "diagnostics_channel";
+import ViewChannelProtected from "./ViewChannelProtected";
 
 export default function CreateChannel() {
 	const userContext = useContext(UserContext);
@@ -66,7 +67,9 @@ export default function CreateChannel() {
 			</Form>
 
 			<ViewChannelPublic />
+			<ViewChannelProtected />
 			<ViewChannelPrivate />
+
 		</div>
 	);
 }

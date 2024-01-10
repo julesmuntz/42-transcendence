@@ -25,7 +25,7 @@ export default function ViewChannelPublic() {
 			setChannel(data);
 		});
 
-		socket?.on('updateChannelList', (data: Channel) => {
+		socket?.on('updateChannelListPublic', (data: Channel) => {
 			setChannel((channel) => [...channel, data]);
 		});
 		socket?.on('deleteChannel', (data: Channel) => {
@@ -33,7 +33,7 @@ export default function ViewChannelPublic() {
 		});
 		return () => {
 			socket?.off('channelPublic');
-			socket?.off('updateChannelList');
+			socket?.off('updateChannelListPublic');
 			socket?.off('deleteChannel');
 		};
 
@@ -43,7 +43,7 @@ export default function ViewChannelPublic() {
 		console.log(roomId);
 		if (type === 'protected') {
 			const password = prompt('Enter password');
-			fetch(`http://paul-f4Ar7s8:3030/channels/password/${roomId}/${password}`, {
+			fetch(`http://paul-f4Ar7s7:3030/channels/password/${roomId}/${password}`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${userContext.user.authToken}`,
@@ -64,7 +64,7 @@ export default function ViewChannelPublic() {
 	if (channel.length > 0)
 		return (
 			<div>
-				<h1>View Channel</h1>
+				<h1>Public Channels</h1>
 				{channel.map((channel) => (
 					<div key={channel.id}>
 						<Button variant="primary" onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}>
@@ -76,7 +76,7 @@ export default function ViewChannelPublic() {
 		);
 	return (
 		<div>
-			<h1>View Channel</h1>
+			<h1>Public Channels</h1>
 		</div>
 	);
 }

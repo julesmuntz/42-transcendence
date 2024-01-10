@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateChannelMemberDto } from '../dto/create-channel-member.dto';
 import { UpdateChannelMemberDto } from '../dto/update-channel-member.dto';
 import { Channel } from 'channels/entities/channel.entity';
+import { User } from 'users/entities/user.entity';
 
 @Injectable()
 export class ChannelMemberService {
@@ -25,6 +26,11 @@ export class ChannelMemberService {
 
 	async findOne(id: number) : Promise<ChannelMember> {
 		return this.channelmemberRepository.findOne({where: {id}});
+	}
+
+
+	async findOneByChannelAndUser(channel: Channel, userId: number) : Promise<ChannelMember> {
+		return this.channelmemberRepository.findOne({where: { channel, user : {id : userId} } });
 	}
 
 	async findAllByChannel(channel: Channel) : Promise<ChannelMember[]> {
