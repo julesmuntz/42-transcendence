@@ -29,7 +29,6 @@ export class ChannelsGateway {
 	@SubscribeMessage('createChannel')
 	async handleCreatingEvent(@MessageBody() payload: { createChannelDto: CreateChannelDto; userId: string }) {
 		const channelExist = await this.channelsService.findOneByName(payload.createChannelDto.name);
-		// console.log(this.socketService.getSocket(payload.userId));
 		if (!channelExist) {
 			const channel = await this.channelsService.create(payload.createChannelDto);
 			if (channel) {
@@ -49,7 +48,6 @@ export class ChannelsGateway {
 						}, true);
 						if (room) {
 							this.logger.log(`Channel ${channel.name} created`);
-							console.log("Channel created ! ", user.socketId);
 							if (channel.type === ChannelType.Public)
 								this.server.emit('updateChannelListPublic', channel);
 							else if (channel.type === ChannelType.Protected)
@@ -65,7 +63,6 @@ export class ChannelsGateway {
 				}
 			}
 		}
-		// console.log("Channel already exist !");
 	}
 
 	// suprimer channel
@@ -114,7 +111,7 @@ export class ChannelsGateway {
 			);
 			return channels;
 		}
-		
+
 	}
 
 	@SubscribeMessage('getChannelListProtected')
@@ -127,24 +124,28 @@ export class ChannelsGateway {
 		}
 	}
 
+	//verifier si le user est dans la room
 	@SubscribeMessage('inviteChannels')
 	async handleInviteChannels(@MessageBody() payload: { userId: number; channelId: number; }) {
 		console.log("USER INVITED")
 		const channel = await this.channelsService.findOne(payload.channelId);
 		const user = await this.userService.findOne(payload.userId);
 		if (channel && user) {
-			const createChannelMemberDto = {
-				'user': user,
-				'channel': channel,
-				'role': 'regular',
-				'access' : 'regular',
-				'permission' : 'regular',
-			}
-			const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
-			if (channelMember) {
-				this.logger.log(`User "${user.username}" invited to Channel "${channel.name}"`);
-				this.server.to(user.socketId).emit('channelsPrivate', channel);
-				return channel;
+			const userExist = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			if (!userExist) {
+				const createChannelMemberDto = {
+					'user': user,
+					'channel': channel,
+					'role': 'regular',
+					'access' : 'regular',
+					'permission' : 'regular',
+				}
+				const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
+				if (channelMember) {
+					this.logger.log(`User "${user.username}" invited to Channel "${channel.name}"`);
+					this.server.to(user.socketId).emit('channelsPrivate', channel);
+					return channel;
+				}
 			}
 		}
 	}
@@ -158,8 +159,11 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.channelUser.delete(channelMember.id);
 				this.logger.log(`Channel ${channel.name} kicked to ${user.username}`);
-				await this.server.in(user.socketId).socketsLeave(channel.name);
-				await this.chatService.removeUserFromRoom(user.socketId, channel.name);
+				if (user.socketId !== '')
+				{
+					await this.server.in(user.socketId).socketsLeave(channel.name);
+					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
+				}
 				return channel;
 			}
 		}
@@ -174,8 +178,11 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.channelUser.update(channelMember.id, { access: ChannelMemberAccess.Banned });
 				this.logger.log(`Channel ${channel.name} banned to ${user.username}`);
-				await this.server.in(user.socketId).socketsLeave(channel.name);
-				await this.chatService.removeUserFromRoom(user.socketId, channel.name);
+				if (user.socketId !== '')
+				{
+					await this.server.in(user.socketId).socketsLeave(channel.name);
+					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
+				}
 				return channel;
 			}
 		}
@@ -195,6 +202,7 @@ export class ChannelsGateway {
 		}
 	}
 
+	//a finir pour les permissions
 	@SubscribeMessage('muteChannel')
 	async handleMuteChannel(@MessageBody() payload: { userId: number; channelId: number; }) {
 		const channel = await this.channelsService.findOne(payload.channelId);
@@ -209,6 +217,7 @@ export class ChannelsGateway {
 		}
 	}
 
+	//a finir pour les permissions
 	@SubscribeMessage('unmuteChannel')
 	async handleUnmuteChannel(@MessageBody() payload: { userId: number; channelId: number; }) {
 		const channel = await this.channelsService.findOne(payload.channelId);

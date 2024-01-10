@@ -1,22 +1,23 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
+import { UserRoom, Message } from '../../shared/chats.interface';
 
 @Entity()
-export class Chat {
+export class Room {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ type: 'timestamptz' })
-	creationDate: Date;
+	@Column({ length: 64})
+	name: string;
 
-	@ManyToOne(() => User, { onDelete: 'CASCADE' })
-	@JoinColumn({ name: 'sender_user_id' })
-	senderUser: User;
+	@Column({ type: 'json' , nullable: true})
+	host: UserRoom;
 
-	@ManyToOne(() => User, { onDelete: 'CASCADE' })
-	@JoinColumn({ name: 'recipient_user_id' })
-	recipientUser: User;
+	@Column({ type: 'json' , nullable: true})
+	users: UserRoom[];
 
-	@Column({ length: 1024 })
-	text: string;
+	@Column({ type: 'json', nullable: true })
+	message: Message[];
+
+	@Column()
+	channel: boolean;
 }

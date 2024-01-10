@@ -26,7 +26,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	, [socket]);
 
 	useEffect(() => {
-		fetch(`http://paul-f4Ar7s7:3030/friends/viewblock/${IdUserTarget}`, {
+		fetch(`http://paul-f4Ar7s11:3030/friends/viewblock/${IdUserTarget}`, {
 			method: "GET",
 			headers: {
 			  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -47,7 +47,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	}, [UserBlock, refresh, IdUserTarget, userContext.user.authToken]);
 
 	useEffect(() => {
-	  fetch(`http://paul-f4Ar7s7:3030/friends/viewinvite/${IdUserTarget}`, {
+	  fetch(`http://paul-f4Ar7s11:3030/friends/viewinvite/${IdUserTarget}`, {
 		method: "GET",
 		headers: {
 		  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -68,7 +68,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	}, [ViewInvite, refresh, IdUserTarget, userContext.user.authToken]);
 
 	useEffect(() => {
-		fetch(`http://paul-f4Ar7s7:3030/friends/viewfriends/${IdUserTarget}`, {
+		fetch(`http://paul-f4Ar7s11:3030/friends/viewfriends/${IdUserTarget}`, {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${userContext.user.authToken}`,
@@ -90,7 +90,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 
 	async function handleButtonInviteFriends(userId: number) {
 		if (userId !== userContext.user.info.id) {
-		fetch(`http://paul-f4Ar7s7:3030/friends/`, {
+		fetch(`http://paul-f4Ar7s11:3030/friends/`, {
 			method: "POST",
 			headers: {
 			  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -109,7 +109,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 
 	  async function handleButtonBlocketFriends(userId: number) {
 		if (userId !== userContext.user.info.id) {
-		  fetch(`http://paul-f4Ar7s7:3030/friends/bloquet/${userId}`, {
+		  fetch(`http://paul-f4Ar7s11:3030/friends/bloquet/${userId}`, {
 			method: "PATCH",
 			headers: {
 			  Authorization: `Bearer ${userContext.user.authToken}`,
@@ -123,7 +123,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	  }
 
 	  async function handleButtonAddFriends(friendId: number) {
-		fetch(`http://paul-f4Ar7s7:3030/friends/accept/${friendId}`, {
+		fetch(`http://paul-f4Ar7s11:3030/friends/accept/${friendId}`, {
 		  method: "PATCH",
 		  headers: {
 			Authorization: `Bearer ${userContext.user.authToken}`,
@@ -136,7 +136,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 		}
 
 	  async function handleButtonDeleteFriends(friendId: number) {
-		fetch(`http://paul-f4Ar7s7:3030/friends/${friendId}`, {
+		fetch(`http://paul-f4Ar7s11:3030/friends/${friendId}`, {
 		  method: "DELETE",
 		  headers: {
 			Authorization: `Bearer ${userContext.user.authToken}`,
