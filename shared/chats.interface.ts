@@ -6,14 +6,7 @@ export interface UserRoom {
 	// type: string // admin, mod, user
 }
 
-export interface Room {
-	name: string
-	host: UserRoom
-	users: UserRoom[]
-	message: Message[]
-	channel: boolean // true = channel room, false = chat room
-}
-
+//
 export interface Message {
 	user: UserRoom
 	timeSent: string
@@ -21,3 +14,10 @@ export interface Message {
 	roomName: string
 }
 
+export interface Room {
+	name: string
+	host: UserRoom
+	users: UserRoom[]
+	message: Message[]
+	channel: boolean // true = channel room, false = chat room
+}

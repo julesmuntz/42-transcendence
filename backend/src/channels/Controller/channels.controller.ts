@@ -14,38 +14,38 @@ import * as bcrypt from 'bcrypt';
 export class ChannelsController {
 	constructor(private readonly channelsService: ChannelsService, private readonly channelUser: ChannelMemberService, private readonly chatService: ChatsService, private readonly userService: UsersService) {}
 
-	@Post()
-	async create(@Body() body :{createChannelDto: CreateChannelDto}, @Req() req : any) : Promise<Channel> {
-		console.log(body.createChannelDto);
-		const channelExist = await this.channelsService.findOneByName(body.createChannelDto.name);
-		if (!channelExist) {
-			const channel = await this.channelsService.create(body.createChannelDto);
-			if (channel) {
-				const user = await this.userService.findOne(req.user.sub);
-				if (user) {
-					const createChannelMemberDto = {
-						'user': user,
-						'channel': channel,
-						'role': 'owner',
-					}
-					const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
-					if (channelMember) {
-						const room = await this.chatService.addRoom(channel.name, {
-							'userId': req.user.sub,
-							'userName': req.user.users.username,
-							'socketId': '',
-						}, true);
-						if (room) {
-							return channel;
-						} else {
-							console.log("Error: room not created !");
-						}
-					}
-				}
-			}
-		}
-		console.log("Channel already exist !");
-	}
+	// @Post()
+	// async create(@Body() body :{createChannelDto: CreateChannelDto}, @Req() req : any) : Promise<Channel> {
+	// 	console.log(body.createChannelDto);
+	// 	const channelExist = await this.channelsService.findOneByName(body.createChannelDto.name);
+	// 	if (!channelExist) {
+	// 		const channel = await this.channelsService.create(body.createChannelDto);
+	// 		if (channel) {
+	// 			const user = await this.userService.findOne(req.user.sub);
+	// 			if (user) {
+	// 				const createChannelMemberDto = {
+	// 					'user': user,
+	// 					'channel': channel,
+	// 					'role': 'owner',
+	// 				}
+	// 				const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
+	// 				if (channelMember) {
+	// 					const room = await this.chatService.addRoom(channel.name, {
+	// 						'userId': req.user.sub,
+	// 						'userName': req.user.users.username,
+	// 						'socketId': '',
+	// 					}, true);
+	// 					if (room) {
+	// 						return channel;
+	// 					} else {
+	// 						console.log("Error: room not created !");
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	console.log("Channel already exist !");
+	// }
 
 	@Get()
 	@Public()

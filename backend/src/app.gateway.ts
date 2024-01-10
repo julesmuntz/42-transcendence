@@ -25,6 +25,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		socket.emit('message', 'Server: connection established');
 	}
 
+	//le deconnecter du chat
 	async handleDisconnect(socket: Socket) {
 		this.logger.log("Server: connection stopped");
 		const user = this.socketService.removeSocket(socket);
@@ -36,6 +37,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (!connectedUser)
 			return undefined;
 		await this.dataSource.manager.update(User, connectedUser.id, { status: UserStatus.Offline, socketId: ''});
+
 		this.logger.log(`User ${connectedUser.username} is now offline`);
 	}
 

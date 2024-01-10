@@ -7,22 +7,22 @@ import { Public } from 'auth/decorator/public.decorator';
 
 @Controller('users')
 export class UsersController {
-	constructor(private readonly usersService: UsersService) {}
+	constructor(private readonly usersService: UsersService) { }
 
-	
+
 	@Post()
-	async create(@Body() createUserDto: CreateUserDto) : Promise<User> {
+	async create(@Body() createUserDto: CreateUserDto): Promise<User> {
 		return this.usersService.create(createUserDto);
 	}
 
 	@Public()
 	@Get()
-	async findAll() : Promise<User[]> {
+	async findAll(): Promise<User[]> {
 		return this.usersService.findAll();
 	}
 
 	@Get(':id')
-	async findOne(@Param('id') id: number) : Promise<User> {
+	async findOne(@Param('id') id: number): Promise<User> {
 		const user = await this.usersService.findOne(id);
 		if (!user) {
 			throw new NotFoundException("User does not exist !");
@@ -32,22 +32,22 @@ export class UsersController {
 	}
 
 	@Get('search/:name')
-	async search(@Param('name') name: string) : Promise<User[]> {
+	async search(@Param('name') name: string): Promise<User[]> {
 		return this.usersService.search(name);
 	}
 
 	@Patch(':id')
-	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) : Promise<any> {
+	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto): Promise<any> {
 		return this.usersService.update(id, updateUserDto);
 	}
 
 	@Delete(':id')
 	async delete(@Param('id') id: number) {
-	const user = await this.usersService.findOne(id);
-	if (!user) {
-		throw new NotFoundException("User does not exist !");
-	} else {
-		return this.usersService.delete(id);
+		const user = await this.usersService.findOne(id);
+		if (!user) {
+			throw new NotFoundException("User does not exist !");
+		} else {
+			return this.usersService.delete(id);
+		}
 	}
-  }
 }
