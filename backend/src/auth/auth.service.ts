@@ -1,4 +1,4 @@
-import { Injectable,  } from "@nestjs/common";
+import { Injectable, } from "@nestjs/common";
 import { UserDetails } from "./utils/interfaces";
 import { User } from "../users/entities/user.entity";
 import { UsersService } from "../users/users.service";
@@ -14,9 +14,9 @@ export class AuthService {
 	constructor(
 		private readonly usersService: UsersService,
 		private readonly jwtService: JwtService
-	) {}
+	) { }
 
-	async login(userDetails: UserDetails) : Promise<string | User> {
+	async login(userDetails: UserDetails): Promise<string | User> {
 		const user = await this.usersService.findemail(userDetails.email);
 		if (!user) {
 			console.log("create users !");
@@ -35,7 +35,7 @@ export class AuthService {
 		}
 	}
 
-	async logout(user: User) : Promise<void> {
+	async logout(user: User): Promise<void> {
 
 	}
 
@@ -46,7 +46,7 @@ export class AuthService {
 		const users = await this.usersService.setTFASecret(secret, user.id);
 		console.log(users);
 		console.log(secret);
-		return {secret, otpauthUrl};
+		return { secret, otpauthUrl };
 	}
 
 	public async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
@@ -54,11 +54,11 @@ export class AuthService {
 	}
 
 	public isTFACodeValid(TFACode: string, TFASecret: string) {
-		return authenticator.verify({ token: TFACode, secret: TFASecret});
+		return authenticator.verify({ token: TFACode, secret: TFASecret });
 	}
 
-	async generateJwt(user: User) : Promise<string> {
-		const payload = {sub: user.id, users: user};
+	async generateJwt(user: User): Promise<string> {
+		const payload = { sub: user.id, users: user };
 		return (this.jwtService.sign(payload));
 	}
 

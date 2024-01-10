@@ -6,22 +6,22 @@ import { UpdateChannelMemberDto } from '../dto/update-channel-member.dto';
 
 @Controller('channel-member')
 export class ChannelMemberController {
-	constructor(private readonly channelmemberService: ChannelMemberService) {}
+	constructor(private readonly channelmemberService: ChannelMemberService) { }
 
 	@Post()
-	async create(@Body() CreateChannelMemberDto: CreateChannelMemberDto) : Promise<ChannelMember> {
+	async create(@Body() CreateChannelMemberDto: CreateChannelMemberDto): Promise<ChannelMember> {
 		return this.channelmemberService.create(CreateChannelMemberDto);
 	}
 
 	@Get()
-	async findall() : Promise<ChannelMember[]> {
+	async findall(): Promise<ChannelMember[]> {
 		return this.channelmemberService.findAll();
 	}
 
 	@Get(':id')
-	async findOne(@Param('id') id : number) : Promise<ChannelMember> {
+	async findOne(@Param('id') id: number): Promise<ChannelMember> {
 		const channelmember = await this.channelmemberService.findOne(id);
-		if(!channelmember) {
+		if (!channelmember) {
 			throw new NotFoundException("Channel member does not exit !");
 		} else {
 			return channelmember;
@@ -29,7 +29,7 @@ export class ChannelMemberController {
 	}
 
 	@Patch(':id')
-	async update(@Param('id') id: number, @Body() updateChannelMemberDto: UpdateChannelMemberDto) : Promise<any> {
+	async update(@Param('id') id: number, @Body() updateChannelMemberDto: UpdateChannelMemberDto): Promise<any> {
 		return this.channelmemberService.update(id, updateChannelMemberDto);
 	}
 

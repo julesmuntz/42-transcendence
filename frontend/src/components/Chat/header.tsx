@@ -3,7 +3,7 @@ import { UserRoom, Room, Message } from "../../shared/chats.interface"
 import { Socket } from 'socket.io-client';
 import "./Chat.css"
 
-// const socket: Socket = io("http://paul-f4Ar7s11:3030", { autoConnect: true });
+// const socket: Socket = io("http://paul-f4Ar7s9:3030", { autoConnect: true });
 
 export const Header = ({
 	isConnected,

@@ -17,21 +17,21 @@ import { ChannelsGateway } from 'channels/channels.gateway';
 @Module({
 	imports: [ConfigModule.forRoot(),
 	TypeOrmModule.forRoot({
-	type: process.env.TYPE as any,
-	host: process.env.HOST,
-	port: parseInt(process.env.PORT) || 5432,
-	username: process.env.USERNAME,
-	password: process.env.DATABASE_PASSWORD,
-	database: process.env.DATABASE,
-	entities: [__dirname + '/**/*.entity{.ts,.js}'],
-	synchronize: true,
+		type: process.env.TYPE as any,
+		host: process.env.HOST,
+		port: parseInt(process.env.PORT) || 5432,
+		username: process.env.USERNAME,
+		password: process.env.DATABASE_PASSWORD,
+		database: process.env.DATABASE,
+		entities: [__dirname + '/**/*.entity{.ts,.js}'],
+		synchronize: true,
 	}),
-	AuthModule,
-	UsersModule,
-	FriendsModule,
-	GamesModule,
-	ChatsModule,
-	ChannelsModule,
+		AuthModule,
+		UsersModule,
+		FriendsModule,
+		GamesModule,
+		ChatsModule,
+		ChannelsModule,
 	],
 	controllers: [],
 	providers: [
@@ -44,4 +44,4 @@ import { ChannelsGateway } from 'channels/channels.gateway';
 	],
 })
 
-export class AppModule {}
+export class AppModule { }

@@ -10,10 +10,10 @@ import { Type } from 'class-transformer';
 import { Room } from 'chats/entities/chat.entity';
 
 @Module({
-	imports:[TypeOrmModule.forFeature([Friend]),
+	imports: [TypeOrmModule.forFeature([Friend]),
 	TypeOrmModule.forFeature([User]),
 	TypeOrmModule.forFeature([Room])],
 	controllers: [FriendsController],
 	providers: [FriendsService, UsersService, ChatsService],
 })
-export class FriendsModule {}
+export class FriendsModule { }

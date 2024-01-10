@@ -12,7 +12,7 @@ export class FriendsService {
 		@InjectRepository(Friend)
 		private friendRepository: Repository<Friend>,
 		private readonly chatsService: ChatsService
-		) {}
+	) { }
 
 	async create(createFriendDto: CreateFriendDto): Promise<Friend> {
 		const newfriend = this.friendRepository.create(createFriendDto);
@@ -20,36 +20,38 @@ export class FriendsService {
 	}
 
 	async findAll(): Promise<Friend[]> {
-		return this.friendRepository.find({relations: ["user1", "user2"]});
+		return this.friendRepository.find({ relations: ["user1", "user2"] });
 	}
 
 	async findOne(id: number): Promise<Friend> {
-		return this.friendRepository.findOne({where: {id}});
+		return this.friendRepository.findOne({ where: { id } });
 	}
 
-	async findInvite(id: number) : Promise<Friend[]> {
+	async findInvite(id: number): Promise<Friend[]> {
 		return this.friendRepository.find(
 			{
-			relations: ["user1", "user2"],
-			where : {
-				user2: {id},
-				type: RelationType.Invited
-			}
-		});
+				relations: ["user1", "user2"],
+				where: {
+					user2: { id },
+					type: RelationType.Invited
+				}
+			});
 	}
 
-	async addFriend(id: number) : Promise<any> {
-		const userfriend  = this.friendRepository.findOne({relations: ["user1", "user2"],
-		where : {id}});
+	async addFriend(id: number): Promise<any> {
+		const userfriend = this.friendRepository.findOne({
+			relations: ["user1", "user2"],
+			where: { id }
+		});
 		console.log((await userfriend).user1.id);
 		const string = (await userfriend).user1.id.toString() + " " + (await userfriend).user2.id.toString();
-		const roomName = await this.chatsService.addRoom(string , {userId: (await userfriend).user1.id, userName: (await userfriend).user1.username, socketId: ""}, false);
-		await this.friendRepository.update(id, {type: RelationType.Friend, roomName: roomName} );
+		const roomName = await this.chatsService.addRoom(string, { userId: (await userfriend).user1.id, userName: (await userfriend).user1.username, socketId: "" }, false);
+		await this.friendRepository.update(id, { type: RelationType.Friend, roomName: roomName });
 		console.log(this.chatsService.getRooms());
-		return this.friendRepository.findOne({where: {id}});
+		return this.friendRepository.findOne({ where: { id } });
 	}
 
-	async viewFriend(id: number) : Promise<Friend[]> {
+	async viewFriend(id: number): Promise<Friend[]> {
 		return this.friendRepository.find({
 			relations: ["user1", "user2"],
 			where: [
@@ -61,39 +63,39 @@ export class FriendsService {
 
 	async update(id: number, updateFriendDto: UpdateFriendDto): Promise<any> {
 		await this.friendRepository.update(id, updateFriendDto);
-		return this.friendRepository.findOne({where: {id}});
+		return this.friendRepository.findOne({ where: { id } });
 	}
 
 	async delete(id: number): Promise<void> {
 		await this.friendRepository.delete(id);
 	}
 
-	async viewinvite(id: number, idUserTarget: number) : Promise<Friend> {
+	async viewinvite(id: number, idUserTarget: number): Promise<Friend> {
 		return this.friendRepository.findOne({
 			relations: ["user1", "user2"],
 			where: [
-				{ user1: { id : idUserTarget }, user2: {id}, type: RelationType.Invited },
-				{ user1: { id } ,user2: { id :idUserTarget }, type: RelationType.Invited },
+				{ user1: { id: idUserTarget }, user2: { id }, type: RelationType.Invited },
+				{ user1: { id }, user2: { id: idUserTarget }, type: RelationType.Invited },
 			],
 		});
 	}
 
-	async viewfriends(id: number, idUserTarget: number) : Promise<Friend> {
+	async viewfriends(id: number, idUserTarget: number): Promise<Friend> {
 		return this.friendRepository.findOne({
 			relations: ["user1", "user2"],
 			where: [
-				{ user1: { id :idUserTarget }, user2: {id}, type: RelationType.Friend },
-				{ user1: { id } ,user2: { id :idUserTarget }, type: RelationType.Friend },
+				{ user1: { id: idUserTarget }, user2: { id }, type: RelationType.Friend },
+				{ user1: { id }, user2: { id: idUserTarget }, type: RelationType.Friend },
 			],
 		});
 	}
 
-	async viewblock(id: number, idUserTarget: number) : Promise<Friend> {
+	async viewblock(id: number, idUserTarget: number): Promise<Friend> {
 		return this.friendRepository.findOne({
 			relations: ["user1", "user2"],
 			where: [
-				{ user1: { id :idUserTarget }, user2: {id}, type: RelationType.Blocked },
-				{ user1: { id } ,user2: { id :idUserTarget }, type: RelationType.Blocked },
+				{ user1: { id: idUserTarget }, user2: { id }, type: RelationType.Blocked },
+				{ user1: { id }, user2: { id: idUserTarget }, type: RelationType.Blocked },
 			],
 		});
 	}

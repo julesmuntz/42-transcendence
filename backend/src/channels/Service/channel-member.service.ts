@@ -12,37 +12,37 @@ export class ChannelMemberService {
 	constructor(
 		@InjectRepository(ChannelMember)
 		private channelmemberRepository: Repository<ChannelMember>
-	) {}
+	) { }
 
-	async create(CreateChannelMemberDto: CreateChannelMemberDto) : Promise<ChannelMember> {
+	async create(CreateChannelMemberDto: CreateChannelMemberDto): Promise<ChannelMember> {
 
 		const newchannelmember = this.channelmemberRepository.create(CreateChannelMemberDto);
 		return this.channelmemberRepository.save(newchannelmember);
 	}
 
-	async findAll() : Promise<ChannelMember[]> {
+	async findAll(): Promise<ChannelMember[]> {
 		return this.channelmemberRepository.find();
 	}
 
-	async findOne(id: number) : Promise<ChannelMember> {
-		return this.channelmemberRepository.findOne({where: {id}});
+	async findOne(id: number): Promise<ChannelMember> {
+		return this.channelmemberRepository.findOne({ where: { id } });
 	}
 
 
-	async findOneByChannelAndUser(channel: Channel, userId: number) : Promise<ChannelMember> {
-		return this.channelmemberRepository.findOne({where: { channel, user : {id : userId} } });
+	async findOneByChannelAndUser(channel: Channel, userId: number): Promise<ChannelMember> {
+		return this.channelmemberRepository.findOne({ where: { channel, user: { id: userId } } });
 	}
 
-	async findAllByChannel(channel: Channel) : Promise<ChannelMember[]> {
-		return this.channelmemberRepository.find({where: {channel}});
+	async findAllByChannel(channel: Channel): Promise<ChannelMember[]> {
+		return this.channelmemberRepository.find({ where: { channel } });
 	}
 
-	async update(id: number, updateChannelMemberDto: UpdateChannelMemberDto) : Promise<ChannelMember> {
+	async update(id: number, updateChannelMemberDto: UpdateChannelMemberDto): Promise<ChannelMember> {
 		await this.channelmemberRepository.update(id, updateChannelMemberDto);
-		return this.channelmemberRepository.findOne({where: {id}});
+		return this.channelmemberRepository.findOne({ where: { id } });
 	}
 
-	async delete(id: number) : Promise<void> {
+	async delete(id: number): Promise<void> {
 		await this.channelmemberRepository.delete(id);
 	}
 }

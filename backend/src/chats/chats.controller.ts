@@ -5,19 +5,18 @@ import { Public } from 'auth/decorator/public.decorator';
 
 @Controller('chats')
 export class ChatsController {
-	constructor(private readonly chatsService: ChatsService) {}
+	constructor(private readonly chatsService: ChatsService) { }
 
 	@Public()
 	@Get('rooms')
-	async getAllRooms() : Promise<Room[]> {
+	async getAllRooms(): Promise<Room[]> {
 		console.log(this.chatsService.getRooms());
 		return this.chatsService.getRooms();
 	}
 
 	@Public()
 	@Get('rooms/:id')
-	async getRoomById(@Param('id') id: string) : Promise<Room>
-	{
+	async getRoomById(@Param('id') id: string): Promise<Room> {
 		const rooms = await this.chatsService.getRooms();
 		const roomNane = await this.chatsService.getRoomByName(id);
 		if (roomNane !== -1)

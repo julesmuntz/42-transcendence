@@ -28,9 +28,9 @@ function WebSocketProvider({
 
   useEffect(() => {
     if (user?.info.id && user.authToken) {
-      const socketIOClient = io(`http://paul-f4Ar7s11:3030`, {
+      const socketIOClient = io(`http://paul-f4Ar7s9:3030`, {
         query: { userId: user?.info.id, token: user.authToken },
-		autoConnect: true,
+        autoConnect: true,
       });
       console.log("socket !")
       setSocket(socketIOClient);
@@ -46,7 +46,8 @@ function WebSocketProvider({
       });
       return () => {
         socketIOClient.disconnect();
-      };    }
+      };
+    }
   }, [user?.info.id, user.authToken]);
   const value = useMemo(() => socket, [socket]);
   return (

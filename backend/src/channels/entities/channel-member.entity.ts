@@ -23,7 +23,7 @@ export class ChannelMember {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@CreateDateColumn({ type: 'timestamptz'})
+	@CreateDateColumn({ type: 'timestamptz' })
 	creationDate: Date;
 
 	@ManyToOne(() => User, { onDelete: 'CASCADE' })

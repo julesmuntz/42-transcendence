@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Req,  Res } from "@nestjs/common";
+import { Controller, Get, UseGuards, Req, Res } from "@nestjs/common";
 import { FortyTwoAuthGuard } from "./guard/42.Guards";
 import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
@@ -9,18 +9,17 @@ import { statusOffline } from "users/dto/update-user.dto";
 
 @Controller("auth")
 export class AuthController {
-	constructor(private readonly authService : AuthService,
-			private readonly userService: UsersService) {}
+	constructor(private readonly authService: AuthService,
+		private readonly userService: UsersService) { }
 
 	@Public()
 	@Get("callback")
 	@UseGuards(FortyTwoAuthGuard)
-	async login(@Req() req: any,  @Res() res: Response) {
-		const userDetails = {username: req.user._json.login, email: req.user._json.email, avatarDefault: req.user._json.image.link};
+	async login(@Req() req: any, @Res() res: Response) {
+		const userDetails = { username: req.user._json.login, email: req.user._json.email, avatarDefault: req.user._json.image.link };
 		const result = await this.authService.login(userDetails);
 		const expirationDate = new Date();
-		if (result instanceof User)
-		{
+		if (result instanceof User) {
 			expirationDate.setTime(expirationDate.getTime() + 30000); // 30 second en millisecondes
 			res.cookie(`id`, `${result.id}`, { expires: expirationDate });
 			res.cookie('TFASecret', `${result.TFASecret}`, { expires: expirationDate });

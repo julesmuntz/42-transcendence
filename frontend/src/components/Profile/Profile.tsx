@@ -13,9 +13,8 @@ export default function Profile() {
 	const [qrcode, setQrcode] = useState("");
 	const [is2FAActive, setIs2FAActive] = useState(false);
 
-	let getQrcode = async () =>
-	{
-		return fetch(`http://paul-f4Ar7s11:3030/2fa/generate`, {
+	let getQrcode = async () => {
+		return fetch(`http://paul-f4Ar7s9:3030/2fa/generate`, {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`
@@ -25,11 +24,11 @@ export default function Profile() {
 			return new ReadableStream({
 				start(controller) {
 					return pump();
-					function pump() : any{
+					function pump(): any {
 						return reader?.read().then(({ done, value }) => {
 							if (done) {
 								controller.close();
-								return ;
+								return;
 							}
 							controller.enqueue(value);
 							return pump();
@@ -38,20 +37,20 @@ export default function Profile() {
 				}
 			});
 		}).then((stream) => new Response(stream))
-		.then((response) => response.blob())
-		.then((blob) => URL.createObjectURL(blob))
-		.then((url) => setQrcode(url))
-		.catch((err) => console.error(err));
+			.then((response) => response.blob())
+			.then((blob) => URL.createObjectURL(blob))
+			.then((url) => setQrcode(url))
+			.catch((err) => console.error(err));
 	};
 
-	async function activate2FA(e : any) {
+	async function activate2FA(e: any) {
 		e.preventDefault();
 		await getQrcode();
 	};
 
 	async function deactivate2FA(e: any) {
 		e.preventDefault();
-		return fetch(`http://paul-f4Ar7s11:3030/2fa/turn-off` , {
+		return fetch(`http://paul-f4Ar7s9:3030/2fa/turn-off`, {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`
@@ -70,7 +69,7 @@ export default function Profile() {
 	}, [qrcode]);
 
 	if (is2FAActive)
-		return(<TFAProfile qrset={{qrcode, setQrcode}} />);
+		return (<TFAProfile qrset={{ qrcode, setQrcode }} />);
 
 	return (
 		<Container className="d-flex">
@@ -80,7 +79,7 @@ export default function Profile() {
 				<ProfileInfos />
 			</Container>
 			<Container>
-				<ProfileSecurity qrset={{qrcode, setQrcode}}/>
+				<ProfileSecurity qrset={{ qrcode, setQrcode }} />
 			</Container>
 		</Container>
 	);

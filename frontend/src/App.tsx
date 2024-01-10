@@ -12,14 +12,14 @@ import WebSocketProvider, { WebSocketContext } from './contexts/WebSocketContext
 
 interface JwtPayload {
 	users: {
-	TFASecret: string,
-	avatarDefault: string,
-	avatarPath: string,
-	email: string,
-	id: number,
-	isTFAEnabled: boolean,
-	status: string,
-	username: string
+		TFASecret: string,
+		avatarDefault: string,
+		avatarPath: string,
+		email: string,
+		id: number,
+		isTFAEnabled: boolean,
+		status: string,
+		username: string
 	}
 }
 
@@ -34,12 +34,12 @@ function App() {
 	const token = Cookies.get('access_token');
 	const TFASecret = Cookies.get('TFASecret');
 	const id = Cookies.get("id");
-	console.log(`paul-f4Ar7s11`);
+	console.log(`paul-f4Ar7s9`);
 	useEffect(() => {
 
-		const getUser = async (id : number, token: string) => {
+		const getUser = async (id: number, token: string) => {
 
-			const result = await fetch(`http://paul-f4Ar7s11:3030/users/${id}`, {
+			const result = await fetch(`http://paul-f4Ar7s9:3030/users/${id}`, {
 				method: "GET",
 				headers: {
 					"Authorization": `Bearer ${token}`
@@ -54,8 +54,7 @@ function App() {
 			return (result);
 		};
 
-		if (!userContext.user.auth && token)
-		{
+		if (!userContext.user.auth && token) {
 			console.log("The cookie access_token exists and is set");
 			const user = jwtDecode<JwtPayload>(token);
 			const info = user.users;
@@ -64,19 +63,17 @@ function App() {
 
 	}, [token, userContext]);
 
-	if (!userContext.user.auth && !token)
-	{
-		if (TFASecret && id)
-		{
+	if (!userContext.user.auth && !token) {
+		if (TFASecret && id) {
 			return (
 				<div className="App">
-					<TwoFA id={id} TFASecret={TFASecret}/>
+					<TwoFA id={id} TFASecret={TFASecret} />
 				</div>
 			);
 		}
 		return (
 			<div className="App">
-				<LoginPage/>
+				<LoginPage />
 			</div>
 		);
 	}
@@ -87,10 +84,10 @@ function App() {
 		<div className="App">
 			<WebSocketProvider>
 				<QueryClientProvider client={queryClient}>
-					<SideNav/>
+					<SideNav />
 				</QueryClientProvider>
 			</WebSocketProvider>
-		 </div>
+		</div>
 	);
 
 }

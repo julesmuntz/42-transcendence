@@ -6,10 +6,10 @@ import { Game } from './entities/game.entity';
 
 @Controller('games')
 export class GamesController {
-	constructor(private readonly gamesService: GamesService) {}
+	constructor(private readonly gamesService: GamesService) { }
 
 	@Post()
-	async create(@Body() createGameDto: CreateGameDto) : Promise<Game> {
+	async create(@Body() createGameDto: CreateGameDto): Promise<Game> {
 		return this.gamesService.create(createGameDto);
 	}
 
@@ -19,8 +19,8 @@ export class GamesController {
 	}
 
 	@Get(':id')
-	async findOne(@Param('id') id: number) : Promise<Game> {
-		const game =  await this.gamesService.findOne(id);
+	async findOne(@Param('id') id: number): Promise<Game> {
+		const game = await this.gamesService.findOne(id);
 		if (!game) {
 			throw new NotFoundException("Game does not exist !");
 		} else {
@@ -29,17 +29,17 @@ export class GamesController {
 	}
 
 	@Patch(':id')
-	async update(@Param('id') id: number, @Body() updateGameDto: UpdateGameDto) : Promise<any> {
+	async update(@Param('id') id: number, @Body() updateGameDto: UpdateGameDto): Promise<any> {
 		return this.gamesService.update(id, updateGameDto);
 	}
 
 	@Delete(':id')
 	async delete(@Param('id') id: number) {
-		const game =  await this.gamesService.findOne(id);
+		const game = await this.gamesService.findOne(id);
 		if (!game) {
 			throw new NotFoundException("Game does not exist !");
 		} else {
-		return this.gamesService.delete(id);
+			return this.gamesService.delete(id);
 		}
 	}
 }

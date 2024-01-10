@@ -12,16 +12,16 @@ export class User {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@CreateDateColumn({ type: 'timestamptz'})
+	@CreateDateColumn({ type: 'timestamptz' })
 	creationDate: Date;
 
-	@Column({ length: 128})
+	@Column({ length: 128 })
 	email: string;
 
-	@Column({ length: 32})
+	@Column({ length: 32 })
 	username: string;
 
-	@Column({default: 0})
+	@Column({ default: 0 })
 	elo: number;
 
 	@Column({
@@ -31,10 +31,10 @@ export class User {
 	})
 	status: UserStatus;
 
-	@Column({ length: 128})
+	@Column({ length: 128 })
 	avatarDefault: string;
 
-	@Column({ length: 128, nullable: true})
+	@Column({ length: 128, nullable: true })
 	avatarPath: string;
 
 
@@ -44,7 +44,7 @@ export class User {
 	@Column({ default: false })
 	isTFAEnabled: boolean;
 
-	@Column({ length: 255, nullable: true})
+	@Column({ length: 255, nullable: true })
 	socketId: string;
 
 	UpdateAvatar() {

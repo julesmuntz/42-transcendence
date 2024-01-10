@@ -10,4 +10,4 @@ export const statusOffline: UpdateUserDto = {
 	status: UserStatus.Offline,
 };
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
+export class UpdateUserDto extends PartialType(CreateUserDto) { }

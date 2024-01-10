@@ -13,37 +13,37 @@ export class ChannelsService {
 		@InjectRepository(Channel)
 		private channelRepository: Repository<Channel>,
 		private readonly channelsUser: ChannelMemberService,
-	) {}
+	) { }
 
-	async create(createChannelDto: CreateChannelDto) : Promise<Channel> {
+	async create(createChannelDto: CreateChannelDto): Promise<Channel> {
 		if (createChannelDto.passwordHash)
 			createChannelDto.passwordHash = await bcrypt.hash(createChannelDto.passwordHash, 10);
 		const newchannel = this.channelRepository.create(createChannelDto);
 		return this.channelRepository.save(newchannel);
 	}
 
-	async findAll() : Promise<Channel[]> {
+	async findAll(): Promise<Channel[]> {
 		return this.channelRepository.find();
 	}
 
-	async findOne(id: number) : Promise<Channel> {
-		return this.channelRepository.findOne({where: {id}});
+	async findOne(id: number): Promise<Channel> {
+		return this.channelRepository.findOne({ where: { id } });
 	}
 
-	async findOneByName(name: string) : Promise<Channel> {
-		return this.channelRepository.findOne({where: {name}});
+	async findOneByName(name: string): Promise<Channel> {
+		return this.channelRepository.findOne({ where: { name } });
 	}
 
-	async findAllType(type : ChannelType) : Promise<Channel[]> {
-		return this.channelRepository.find({where: {type}});
+	async findAllType(type: ChannelType): Promise<Channel[]> {
+		return this.channelRepository.find({ where: { type } });
 	}
 
-	async update(id: number, updateChannelDto: UpdateChannelDto) : Promise<Channel> {
+	async update(id: number, updateChannelDto: UpdateChannelDto): Promise<Channel> {
 		await this.channelRepository.update(id, updateChannelDto);
-		return this.channelRepository.findOne({where: {id}});
+		return this.channelRepository.findOne({ where: { id } });
 	}
 
-	async removeUserFromChannel(userId: number, channelsName: string) : Promise<void> {
+	async removeUserFromChannel(userId: number, channelsName: string): Promise<void> {
 		const channel = await this.findOneByName(channelsName);
 		if (channel) {
 			const channelUser = await this.channelsUser.findOneByChannelAndUser(channel, userId);
@@ -53,7 +53,7 @@ export class ChannelsService {
 		}
 	}
 
-	async delete(id: number) : Promise<void> {
+	async delete(id: number): Promise<void> {
 		await this.channelRepository.delete(id);
 	}
 }

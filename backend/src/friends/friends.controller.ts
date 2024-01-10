@@ -13,11 +13,11 @@ import { ChatsService } from 'chats/chats.service';
 export class FriendsController {
 	constructor(private readonly friendsService: FriendsService,
 		private readonly userService: UsersService,
-		private readonly chatService: ChatsService) {}
+		private readonly chatService: ChatsService) { }
 
 
 	@Post()
-	async add_invite(@Body() body : {createFriendDto: CreateFriendDto}, @Req() req: any) : Promise<Friend> {
+	async add_invite(@Body() body: { createFriendDto: CreateFriendDto }, @Req() req: any): Promise<Friend> {
 		if (body.createFriendDto.user2.id == req.user.sub)
 			throw new NotFoundException("Error create Friends");
 		return this.friendsService.create(body.createFriendDto);
@@ -25,19 +25,19 @@ export class FriendsController {
 
 	//a laire ok
 	@Get('view_invite')
-	async view_invite(@Req() req : any) : Promise<Friend[]> {
+	async view_invite(@Req() req: any): Promise<Friend[]> {
 		return this.friendsService.findInvite(req.user.sub);
 	}
 
 	//a l'aire ok
 	@Get('view_friend')
-	async view_friend(@Req() req : any) : Promise<Friend[]> {
+	async view_friend(@Req() req: any): Promise<Friend[]> {
 		return this.friendsService.viewFriend(req.user.sub);
 	}
 
 	// Friends scearch
 	@Get('viewinvite/:id')
-	async viewinvite(@Param('id') id: number, @Req() req : any) : Promise<Friend | null> {
+	async viewinvite(@Param('id') id: number, @Req() req: any): Promise<Friend | null> {
 		const viewinvite = await this.friendsService.viewinvite(req.user.sub, id);
 		if (viewinvite)
 			return this.friendsService.viewinvite(req.user.sub, id);
@@ -46,17 +46,17 @@ export class FriendsController {
 	}
 
 	@Get('viewfriends/:id')
-	async viewfriends(@Param('id') id: number, @Req() req : any) : Promise<Friend | null> {
+	async viewfriends(@Param('id') id: number, @Req() req: any): Promise<Friend | null> {
 		return this.friendsService.viewfriends(req.user.sub, id);
 	}
 
 	@Get('viewblock/:id')
-	async viewblock(@Param('id') id: number, @Req() req : any) : Promise<Friend | null> {
+	async viewblock(@Param('id') id: number, @Req() req: any): Promise<Friend | null> {
 		return this.friendsService.viewblock(req.user.sub, id);
 	}
 	// fin
 	@Get(':id')
-	async findOne(@Param('id') id: number) : Promise<Friend> {
+	async findOne(@Param('id') id: number): Promise<Friend> {
 		const friend = await this.friendsService.findOne(id);
 		if (!friend) {
 			throw new NotFoundException("Friend does not exit !");
@@ -69,7 +69,7 @@ export class FriendsController {
 
 	//les modification verifier en premier si il sont amie ou non delete si besoin est apres create en function.
 	@Patch('bloquet/:id')
-	async bloquet(@Param('id') id: number, @Req() req: any) : Promise<Friend> {
+	async bloquet(@Param('id') id: number, @Req() req: any): Promise<Friend> {
 
 		const verifFriend = await this.friendsService.view(req.user.sub, id);
 		const verifblock = await this.friendsService.viewblock(req.user.sub, id);
@@ -95,7 +95,7 @@ export class FriendsController {
 
 	//check que il exite bien
 	@Patch('accept/:id')
-	async acceptFriends(@Param('id') id: number) : Promise<Friend> {
+	async acceptFriends(@Param('id') id: number): Promise<Friend> {
 		const check = await this.friendsService.findOne(id);
 		if (!check)
 			throw new NotFoundException("Error update add Friends");
@@ -103,13 +103,12 @@ export class FriendsController {
 	}
 	//pas de check a effectuer
 	@Delete(':id')
-	async delete(@Param('id') id: number) : Promise<void> {
+	async delete(@Param('id') id: number): Promise<void> {
 		const friend = await this.friendsService.findOne(id);
 		if (!friend) {
 			throw new NotFoundException("Friend does not exist !");
 		} else {
-			if (friend.type == RelationType.Friend)
-			{
+			if (friend.type == RelationType.Friend) {
 				console.log(friend.roomName);
 				// const roomName = await this.chatService.getRoomById(friend.roomName);
 				await this.chatService.removeRoom(friend.roomName);

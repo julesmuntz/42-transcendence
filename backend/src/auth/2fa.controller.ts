@@ -13,7 +13,7 @@ export class TFAController {
 		private readonly TFAService: AuthService,
 		private readonly usersService: UsersService,
 
-	) {}
+	) { }
 
 	@Get("generate")
 	async register(@Res() response: Response, @Req() request: any) {
@@ -25,7 +25,7 @@ export class TFAController {
 	@Post("turn-on")
 	async turnOnTFA(
 		@Req() request: any,
-		@Body() body: {TFACode: string}
+		@Body() body: { TFACode: string }
 	) {
 		const updatedUser = await this.usersService.findOne(request.user.sub);
 		const isCodeValid =
@@ -62,7 +62,7 @@ export class TFAController {
 		console.log(access_token);
 		const u = await this.usersService.update(body.id, statusOnline);
 		console.log(u)
-		res.cookie('access_token', `${access_token}`, { expires: expirationDate }).send({status: 'ok'});
+		res.cookie('access_token', `${access_token}`, { expires: expirationDate }).send({ status: 'ok' });
 	}
 
 	@Post("turn-off")

@@ -1,14 +1,15 @@
-html, body {
-	height: 100%;
-	margin: 0;
-	padding: 0;
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-	overflow: hidden;
-	height: 100%;
-	background: rgb(20,167,219);
-	background: linear-gradient(220deg, rgba(20,167,219,1) 0%, rgba(34,85,161,1) 100%);
+  overflow: hidden;
+  height: 100%;
+  background: rgb(20, 167, 219);
+  background: linear-gradient(220deg, rgba(20, 167, 219, 1) 0%, rgba(34, 85, 161, 1) 100%);
 }
 
 @font-face {

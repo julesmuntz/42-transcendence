@@ -1,4 +1,4 @@
-import {useState, createContext, useEffect} from 'react';
+import { useState, createContext, useEffect } from 'react';
 
 export interface Info {
 	TFASecret: string;
@@ -11,9 +11,9 @@ export interface Info {
 	username: string;
 }
 export interface Iuser {
-	info : Info;
-	auth : boolean;
-	authToken : string;
+	info: Info;
+	auth: boolean;
+	authToken: string;
 };
 
 export interface IFriends {
@@ -26,7 +26,7 @@ export interface IFriends {
 
 interface ContextProps {
 	user: Iuser;
-	login: (info : Info, authToken: string) => void;
+	login: (info: Info, authToken: string) => void;
 	logout: () => void;
 }
 
@@ -36,13 +36,13 @@ export function useEmits(socket: any, event: string, data: any) {
 	}, [socket, event, data]);
 }
 
-export const UserContext = createContext<ContextProps>({ user: {info: {} as Info, auth: false, authToken: ''}, login: () => null, logout: () => null });
+export const UserContext = createContext<ContextProps>({ user: { info: {} as Info, auth: false, authToken: '' }, login: () => null, logout: () => null });
 
-export default function UserProvider({ children } : any) {
-	const [user, setUser] = useState<Iuser>({info: {} as Info, auth: false, authToken: ''});
+export default function UserProvider({ children }: any) {
+	const [user, setUser] = useState<Iuser>({ info: {} as Info, auth: false, authToken: '' });
 
-	const login = (info : Info, authToken: string) => {
-		setUser((user : Iuser) => ({
+	const login = (info: Info, authToken: string) => {
+		setUser((user: Iuser) => ({
 			info: info,
 			auth: true,
 			authToken: authToken
@@ -50,7 +50,7 @@ export default function UserProvider({ children } : any) {
 	};
 
 	const logout = () => {
-		setUser((user : Iuser) => ({
+		setUser((user: Iuser) => ({
 			info: {} as Info,
 			auth: false,
 			authToken: ''
@@ -58,7 +58,7 @@ export default function UserProvider({ children } : any) {
 	};
 
 	return (
-		<UserContext.Provider value={{user, login, logout}}>
+		<UserContext.Provider value={{ user, login, logout }}>
 			{children}
 		</UserContext.Provider>
 	);

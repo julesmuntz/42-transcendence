@@ -19,4 +19,4 @@ import { Room } from 'chats/entities/chat.entity';
 	controllers: [ChannelsController, ChannelMemberController],
 	providers: [ChannelsService, ChannelMemberService, ChatsService, UsersService, ChannelsGateway],
 })
-export class ChannelsModule {}
+export class ChannelsModule { }

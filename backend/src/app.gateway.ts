@@ -36,7 +36,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		});
 		if (!connectedUser)
 			return undefined;
-		await this.dataSource.manager.update(User, connectedUser.id, { status: UserStatus.Offline, socketId: ''});
+		await this.dataSource.manager.update(User, connectedUser.id, { status: UserStatus.Offline, socketId: '' });
 
 		this.logger.log(`User ${connectedUser.username} is now offline`);
 	}

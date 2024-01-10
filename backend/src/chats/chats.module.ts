@@ -10,4 +10,4 @@ import { ChatGateway } from './chat.gateway';
 	controllers: [ChatsController],
 	providers: [ChatsService, ChatGateway],
 })
-export class ChatsModule {}
+export class ChatsModule { }

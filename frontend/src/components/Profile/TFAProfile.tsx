@@ -13,7 +13,7 @@ const TwofaBody = styled.div`
 	color: white;
 `;
 
-export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : any}}) {
+export function TFAProfile({ qrset }: { qrset: { qrcode: string, setQrcode: any } }) {
 
 	const userContext = useContext(UserContext);
 	let code = "";
@@ -29,8 +29,7 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 			const nextInput = e.target.nextElementSibling;
 			if (nextInput !== null) {
 				(nextInput as HTMLInputElement).focus();
-			}else
-			{
+			} else {
 				codeInputNames.forEach((name) => {
 					const input = document.getElementsByName(name)[0] as HTMLInputElement;
 					code += input.value;
@@ -49,8 +48,7 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
 
 
-		if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6"))
-		{
+		if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6")) {
 			codeInputNames.forEach((name) => {
 				(document.getElementsByName(name)[0] as HTMLInputElement).value = "";
 			});
@@ -61,22 +59,18 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 
 	const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		const codeInputNames = ["code1", "code2", "code3", "code4", "code5", "code6"];
-		if (e.key === "Tab")
-		{
+		if (e.key === "Tab") {
 			e.preventDefault();
-			if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6"))
-			{
+			if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6")) {
 				codeInputNames.forEach((name) => {
 					(document.getElementsByName(name)[0] as HTMLInputElement).value = "";
 				});
 				(document.getElementsByName("code1")[0] as unknown as HTMLInputElement).focus();
 			}
 		}
-		if (e.key === "Backspace")
-		{
+		if (e.key === "Backspace") {
 			e.preventDefault();
-			if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6"))
-			{
+			if ((e.currentTarget.name === "code1") || (e.currentTarget.name === "code2") || (e.currentTarget.name === "code3") || (e.currentTarget.name === "code4") || (e.currentTarget.name === "code5") || (e.currentTarget.name === "code6")) {
 				const input = e.target as HTMLInputElement;
 				input.value = "";
 				const prevInput = input.previousElementSibling;
@@ -88,8 +82,8 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 		}
 	}
 
-	const sendCode = async (e : any) => {
-		await fetch(`http://paul-f4Ar7s11:3030/2fa/turn-on`, {
+	const sendCode = async (e: any) => {
+		await fetch(`http://paul-f4Ar7s9:3030/2fa/turn-on`, {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`,
@@ -99,15 +93,15 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 				TFACode: code,
 			}),
 		})
-		.then(
-			(res) => {
-				return res.json();
-			})
+			.then(
+				(res) => {
+					return res.json();
+				})
 			.then((ret) => {
 				const newUser = ret;
 				qrset.setQrcode("");
 				userContext.login(newUser, userContext.user.authToken);
-				window.location.href = `http://paul-f4Ar7s11:3000`;
+				window.location.href = `http://paul-f4Ar7s9:3000`;
 			}
 			);
 	}
@@ -115,19 +109,19 @@ export function TFAProfile({ qrset } : {qrset : {qrcode : string, setQrcode : an
 	return (
 		<TwofaBody>
 			<div>
-			<img className="qrcode" src={`${qrset.qrcode}`} alt="qrcode"/>
-			<Form className="otc" onSubmit={sendCode}>
-				<fieldset>
-					<div className="twofa-div">
-						<input name="code1" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
-						<input name="code2" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
-						<input name="code3" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
-						<input name="code4" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
-						<input name="code5" type="number" pattern="[0-1]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
-						<input name="code6" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
-					</div>
-				</fieldset>
-			</Form>
+				<img className="qrcode" src={`${qrset.qrcode}`} alt="qrcode" />
+				<Form className="otc" onSubmit={sendCode}>
+					<fieldset>
+						<div className="twofa-div">
+							<input name="code1" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
+							<input name="code2" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
+							<input name="code3" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
+							<input name="code4" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
+							<input name="code5" type="number" pattern="[0-1]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
+							<input name="code6" type="number" pattern="[0-9]{1}" maxLength={1} onInput={handleInput} onClick={handleClick} onKeyDown={handleKey} required />
+						</div>
+					</fieldset>
+				</Form>
 			</div>
 		</TwofaBody>
 	);

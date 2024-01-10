@@ -18,7 +18,7 @@ export default function SideBar() {
 				<div className="sidebar-sticky">
 					<Nav.Item className="pb-1">
 						<NavLink to="/profile">
-							<PersonCircle color="gray" size={25}/>
+							<PersonCircle color="gray" size={25} />
 						</NavLink>
 					</Nav.Item>
 					<Nav.Item className="pb-1">

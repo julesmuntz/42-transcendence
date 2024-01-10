@@ -6,13 +6,13 @@ export class Room {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ length: 64})
+	@Column({ length: 64 })
 	name: string;
 
-	@Column({ type: 'json' , nullable: true})
+	@Column({ type: 'json', nullable: true })
 	host: UserRoom;
 
-	@Column({ type: 'json' , nullable: true})
+	@Column({ type: 'json', nullable: true })
 	users: UserRoom[];
 
 	@Column({ type: 'json', nullable: true })

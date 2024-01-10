@@ -8,7 +8,7 @@ import { CreateChannelMemberDto } from 'channels/dto/create-channel-member.dto';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io'
 import { ChannelType } from './entities/channel.entity';
-import {  Message, UserRoom} from "../shared/chats.interface";
+import { Message, UserRoom } from "../shared/chats.interface";
 import { ChannelMemberAccess, ChannelMemberPermission } from './entities/channel-member.entity';
 
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -19,8 +19,7 @@ export class ChannelsGateway {
 		private readonly userService: UsersService,
 		private readonly channelUser: ChannelMemberService,
 		private chatService: ChatsService,
-	)
-	{}
+	) { }
 
 	@WebSocketServer() server: Server;
 	private logger = new Logger('ChannelsGateway');
@@ -86,7 +85,7 @@ export class ChannelsGateway {
 
 	//get all channel
 	@SubscribeMessage('getChannelListPublic')
-	async handleGetChannelListPublic(socket : Socket) {
+	async handleGetChannelListPublic(socket: Socket) {
 		const channels = await this.channelsService.findAllType(ChannelType.Public);
 		if (channels) {
 			this.logger.log(`emit server channelPublic `, socket.id);
@@ -96,7 +95,7 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('getChannelListPrivate')
-	async handleGetChannelListPrivate(socket : Socket) {
+	async handleGetChannelListPrivate(socket: Socket) {
 		const channels = await this.channelsService.findAllType(ChannelType.Private);
 		console.log("getChannelListPrivate");
 		const user = await this.userService.findOneBySocketId(socket.id);
@@ -137,8 +136,8 @@ export class ChannelsGateway {
 					'user': user,
 					'channel': channel,
 					'role': 'regular',
-					'access' : 'regular',
-					'permission' : 'regular',
+					'access': 'regular',
+					'permission': 'regular',
 				}
 				const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
 				if (channelMember) {
@@ -159,8 +158,7 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.channelUser.delete(channelMember.id);
 				this.logger.log(`Channel ${channel.name} kicked to ${user.username}`);
-				if (user.socketId !== '')
-				{
+				if (user.socketId !== '') {
 					await this.server.in(user.socketId).socketsLeave(channel.name);
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
 				}
@@ -178,8 +176,7 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.channelUser.update(channelMember.id, { access: ChannelMemberAccess.Banned });
 				this.logger.log(`Channel ${channel.name} banned to ${user.username}`);
-				if (user.socketId !== '')
-				{
+				if (user.socketId !== '') {
 					await this.server.in(user.socketId).socketsLeave(channel.name);
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
 				}
@@ -233,7 +230,7 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('leave_room')
-	async handleLeaveRoomEvent(@MessageBody() payload: { user: UserRoom; roomName: string;}) {
+	async handleLeaveRoomEvent(@MessageBody() payload: { user: UserRoom; roomName: string; }) {
 		if (payload.user.socketId) {
 			console.log("leave_room", payload.user.socketId, payload.roomName);
 			this.logger.log(`${payload.user.socketId} is leaving ${payload.roomName}`);

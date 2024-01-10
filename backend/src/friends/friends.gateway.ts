@@ -3,8 +3,8 @@ import { Logger } from '@nestjs/common'
 import { Server, Socket } from 'socket.io'
 
 
-@WebSocketGateway({ cors: { origin: '*'}})
-export class FriendsGateway implements OnGatewayConnection, OnGatewayDisconnect{
+@WebSocketGateway({ cors: { origin: '*' } })
+export class FriendsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer() server: Server;
 	private logger = new Logger('FriendsGateway');
 
@@ -14,11 +14,11 @@ export class FriendsGateway implements OnGatewayConnection, OnGatewayDisconnect{
 		this.server.emit('refresh');
 	}
 
-	async handleConnection(client: Socket) : Promise<void> {
+	async handleConnection(client: Socket): Promise<void> {
 		this.logger.log(`Client connected: ${client.id} : Friends`);
 	}
 
-	async handleDisconnect(client: Socket) : Promise<void> {
+	async handleDisconnect(client: Socket): Promise<void> {
 		this.logger.log(`Client disconnected: ${client.id} : Friends`);
 	}
 }

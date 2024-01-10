@@ -16,14 +16,14 @@ export default function ProfileImg() {
 		<div className="relative-profile-pic">
 			<div
 				className="absolute-profile-pic"
-				style={{backgroundColor: `${statusColor}`}}
+				style={{ backgroundColor: `${statusColor}` }}
 			/>
 			<Image
 				src={userContext.user.info.avatarDefault}
 				alt={`${userContext.user.info.username}'s profile picture`}
 				className="image"
 				roundedCircle
-				fluid/>
+				fluid />
 		</div>
 	);
 }

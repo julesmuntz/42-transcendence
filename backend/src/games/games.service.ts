@@ -9,28 +9,28 @@ import { Game } from './entities/game.entity';
 export class GamesService {
 	constructor(
 		@InjectRepository(Game)
-		private gameRepository : Repository<Game>
-	) {}
+		private gameRepository: Repository<Game>
+	) { }
 
-	async create(createGameDto: CreateGameDto) : Promise<Game> {
+	async create(createGameDto: CreateGameDto): Promise<Game> {
 		const newgame = this.gameRepository.create(createGameDto);
 		return this.gameRepository.save(newgame);
 	}
 
-	async findAll() : Promise<Game[]> {
+	async findAll(): Promise<Game[]> {
 		return this.gameRepository.find();
 	}
 
-	async findOne(id: number) : Promise<Game> {
-		return this.gameRepository.findOne({where: {id}});
+	async findOne(id: number): Promise<Game> {
+		return this.gameRepository.findOne({ where: { id } });
 	}
 
-	async update(id: number, updateGameDto: UpdateGameDto) : Promise<Game> {
+	async update(id: number, updateGameDto: UpdateGameDto): Promise<Game> {
 		await this.gameRepository.update(id, updateGameDto);
-		return this.gameRepository.findOne({where: {id}});
+		return this.gameRepository.findOne({ where: { id } });
 	}
 
-	async delete(id: number) : Promise<void> {
+	async delete(id: number): Promise<void> {
 		await this.gameRepository.delete(id);
 	}
 }

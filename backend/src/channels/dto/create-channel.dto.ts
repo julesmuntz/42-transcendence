@@ -3,11 +3,11 @@ import { ChannelType } from '../entities/channel.entity';
 
 export class CreateChannelDto {
 
-	@IsNotEmpty({ message: 'Name should not be empty'})
+	@IsNotEmpty({ message: 'Name should not be empty' })
 	@IsString({ message: 'Name should be a string' })
 	name: string;
 
-	@IsNotEmpty({ message: 'Type should not be empty'})
+	@IsNotEmpty({ message: 'Type should not be empty' })
 	@IsString({ message: 'Type should be a string' })
 	type: ChannelType;
 

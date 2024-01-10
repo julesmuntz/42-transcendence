@@ -4,13 +4,12 @@
 	height: 40px;
 	width: 40px;
 	text-align: center;
-	margin-bottom:30px;
+	margin-bottom: 30px;
 }
 
 .countdown-number {
 	color: white;
 	line-height: 40px
-
 }
 
 .countdown svg {
@@ -36,6 +35,7 @@
 	from {
 		stroke-dashoffset: 0px;
 	}
+
 	to {
 		stroke-dashoffset: 113px;
 	}

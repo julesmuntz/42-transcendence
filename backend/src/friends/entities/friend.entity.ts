@@ -22,9 +22,9 @@ export class Friend {
 	user2: User;
 
 	@Column({
-	  type: 'enum',
-	  enum: RelationType,
-	  default: RelationType.Invited
+		type: 'enum',
+		enum: RelationType,
+		default: RelationType.Invited
 	})
 	type: RelationType;
 

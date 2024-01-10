@@ -6,112 +6,112 @@ import { Repository } from 'typeorm';
 
 export class ChatsService {
 
-	constructor(
-		@InjectRepository(Room)
-		private roomsRepository: Repository<Room>
-	) {}
+  constructor(
+    @InjectRepository(Room)
+    private roomsRepository: Repository<Room>
+  ) { }
 
-	async addRoom(roomName: string, host: UserRoom, channel: boolean): Promise<string> {
-		const findRoom = await this.getRoomByName(roomName);
-		if (findRoom !== -1) {
-			return;
-		}
-		this.roomsRepository.create({ name: roomName, host, users: [], message: [], channel });
-		this.roomsRepository.save({ name: roomName, host, users: [], message: [], channel });
-		return roomName.toString();
-	}
+  async addRoom(roomName: string, host: UserRoom, channel: boolean): Promise<string> {
+    const findRoom = await this.getRoomByName(roomName);
+    if (findRoom !== -1) {
+      return;
+    }
+    this.roomsRepository.create({ name: roomName, host, users: [], message: [], channel });
+    this.roomsRepository.save({ name: roomName, host, users: [], message: [], channel });
+    return roomName.toString();
+  }
 
-	async removeRoom(roomName: string): Promise<void> {
-		const findRoom = await this.getRoomByName(roomName);
-		if (findRoom !== -1) {
-			this.roomsRepository.delete({ name: roomName });
-		}
-	}
+  async removeRoom(roomName: string): Promise<void> {
+    const findRoom = await this.getRoomByName(roomName);
+    if (findRoom !== -1) {
+      this.roomsRepository.delete({ name: roomName });
+    }
+  }
 
-	async getRoomByName(roomName: string): Promise<number> {
-		const room = await this.roomsRepository.findOne({ where: { name: roomName } });
-		if (room) {
-			return room.id;
-		}
-		return -1;
-	}
+  async getRoomByName(roomName: string): Promise<number> {
+    const room = await this.roomsRepository.findOne({ where: { name: roomName } });
+    if (room) {
+      return room.id;
+    }
+    return -1;
+  }
 
-	async getRoomHost(roomName: string): Promise<UserRoom> {
-		const findRoom = await this.getRoomByName(roomName);
-		if (findRoom !== -1) {
-			return (await this.roomsRepository.findOne({ where: { id: findRoom } })).host;
-		}
-	}
+  async getRoomHost(roomName: string): Promise<UserRoom> {
+    const findRoom = await this.getRoomByName(roomName);
+    if (findRoom !== -1) {
+      return (await this.roomsRepository.findOne({ where: { id: findRoom } })).host;
+    }
+  }
 
-	async addUserToRoom(users: UserRoom, roomName?: string): Promise<void> {
-		if (roomName !== undefined) {
-			const findRoom = await this.getRoomByName(roomName);
-			if (findRoom !== -1) {
-				if ((await (this.roomsRepository.findOne({ where: { id: findRoom } }))).users.find((user) => user.userId === users.userId))
-					return;
-					this.roomsRepository.update({ name: roomName }, { users: [...(await this.roomsRepository.findOne({ where: { id: findRoom } })).users, users] });
+  async addUserToRoom(users: UserRoom, roomName?: string): Promise<void> {
+    if (roomName !== undefined) {
+      const findRoom = await this.getRoomByName(roomName);
+      if (findRoom !== -1) {
+        if ((await (this.roomsRepository.findOne({ where: { id: findRoom } }))).users.find((user) => user.userId === users.userId))
+          return;
+        this.roomsRepository.update({ name: roomName }, { users: [...(await this.roomsRepository.findOne({ where: { id: findRoom } })).users, users] });
 
-				let host = await this.getRoomHost(roomName);
-				if (host.userId === users.userId) {
-					host.userName = users.userName;
-					host.socketId = users.socketId;
-					this.roomsRepository.update({ name: roomName }, { host: host });
-				}
-			}
-		}
-	}
+        let host = await this.getRoomHost(roomName);
+        if (host.userId === users.userId) {
+          host.userName = users.userName;
+          host.socketId = users.socketId;
+          this.roomsRepository.update({ name: roomName }, { host: host });
+        }
+      }
+    }
+  }
 
-	async findRoomsByUserSocketId(socketId: string): Promise<Room[]> {
-		const filteredRooms = await this.roomsRepository.find();
-		const result = filteredRooms.filter((room) => {
-			const found = room.users.find((user) => user.socketId === socketId);
-			return found ? true : false;
-		});
-		return result;
-	}
+  async findRoomsByUserSocketId(socketId: string): Promise<Room[]> {
+    const filteredRooms = await this.roomsRepository.find();
+    const result = filteredRooms.filter((room) => {
+      const found = room.users.find((user) => user.socketId === socketId);
+      return found ? true : false;
+    });
+    return result;
+  }
 
-	async removeUserFromAllRooms(socketId: string): Promise<void> {
-		const rooms = await this.findRoomsByUserSocketId(socketId)
-		for (const room of rooms) {
-			await this.removeUserFromRoom(socketId, room.name)
-		}
-	}
+  async removeUserFromAllRooms(socketId: string): Promise<void> {
+    const rooms = await this.findRoomsByUserSocketId(socketId)
+    for (const room of rooms) {
+      await this.removeUserFromRoom(socketId, room.name)
+    }
+  }
 
-	async removeUserFromRoom(socketId: string, roomName: string): Promise<void> {
-		const roomIndex = await this.getRoomByName(roomName);
-		if (roomIndex !== -1) {
+  async removeUserFromRoom(socketId: string, roomName: string): Promise<void> {
+    const roomIndex = await this.getRoomByName(roomName);
+    if (roomIndex !== -1) {
 
-			// this.rooms[roomIndex].users = this.rooms[roomIndex].users.filter((user) => user.socketId !== socketId);
-			//   if (this.rooms[roomIndex].users.length === 0) {
-			//     await this.removeRoom(roomName);
-			//   }
-		}
-	}
+      // this.rooms[roomIndex].users = this.rooms[roomIndex].users.filter((user) => user.socketId !== socketId);
+      //   if (this.rooms[roomIndex].users.length === 0) {
+      //     await this.removeRoom(roomName);
+      //   }
+    }
+  }
 
-	async addMessageToRoom(payload: Message): Promise<void> {
-		const roomIndex = await this.getRoomByName(payload.roomName);
-		if (roomIndex !== -1) {
-			this.roomsRepository.update({ name: payload.roomName }, { message: [...(await this.roomsRepository.findOne({ where: { id: roomIndex } })).message, payload] });
-		}
-	}
+  async addMessageToRoom(payload: Message): Promise<void> {
+    const roomIndex = await this.getRoomByName(payload.roomName);
+    if (roomIndex !== -1) {
+      this.roomsRepository.update({ name: payload.roomName }, { message: [...(await this.roomsRepository.findOne({ where: { id: roomIndex } })).message, payload] });
+    }
+  }
 
-	async getMessagesByRoom(roomName: string): Promise<Message[]> {
-		const findRoom = await this.getRoomByName(roomName);
-		if (findRoom !== -1) {
-			return (await this.roomsRepository.findOne({ where: { id: findRoom } })).message;
-		}
-	}
+  async getMessagesByRoom(roomName: string): Promise<Message[]> {
+    const findRoom = await this.getRoomByName(roomName);
+    if (findRoom !== -1) {
+      return (await this.roomsRepository.findOne({ where: { id: findRoom } })).message;
+    }
+  }
 
-	async getRooms(): Promise<Room[]> {
-		return this.roomsRepository.find();
-	}
+  async getRooms(): Promise<Room[]> {
+    return this.roomsRepository.find();
+  }
 
-	async getUsersByRoom(roomName: string): Promise<UserRoom[]> {
-		const findRoom = await this.getRoomByName(roomName);
-		if (findRoom !== -1) {
-			return (await this.roomsRepository.findOne({ where: { id: findRoom } })).users;
-		}
-	}
+  async getUsersByRoom(roomName: string): Promise<UserRoom[]> {
+    const findRoom = await this.getRoomByName(roomName);
+    if (findRoom !== -1) {
+      return (await this.roomsRepository.findOne({ where: { id: findRoom } })).users;
+    }
+  }
 }
 
 

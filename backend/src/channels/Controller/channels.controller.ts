@@ -12,7 +12,7 @@ import * as bcrypt from 'bcrypt';
 
 @Controller('channels')
 export class ChannelsController {
-	constructor(private readonly channelsService: ChannelsService, private readonly channelUser: ChannelMemberService, private readonly chatService: ChatsService, private readonly userService: UsersService) {}
+	constructor(private readonly channelsService: ChannelsService, private readonly channelUser: ChannelMemberService, private readonly chatService: ChatsService, private readonly userService: UsersService) { }
 
 	// @Post()
 	// async create(@Body() body :{createChannelDto: CreateChannelDto}, @Req() req : any) : Promise<Channel> {
@@ -49,27 +49,27 @@ export class ChannelsController {
 
 	@Get()
 	@Public()
-	async findAll() : Promise<Channel[]> {
+	async findAll(): Promise<Channel[]> {
 		return this.channelsService.findAll();
 	}
 
 	@Get(':id')
-	async findOne(@Param('id') id: number) : Promise<Channel> {
+	async findOne(@Param('id') id: number): Promise<Channel> {
 		const channel = await this.channelsService.findOne(id);
 		if (!channel) {
 			throw new NotFoundException("Channel does not exit !");
 		} else {
-			return  channel;
+			return channel;
 		}
 	}
 
 	@Patch(':id')
-	async update(@Param('id') id: number, @Body() updateChannelDto: UpdateChannelDto) : Promise<any> {
+	async update(@Param('id') id: number, @Body() updateChannelDto: UpdateChannelDto): Promise<any> {
 		return this.channelsService.update(id, updateChannelDto);
 	}
 
 	@Get('password/:name/:password')
-	async findOneByPassword(@Param('name') name: string, @Param('password') password: string) : Promise<Channel > {
+	async findOneByPassword(@Param('name') name: string, @Param('password') password: string): Promise<Channel> {
 		console.log('name ', name);
 		console.log('password ', password);
 		const channel = await this.channelsService.findOneByName(name);
