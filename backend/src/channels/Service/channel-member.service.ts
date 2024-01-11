@@ -21,17 +21,26 @@ export class ChannelMemberService {
 	}
 
 	async findAll(): Promise<ChannelMember[]> {
-		return this.channelmemberRepository.find();
+		return this.channelmemberRepository.find({relations: ["user"]});
 	}
 
 	async findOne(id: number): Promise<ChannelMember> {
 		return this.channelmemberRepository.findOne({ where: { id } });
 	}
 
-
+	//bug fonction pas encore utilisé
 	async findOneByChannelAndUser(channel: Channel, userId: number): Promise<ChannelMember> {
-		return this.channelmemberRepository.findOne({ where: { channel, user: { id: userId } } });
+		return this.channelmemberRepository.findOne({
+			relations: ["user", "channel"], // Assurez-vous de charger également la relation du canal
+			where: {
+				user: { id: userId },
+				channel: { id: channel.id } // Assurez-vous de comparer les IDs du canal
+			}
+		});
 	}
+
+
+
 
 	async findAllByChannel(channel: Channel): Promise<ChannelMember[]> {
 		return this.channelmemberRepository.find({ where: { channel } });

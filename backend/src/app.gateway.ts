@@ -45,13 +45,18 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async saveUserSocket(socket: Socket, userId: string) {
 		if (userId) {
 			this.socketService.addSocket(userId, socket);
-			const connectedUser = await this.dataSource.manager.findOneBy(User, {
+			let connectedUser = await this.dataSource.manager.findOneBy(User, {
 				id: parseInt(userId),
 			});
 			if (!connectedUser)
 				return undefined;
 			await this.dataSource.manager.update(User, connectedUser.id, { status: UserStatus.Online, socketId: socket.id });
 			this.logger.log(`User ${connectedUser.username} is now online`);
+			connectedUser = await this.dataSource.manager.findOneBy(User, {
+				id: parseInt(userId),
+			});
+			this.server.to(socket.id).emit("user");
+			this.logger.log('eee');
 		}
 	}
 }

@@ -97,11 +97,13 @@ export class ChannelsGateway {
 	@SubscribeMessage('getChannelListPrivate')
 	async handleGetChannelListPrivate(socket: Socket) {
 		const channels = await this.channelsService.findAllType(ChannelType.Private);
-		console.log("getChannelListPrivate");
+
 		const user = await this.userService.findOneBySocketId(socket.id);
 		if (channels && user) {
+			console.log("getChannelListPrivate");
 			channels.forEach(async (element) => {
 				const channelMember = await this.channelUser.findOneByChannelAndUser(element, user.id);
+				console.log("channelMember", channelMember);
 				if (channelMember && channelMember.access !== ChannelMemberAccess.Banned) {
 					this.logger.log(`emit server channelPrivate`);
 					this.server.to(socket.id).emit('channelPrivate', element);

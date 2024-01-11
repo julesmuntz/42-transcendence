@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import { LockFill } from 'react-bootstrap-icons';
 import { useContext } from "react";
 import { UserContext } from "../../../contexts/UserContext";
+import ProfileModifier from "./ProfileModifier";
 
 interface Props {
 	children?: ReactNode;
@@ -16,7 +17,7 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 	const userContext = useContext(UserContext);
 
 	let getQrcode = async () => {
-		return fetch(`http://paul-f4Ar7s9:3030/2fa/generate`, {
+		return fetch(`http://paul-f4Ar7s11:3030/2fa/generate`, {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`
@@ -52,7 +53,7 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 
 	async function deactivate2FA(e: any) {
 		e.preventDefault();
-		return fetch(`http://paul-f4Ar7s9:3030/2fa/turn-off`, {
+		return fetch(`http://paul-f4ArUserContext7s11:3030/2fa/turn-off`, {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`
@@ -78,6 +79,10 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 		</Button>
 	));
 
+	const modifyInfos = () => {
+
+	}
+
 	return (
 		<>
 			<Dropdown>
@@ -91,6 +96,7 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 							<Dropdown.Item onClick={deactivate2FA}>Deactivate 2FA</Dropdown.Item>
 						</>
 					}
+					<ProfileModifier/>
 				</Dropdown.Menu>
 			</Dropdown>
 		</>

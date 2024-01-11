@@ -3,6 +3,7 @@ import { ChannelMemberService } from '../Service/channel-member.service';
 import { CreateChannelMemberDto } from '../dto/create-channel-member.dto';
 import { ChannelMember } from '../entities/channel-member.entity';
 import { UpdateChannelMemberDto } from '../dto/update-channel-member.dto';
+import { Public } from 'auth/decorator/public.decorator';
 
 @Controller('channel-member')
 export class ChannelMemberController {
@@ -12,7 +13,8 @@ export class ChannelMemberController {
 	async create(@Body() CreateChannelMemberDto: CreateChannelMemberDto): Promise<ChannelMember> {
 		return this.channelmemberService.create(CreateChannelMemberDto);
 	}
-
+	
+	@Public()
 	@Get()
 	async findall(): Promise<ChannelMember[]> {
 		return this.channelmemberService.findAll();

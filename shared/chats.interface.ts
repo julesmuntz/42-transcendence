@@ -2,8 +2,8 @@ export interface UserRoom {
 	userId: number
 	userName: string
 	socketId: string
-	// muted: boolean // true = muted, false = not muted
-	// type: string // admin, mod, user
+	muted?: boolean // true = muted, false = not muted
+	type?: string // admin, mod, user
 }
 
 //

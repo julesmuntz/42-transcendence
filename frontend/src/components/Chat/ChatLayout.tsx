@@ -7,7 +7,7 @@ export const useRoomQuery = (roomName: string, isConnected: boolean) => {
 	const query = useQuery({
 		queryKey: ['rooms', roomName],
 		queryFn: (): Promise<Room> =>
-			axios.get(`http://paul-f4Ar7s9:3030/chats/rooms/${roomName}`).then((response) => response.data),
+			axios.get(`http://paul-f4Ar7s11:3030/chats/rooms/${roomName}`).then((response) => response.data),
 		refetchInterval: 60000,
 		enabled: isConnected,
 	});
@@ -17,7 +17,7 @@ export const useRoomQuery = (roomName: string, isConnected: boolean) => {
 export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => {
 	return (
 		<div className="container">
-			<div className="col-md-12 col-lg-6">
+			<div className="col-md-12 col-lg-12 chat">
 				<div className="panel">
 					{children}
 				</div>
