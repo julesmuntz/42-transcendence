@@ -19,15 +19,21 @@ export default function Chat() {
   const [toggleUserList, setToggleUserList] = useState<boolean>(false);
 
   const { data: room } = useRoomQuery(roomName as string, isConnected ?? false);
-  const [getUser, setUser] = useState<UserRoom[]>([]);
+  const [getUser, setUsers] = useState<UserRoom[]>([]);
   const navigate = useNavigate();
-  let user: UserRoom | undefined;
+	const [user, setUser] = useState<UserRoom>({
+		userId: userContext.user.info.id,
+		userName: userContext.user.info.username,
+		socketId: socket?.id || "",
+	});
 
+
+// setUser({ userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket?.id });
   useEffect(() => {
     if (!roomName) {
       navigate('/');
     } else {
-      socket?.emit('join_room', { user: { userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket?.id } , roomName: roomName });
+      socket?.emit('join_room', { user, roomName: roomName });
       socket?.on('connect_chat', () => {
         setIsConnected(true);
       });
@@ -35,10 +41,10 @@ export default function Chat() {
         setMessages((messages) => [e, ...messages]);
       });
 		socket?.on('user_list', (e) => {
-			setUser((getUser) => [e, ...getUser]);
+			setUsers((getUser) => [e, ...getUser]);
 		});
-		socket?.on('chat_user', (e) => {
-			user = e;
+		socket?.on('chat_user', (e : UserRoom) => {
+			setUser(e);
 		});
 
     }
