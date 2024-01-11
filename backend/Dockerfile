@@ -17,6 +17,7 @@ RUN npm install && npm install --save @nestjs/typeorm typeorm@0.3.17 pg\
 	&& npm i --save @nestjs/websockets @nestjs/platform-socket.io \
 	&& npm install bcrypt
 
+RUN npm i -D @types/multer
 
 COPY tsconfig.json .
 

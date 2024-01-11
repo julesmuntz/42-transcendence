@@ -54,6 +54,8 @@ services:
     volumes:
       - ./frontend/src:/app/src
       - ./shared:/app/src/shared
+    env_file:
+      - ./frontend/.env
     depends_on:
       - database
     networks:

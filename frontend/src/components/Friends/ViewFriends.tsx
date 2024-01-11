@@ -12,7 +12,7 @@ export default function ViewFriends() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://paul-f4Ar7s11:3030/friends/view_friend`, {
+    fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/friends/view_friend`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${userContext.user.authToken}`,
@@ -27,7 +27,7 @@ export default function ViewFriends() {
 
   //faire en sorte qu ca actualise  !
   async function handleButtonDeleteFriends(friendId: number) {
-    fetch(`http://paul-f4Ar7s11:3030/friends/${friendId}`, {
+    fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/friends/${friendId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${userContext.user.authToken}`,

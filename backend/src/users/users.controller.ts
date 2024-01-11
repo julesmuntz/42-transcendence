@@ -1,18 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res, Req, Patch, Param, Delete, NotFoundException, BadRequestException, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Public } from 'auth/decorator/public.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express, Response } from 'express';
+import { createWriteStream, existsSync } from 'fs';
 
 @Controller('users')
 export class UsersController {
 	constructor(private readonly usersService: UsersService) { }
 
-
 	@Post()
 	async create(@Body() createUserDto: CreateUserDto): Promise<User> {
 		return this.usersService.create(createUserDto);
+	}
+
+	@Post('upload/:id')
+	@UseInterceptors(FileInterceptor('customFile'))
+	async handleUpload(@UploadedFile() file: any, @Param('id') id: number): Promise<any> {
+		const ws = createWriteStream("./imgs/" + file.originalname);
+		ws.write(file.buffer);
+		await this.usersService.update(id, {avatarPath: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.originalname});
+		return {
+			statusCode: 200,
+			data: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.originalname,
+		}
 	}
 
 	@Public()
@@ -36,9 +50,19 @@ export class UsersController {
 		return this.usersService.search(name);
 	}
 
+	@Public()
+	@Get('imgs/:imgpath')
+	seeUploadedFile(@Param('imgpath') image, @Res() res: Response) {
+		return res.sendFile(image, { root: './imgs'});
+	}
+
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto): Promise<any> {
-		return this.usersService.update(id, updateUserDto);
+		console.log(updateUserDto);
+		await this.usersService.update(id, updateUserDto);
+		return {
+			statusCode: 200,
+		}
 	}
 
 	@Delete(':id')

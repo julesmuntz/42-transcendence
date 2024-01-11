@@ -3,14 +3,21 @@ import { UserContext } from "../../contexts/UserContext";
 import Image from "react-bootstrap/Image";
 import "./css/ProfileImg.css"
 
-export default function ProfileImg() {
+export default function ProfileImg({userPublic} : {userPublic: any | undefined}) {
+	let user;
 	const userContext = useContext(UserContext);
+	if (userPublic)
+		user = userPublic;
+	else
+		user = userContext.user.info;
 	let statusColor = "violet";
 
-	if (userContext.user.info.status === "offline")
+	if (user === "offline")
 		statusColor = "gray";
-	else if (userContext.user.info.status === "online")
+	else if (user === "online")
 		statusColor = "#0a5";
+
+	console.log(user.avatarPath);
 
 	return (
 		<div className="relative-profile-pic">
@@ -19,11 +26,12 @@ export default function ProfileImg() {
 				style={{ backgroundColor: `${statusColor}` }}
 			/>
 			<Image
-				src={userContext.user.info.avatarDefault}
-				alt={`${userContext.user.info.username}'s profile picture`}
+				src={user.avatarPath ?? user.avatarDefault}
+				alt={`${user.username}'s profile picture`}
 				className="image"
 				roundedCircle
-				fluid />
+				fluid
+			/>
 		</div>
 	);
 }

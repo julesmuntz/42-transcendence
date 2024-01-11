@@ -31,12 +31,11 @@ export class User {
 	})
 	status: UserStatus;
 
-	@Column({ length: 128 })
+	@Column()
 	avatarDefault: string;
 
-	@Column({ length: 128, nullable: true })
+	@Column({nullable: true})
 	avatarPath: string;
-
 
 	@Column({ nullable: true })
 	TFASecret: string;
@@ -47,8 +46,5 @@ export class User {
 	@Column({ length: 255, nullable: true })
 	socketId: string;
 
-	UpdateAvatar() {
-		if (this.avatarPath === null)
-			this.avatarPath = this.avatarDefault;
-	}
+
 }
