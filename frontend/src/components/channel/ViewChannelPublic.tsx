@@ -22,6 +22,7 @@ export default function ViewChannelPublic() {
 	useEffect(() => {
 
 		socket?.on('channelPublic', (data: Channel[]) => {
+			setChannel([]);
 			setChannel(data);
 		});
 
@@ -43,7 +44,7 @@ export default function ViewChannelPublic() {
 		console.log(roomId);
 		if (type === 'protected') {
 			const password = prompt('Enter password');
-			fetch(`http://paul-f4Ar7s11:3030/channels/password/${roomId}/${password}`, {
+			fetch(`http://paul-f4Ar4s4:3030/channels/password/${roomId}/${password}`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${userContext.user.authToken}`,

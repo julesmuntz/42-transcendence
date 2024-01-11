@@ -21,6 +21,7 @@ export default function ViewChannelProtected() {
 
 	useEffect(() => {
 		socket?.on('channelProtected', (data: Channel[]) => {
+			setChannel([]);
 			setChannel(data);
 		});
 		socket?.on('updateChannelListProtected', (data: Channel) => {
@@ -42,7 +43,7 @@ export default function ViewChannelProtected() {
 		console.log(roomId);
 		if (type === 'protected') {
 			const password = prompt('Enter password');
-			fetch(`http://paul-f4Ar7s11:3030/channels/password/${roomId}/${password}`, {
+			fetch(`http://paul-f4Ar4s4:3030/channels/password/${roomId}/${password}`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${userContext.user.authToken}`,
