@@ -5,7 +5,7 @@ import "./css/Login.css";
 export default function Login() {
 	async function redirectToBack(e: any) {
 		e.preventDefault();
-		window.location.href = `http://paul-f4Ar4s4:3030/auth/callback`;
+		window.location.href = `http://${process.env.REACT_APP_HOSTNAME}:3030/auth/callback`;
 	}
 
 	return (

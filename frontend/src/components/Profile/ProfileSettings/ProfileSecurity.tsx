@@ -17,7 +17,7 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 	const userContext = useContext(UserContext);
 
 	let getQrcode = async () => {
-		return fetch(`http://paul-f4Ar4s4:3030/2fa/generate`, {
+		return fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/2fa/generate`, {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`

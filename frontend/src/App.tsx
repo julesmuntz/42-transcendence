@@ -34,7 +34,7 @@ function App() {
 	const token = Cookies.get('access_token');
 	const TFASecret = Cookies.get('TFASecret');
 	const id = Cookies.get("id");
-	console.log(`paul-f4Ar4s4`);
+	console.log(`${process.env.REACT_APP_HOSTNAME}`);
 
 	// useEffect(() => {
 	// 		socket?.on("user", (e) => {
@@ -49,7 +49,7 @@ function App() {
 
 		const getUser = async (id: number, token: string) => {
 
-			const result = await fetch(`http://paul-f4Ar4s4:3030/users/${id}`, {
+			const result = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${id}`, {
 				method: "GET",
 				headers: {
 					"Authorization": `Bearer ${token}`

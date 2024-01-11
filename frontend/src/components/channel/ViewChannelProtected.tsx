@@ -43,7 +43,7 @@ export default function ViewChannelProtected() {
 		console.log(roomId);
 		if (type === 'protected') {
 			const password = prompt('Enter password');
-			fetch(`http://paul-f4Ar4s4:3030/channels/password/${roomId}/${password}`, {
+			fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/channels/password/${roomId}/${password}`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${userContext.user.authToken}`,
@@ -76,7 +76,6 @@ export default function ViewChannelProtected() {
 		);
 	return (
 		<div>
-			<h1>Protected Channels</h1>
 		</div>
 	);
 }

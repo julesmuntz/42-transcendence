@@ -43,7 +43,7 @@ export default function ViewChannelPrivate() {
 		console.log(roomId);
 		if (type === 'protected') {
 			const password = prompt('Enter password');
-			fetch(`http://paul-f4Ar4s4:3030/channels/password/${roomId}/${password}`, {
+			fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/channels/password/${roomId}/${password}`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${userContext.user.authToken}`,
@@ -62,7 +62,7 @@ export default function ViewChannelPrivate() {
 	};
 
 	async function getUserIdByUsername(target: string): Promise<number | null> {
-		const response = await fetch(`http://paul-f4Ar4s4:3030/users/search/${target}`, {
+		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/search/${target}`, {
 			method: 'GET',
 			headers: {
 				Authorization: `Bearer ${userContext.user.authToken}`,
@@ -113,7 +113,6 @@ export default function ViewChannelPrivate() {
 		);
 	return (
 		<div>
-			<h1>Private Channels</h1>
 		</div>
 	);
 }
