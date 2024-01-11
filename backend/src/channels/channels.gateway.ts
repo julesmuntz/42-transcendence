@@ -8,8 +8,9 @@ import { CreateChannelMemberDto } from 'channels/dto/create-channel-member.dto';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io'
 import { ChannelType } from './entities/channel.entity';
-import { Message, UserRoom } from "../shared/chats.interface";
+import { UserRoom } from "../shared/chats.interface";
 import { ChannelMemberAccess, ChannelMemberPermission } from './entities/channel-member.entity';
+import e from 'express';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChannelsGateway {
@@ -87,41 +88,64 @@ export class ChannelsGateway {
 	@SubscribeMessage('getChannelListPublic')
 	async handleGetChannelListPublic(socket: Socket) {
 		const channels = await this.channelsService.findAllType(ChannelType.Public);
-		if (channels) {
-			this.logger.log(`emit server channelPublic `, socket.id);
-			this.server.emit('channelPublic', channels);
-			return channels;
+		const user = await this.userService.findOneBySocketId(socket.id);
+		let validChannels = [];
+
+		if (channels && user) {
+			for (const element of channels) {
+				const channelMember = await this.channelUser.findOneByChannelAndUser(element, user.id);
+				if (channelMember && channelMember.access !== ChannelMemberAccess.Banned) {
+					validChannels.push(element);
+				}
+				else if (!channelMember) {
+					validChannels.push(element);
+				}
+			}
+		this.logger.log(`emit server channelPublic `, socket.id);
+		this.server.to(socket.id).emit('channelPublic', validChannels);
+		return channels;
 		}
 	}
 
 	@SubscribeMessage('getChannelListPrivate')
 	async handleGetChannelListPrivate(socket: Socket) {
 		const channels = await this.channelsService.findAllType(ChannelType.Private);
-
 		const user = await this.userService.findOneBySocketId(socket.id);
+		let validChannels = [];
+
 		if (channels && user) {
-			console.log("getChannelListPrivate");
-			channels.forEach(async (element) => {
+			for (const element of channels) {
 				const channelMember = await this.channelUser.findOneByChannelAndUser(element, user.id);
-				console.log("channelMember", channelMember);
 				if (channelMember && channelMember.access !== ChannelMemberAccess.Banned) {
-					this.logger.log(`emit server channelPrivate`);
-					this.server.to(socket.id).emit('channelPrivate', element);
+					validChannels.push(element);
 				}
 			}
-			);
-			return channels;
+		this.logger.log(`emit server channelPrivate `, socket.id);
+		this.server.to(socket.id).emit('channelPrivate', validChannels);
+		return channels;
 		}
-
 	}
 
+
 	@SubscribeMessage('getChannelListProtected')
-	async handleGetChannelListProtected() {
+	async handleGetChannelListProtected(socket: Socket) {
 		const channels = await this.channelsService.findAllType(ChannelType.Protected);
-		if (channels) {
-			this.logger.log(`emit server channelProtected`);
-			this.server.emit('channelProtected', channels);
-			return channels;
+		const user = await this.userService.findOneBySocketId(socket.id);
+		let validChannels = [];
+
+		if (channels && user) {
+			for (const element of channels) {
+				const channelMember = await this.channelUser.findOneByChannelAndUser(element, user.id);
+				if (channelMember && channelMember.access !== ChannelMemberAccess.Banned) {
+					validChannels.push(element);
+				}
+				else if (!channelMember) {
+					validChannels.push(element);
+				}
+			}
+		this.logger.log(`emit server channelProtected `, socket.id);
+		this.server.to(socket.id).emit('channelProtected', validChannels);
+		return channels;
 		}
 	}
 
@@ -144,7 +168,7 @@ export class ChannelsGateway {
 				const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
 				if (channelMember) {
 					this.logger.log(`User "${user.username}" invited to Channel "${channel.name}"`);
-					this.server.to(user.socketId).emit('channelsPrivate', channel);
+					this.server.to(user.socketId).emit('updateChannelListPrivate', channel);
 					return channel;
 				}
 			}

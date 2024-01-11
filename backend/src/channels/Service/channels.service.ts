@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { UpdateChannelDto } from '../dto/update-channel.dto';
 import { Channel, ChannelType } from '../entities/channel.entity';
 import * as bcrypt from 'bcrypt';
 import { ChannelMemberService } from './channel-member.service';
+import { ChannelMemberAccess } from 'channels/entities/channel-member.entity';
 
 @Injectable()
 export class ChannelsService {
