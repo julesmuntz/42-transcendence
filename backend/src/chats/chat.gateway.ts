@@ -59,7 +59,7 @@ export class ChatGateway {
 				for (let message of messages)
 					await this.server.to(payload.user.socketId).emit('chat', message);
 			}
-			await this.server.to(payload.roomName).emit('chat_user', payload.user);
+			await this.server.to(payload.user.socketId).emit('chat_user', payload.user);
 			this.handleUserListEvent(payload.roomName);
 		}
 	}
