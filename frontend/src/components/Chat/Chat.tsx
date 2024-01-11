@@ -18,7 +18,7 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [toggleUserList, setToggleUserList] = useState<boolean>(false);
 
-  const { data: room } = useRoomQuery(roomName as string, isConnected ?? false);
+  const { data: room } = useRoomQuery(roomName as string, isConnected ?? false) || {};
   const [getUser, setUsers] = useState<UserRoom[]>([]);
   const navigate = useNavigate();
 	const [user, setUser] = useState<UserRoom>({

@@ -41,11 +41,6 @@ export default function SideBar() {
 							<Search color="gray" size={22} />
 						</NavLink>
 					</Nav.Item>
-					<Nav.Item className="pb-1">
-						<NavLink to="/channel">
-							<BalloonHeart color="gray" size={25} />
-						</NavLink>
-					</Nav.Item>
 				</div>
 			</Nav>
 			<Routes>
@@ -55,7 +50,7 @@ export default function SideBar() {
 				<Route path="/search" element={<SearchProfile />}></Route>
 				<Route path="/game" element={<Game />}></Route>
 				<Route path="/chat/:id" element={<Chat />}></Route>
-				<Route path="/channel" element={<CreateChannel />}></Route>
+				<Route path="/chat" element={<CreateChannel />}></Route>
 			</Routes>
 		</BrowserRouter>
 	);

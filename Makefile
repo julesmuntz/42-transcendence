@@ -1,5 +1,6 @@
 DOCKER_COMPOSE_FILE	= docker-compose.yml
 ENV_FILE			= .env
+F_ENV_FILE			= ./frontend/.env
 
 all: up
 
@@ -29,6 +30,7 @@ fclean: clean
 	@ if [ -n "$$(docker volume ls -q)" ]; then docker volume rm $$(docker volume ls -q); fi
 	@ echo "Removing .env"
 	@ if [ -e $(ENV_FILE) ]; then rm -rf .env; fi
+	@ if [ -e $(F_ENV_FILE) ]; then rm -rf .env; fi
 	@ docker system prune -f -a
 
 .PHONY: all up down clean fclean re

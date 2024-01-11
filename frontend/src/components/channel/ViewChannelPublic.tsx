@@ -62,19 +62,28 @@ export default function ViewChannelPublic() {
 			navigate(`/chat/${roomId}`);
 	};
 
-	if (channel.length > 0)
+	if (channel.length > 0) {
 		return (
 			<div>
-				<h1>Public Channels</h1>
 				{channel.map((channel) => (
-					<div key={channel.id}>
-						<Button variant="primary" onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}>
-							<h2>{channel.name}</h2> </Button>
-						<p>{channel.type}</p>
-					</div>
+					<a
+						key={channel.name}
+						className="list-group-item list-group-item-action border-0"
+						onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
+					>
+						<div className="color_text d-flex align-items-start">
+							<div className="flex-grow-1 ml-3">
+								{channel.name}
+								<div className="small">
+									{channel.type}
+								</div>
+							</div>
+						</div>
+					</a>
 				))}
 			</div>
 		);
+	}
 	return (
 		<div>
 		</div>

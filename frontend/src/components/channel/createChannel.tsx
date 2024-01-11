@@ -37,8 +37,6 @@ export default function CreateChannel() {
 
 	return (
 		<div>
-			<h1>Create Channel</h1>
-
 			<Form>
 				<Form.Group controlId="name">
 					<Form.Label>Name</Form.Label>
@@ -61,8 +59,8 @@ export default function CreateChannel() {
 					</Form.Group>
 				)}
 
-				<Button variant="primary" type="button" onClick={createChannel}>
-					Create
+				<Button variant="secondary" type="button" onClick={createChannel}>
+					+
 				</Button>
 			</Form>
 

@@ -52,7 +52,7 @@ services:
     ports:
       - 3000:3000
     env_file:
-      - .env
+      - ./frontend/.env
     volumes:
       - ./frontend/src:/app/src
       - ./shared:/app/src/shared

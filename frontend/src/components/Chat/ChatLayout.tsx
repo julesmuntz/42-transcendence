@@ -20,42 +20,23 @@ export const useRoomQuery = (roomName: string, isConnected: boolean) => {
 
 export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => {
 	return (
-		<div className="container p-0">
-
-		<h1 className="h3 mb-3">Messages</h1>
-
-		<div className="card">
-			<div className="row g-0">
-				<div className="col-12 col-lg-5 col-xl-3 border-right">
-
-					<div className="px-4 d-none d-md-block">
-						<div className="d-flex align-items-center">
-								<div className="flex-grow-1">
-									<CreateChannel />
-									{/* <ViewChannelPublic /> */}
-									{/* <ViewChannelProtected /> */}
-									{/* <ViewChannelPrivate /> */}
-							</div>
-						</div>
-					</div>
-
-						
-
-				</div>
-				<div className="col-12 col-lg-7 col-xl-9">
-
-					<div className="position-relative">
-							<div className="chat-messages p-4">
-								<div className="panel">
-									{children}
-								</div>
-						</div>
-					</div>
-
-
-				</div>
-			</div>
-		</div>
-	</div>
-	);
+		<main className="content">
+        <div className="container p-0">
+          <h1 className="h3 mb-3">Messages</h1>
+          <div className="card">
+          	<div className="row g-0">
+          	  <div className="col-12 col-lg-5 col-xl-3 border-right">
+					<CreateChannel />
+          	  </div>
+          	      <div className="col-12 col-lg-7 col-xl-9">
+          	    <div className="position-relative">
+          	      <div className="chat-messages p-4">
+          	        <div className="panel">{children}</div>
+          	      </div>
+          	    </div>
+          	  </div>
+          	</div>
+          </div>
+        </div></main>
+      );
 };
