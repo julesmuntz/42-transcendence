@@ -5,8 +5,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Public } from 'auth/decorator/public.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 import { Express, Response } from 'express';
 import { createWriteStream, existsSync } from 'fs';
+import { editFileName } from './file-upload.utils';
 
 @Controller('users')
 export class UsersController {
@@ -18,14 +20,28 @@ export class UsersController {
 	}
 
 	@Post('upload/:id')
-	@UseInterceptors(FileInterceptor('customFile'))
+	@UseInterceptors(FileInterceptor('customFile', {
+		storage: diskStorage({
+			destination: './imgs',
+			filename: editFileName
+		})
+	}))
 	async handleUpload(@UploadedFile() file: any, @Param('id') id: number): Promise<any> {
-		const ws = createWriteStream("./imgs/" + file.originalname);
-		ws.write(file.buffer);
-		await this.usersService.update(id, {avatarPath: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.originalname});
+		console.log(file);
+		// const ws = createWriteStream("./imgs/" + file.originalname);
+		// console.log(ws);
+		// ws.on('open', function(fd) {
+		// 	console.log("KIKI");
+		// 	console.log(existsSync("./imgs/" + file.originalname));
+		// 	console.log(existsSync("./imgs/" + file.originalname));
+		// 	console.log(existsSync("./imgs/" + file.originalname));
+		// 	ws.write(file.buffer);
+		// })
+		// console.log("WHYYY");
+		await this.usersService.update(id, {avatarPath: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename});
 		return {
 			statusCode: 200,
-			data: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.originalname,
+			data: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename,
 		}
 	}
 

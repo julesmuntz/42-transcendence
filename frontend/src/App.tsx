@@ -22,9 +22,7 @@ interface JwtPayload {
 	}
 }
 
-
 const queryClient = new QueryClient();
-
 
 function App() {
 

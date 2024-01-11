@@ -34,6 +34,7 @@ export default function ProfileModifier() {
 		const form: FormData = new FormData();
 		form.append('customFile', e.target[0].files[0]);
 		const newUsername = e.target[1].value;
+		console.log("helloooo");
 
 		if (e.target[0].files[0])
 			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/upload/${userContext.user.info.id}`, {

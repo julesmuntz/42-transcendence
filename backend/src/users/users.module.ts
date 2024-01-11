@@ -6,7 +6,10 @@ import { User } from './entities/user.entity';
 import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([User])],
+	imports: [TypeOrmModule.forFeature([User]),
+			  MulterModule.register({
+				dest: './imgs',
+			  })],
 	controllers: [UsersController],
 	providers: [UsersService],
 })
