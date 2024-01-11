@@ -41,9 +41,6 @@ export class ChatsService {
     if (roomName) {
       const findRoom = await this.getRoomByName(roomName);
       if (findRoom) {
-		if (findRoom.channel) {
-
-		}
         const room = await this.roomsRepository.findOneOrFail({ where: { id: findRoom.id } });
         if (!room.users.find(user => user.userId === users.userId)) {
           room.users.push(users);

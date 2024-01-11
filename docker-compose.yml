@@ -51,6 +51,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
+    env_file:
+      - ./frontend/.env
     volumes:
       - ./frontend/src:/app/src
       - ./shared:/app/src/shared

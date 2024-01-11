@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ChannelMember } from '../entities/channel-member.entity';
+import { ChannelMember, ChannelMemberAccess } from '../entities/channel-member.entity';
 import { Repository } from 'typeorm';
 import { CreateChannelMemberDto } from '../dto/create-channel-member.dto';
 import { UpdateChannelMemberDto } from '../dto/update-channel-member.dto';
@@ -39,8 +39,10 @@ export class ChannelMemberService {
 		});
 	}
 
-
-
+	async findOneByChannel(channelId: string): Promise<ChannelMember> {
+		return this.channelmemberRepository.findOne({ relations: ['channel'],
+											 where: { channel: {name : channelId} } });
+	}
 
 	async findAllByChannel(channel: Channel): Promise<ChannelMember[]> {
 		return this.channelmemberRepository.find({ where: { channel } });

@@ -19,7 +19,7 @@ import { ChannelsGateway } from 'channels/channels.gateway';
 	TypeOrmModule.forRoot({
 		type: process.env.TYPE as any,
 		host: process.env.HOST,
-		port: parseInt(process.env.PORT) || 5432,
+		port: parseInt(process.env.PORT) || 5432, 
 		username: process.env.USERNAME,
 		password: process.env.DATABASE_PASSWORD,
 		database: process.env.DATABASE,

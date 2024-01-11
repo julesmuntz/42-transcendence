@@ -20,8 +20,9 @@ export default function ViewChannelPrivate() {
 	useEmits(socket, 'getChannelListPrivate', null);
 
 	useEffect(() => {
-		socket?.on('channelPrivate', (data: Channel) => {
-			setChannel(data ? [data] : []);
+		socket?.on('channelPrivate', (data: Channel[]) => {
+			setChannel([]);
+			setChannel(data);
 		});
 		socket?.on('updateChannelListPrivate', (data: Channel) => {
 			setChannel((channel) => [...channel, data]);
@@ -89,30 +90,30 @@ export default function ViewChannelPrivate() {
 		}
 	}
 
-	if (channel.length > 0)
+	if (channel.length > 0) {
 		return (
 			<div>
-				<h1>Private Channels</h1>
 				{channel.map((channel) => (
-					<div key={channel.id}>
-						<Button variant="primary" onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}>
-							<h2>{channel.name}</h2> </Button>
-						<p>{channel.type}</p>
-					</div>
-				))}
-
-				{channel.map((channel) => (
-					<div key={channel.id}>
-						<Button variant="primary" onClick={() => inviteToChannel(channel.id)}>
-							<h2>{"Invite to " + channel.name}</h2> </Button>
-						<p>{ }</p>
-					</div>
+					<a
+						key={channel.name}
+						className="list-group-item list-group-item-action border-0"
+						onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
+					>
+						<div className="color_text d-flex align-items-start">
+							<div className="flex-grow-1 ml-3">
+								{channel.name}
+								<div className="small">
+									{channel.type}
+								</div>
+							</div>
+						</div>
+					</a>
 				))}
 			</div>
 		);
+	}
 	return (
 		<div>
-			<h1>Private Channels</h1>
 		</div>
 	);
 }
