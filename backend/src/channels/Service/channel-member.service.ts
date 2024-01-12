@@ -21,7 +21,7 @@ export class ChannelMemberService {
 	}
 
 	async findAll(): Promise<ChannelMember[]> {
-		return this.channelmemberRepository.find({relations: ["user"]});
+		return this.channelmemberRepository.find({ relations: ["user"] });
 	}
 
 	async findOne(id: number): Promise<ChannelMember> {
@@ -40,8 +40,10 @@ export class ChannelMemberService {
 	}
 
 	async findOneByChannel(channelId: string): Promise<ChannelMember> {
-		return this.channelmemberRepository.findOne({ relations: ['channel'],
-											 where: { channel: {name : channelId} } });
+		return this.channelmemberRepository.findOne({
+			relations: ['channel'],
+			where: { channel: { name: channelId } }
+		});
 	}
 
 	async findAllByChannel(channel: Channel): Promise<ChannelMember[]> {
@@ -49,8 +51,10 @@ export class ChannelMemberService {
 	}
 
 	async findAllByChannelName(channelId: string): Promise<ChannelMember[]> {
-		return this.channelmemberRepository.find({  relations: ['channel', 'user'],
-		where: { channel: { name: channelId } } });
+		return this.channelmemberRepository.find({
+			relations: ['channel', 'user'],
+			where: { channel: { name: channelId } }
+		});
 	}
 
 	async findOneByChannelNameAndUser(channelId: string, userId: number): Promise<ChannelMember> {

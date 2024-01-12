@@ -22,7 +22,7 @@ export class ChatsService {
   }
 
   async removeRoom(roomName: string): Promise<void> {
-   const findRoom = await this.getRoomByName(roomName);
+    const findRoom = await this.getRoomByName(roomName);
     if (findRoom) {
       await this.roomsRepository.delete(findRoom.id);
     }

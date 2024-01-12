@@ -13,7 +13,7 @@ export class ChannelMemberController {
 	async create(@Body() CreateChannelMemberDto: CreateChannelMemberDto): Promise<ChannelMember> {
 		return this.channelmemberService.create(CreateChannelMemberDto);
 	}
-	
+
 	@Public()
 	@Get()
 	async findall(): Promise<ChannelMember[]> {

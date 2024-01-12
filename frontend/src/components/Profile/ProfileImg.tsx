@@ -3,7 +3,7 @@ import { UserContext } from "../../contexts/UserContext";
 import Image from "react-bootstrap/Image";
 import "./css/ProfileImg.css"
 
-export default function ProfileImg({userPublic} : {userPublic: any | undefined}) {
+export default function ProfileImg({ userPublic }: { userPublic: any | undefined }) {
 	let user;
 	const userContext = useContext(UserContext);
 	if (userPublic)

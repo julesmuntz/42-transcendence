@@ -11,7 +11,7 @@ import { promises } from 'dns';
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {
 	constructor(private chatService: ChatsService,
-		private readonly channelUser : ChannelMemberService,
+		private readonly channelUser: ChannelMemberService,
 		private readonly channel: ChannelsService) { }
 
 	@WebSocketServer() server: Server;
@@ -35,18 +35,16 @@ export class ChatGateway {
 	}
 
 
-	async createUserRoom(user: UserRoom, roomName: string) : Promise<UserRoom | undefined>
-	{
+	async createUserRoom(user: UserRoom, roomName: string): Promise<UserRoom | undefined> {
 		const room = await this.channel.findOneByName(roomName);
 		if (room) {
 			const channel_user = await this.channelUser.findOneByChannelNameAndUser(roomName, user.userId);
-			if(channel_user){
+			if (channel_user) {
 				if (channel_user.permission === ChannelMemberPermission.Muted)
 					user.muted = true;
 				else
 					user.muted = false;
-				if (channel_user.access === ChannelMemberAccess.Banned)
-				{
+				if (channel_user.access === ChannelMemberAccess.Banned) {
 					this.server.to(user.socketId).emit('banned', 'You are banned from this channel');
 					return undefined;
 				}
@@ -92,33 +90,33 @@ export class ChatGateway {
 		}
 	}
 	//renvoie la liste des user de la room
-// Corrected handleUserListEvent function
-async handleUserListEvent(roomName: string) {
-	this.logger.log(`Get user list of ${roomName}`);
-	try {
-	  const users = await this.channelUser.findAllByChannelName(roomName);
-	// console.log(users);
-	  if (users && users.length > 0) {
-		const roomUsers: UserRoom[] = [];
+	// Corrected handleUserListEvent function
+	async handleUserListEvent(roomName: string) {
+		this.logger.log(`Get user list of ${roomName}`);
+		try {
+			const users = await this.channelUser.findAllByChannelName(roomName);
+			// console.log(users);
+			if (users && users.length > 0) {
+				const roomUsers: UserRoom[] = [];
 
-		for (const user of users) {
-			roomUsers.push({
-			  userId: user.user.id,
-			  userName: user.user.username,
-			  socketId: user.user.socketId,
-			  muted: user.permission === ChannelMemberPermission.Muted ?? false,
-			  type: user.role === ChannelMemberRole.Owner ? 'Owner' : user.role === ChannelMemberRole.Admin ? 'Admin' : 'regular',
-			  ban: user.access === ChannelMemberAccess.Banned ?? false,
-			});
-		  }
-		//   console.log(roomUsers);
-		// Assuming 'user_list' is the event name; adjust it based on your client-side implementation
-		this.server.to(roomName).emit('user_list', roomUsers);
-	  }
-	} catch (error) {
-	  this.logger.error(`Error getting user list for ${roomName}: ${error.message}`);
+				for (const user of users) {
+					roomUsers.push({
+						userId: user.user.id,
+						userName: user.user.username,
+						socketId: user.user.socketId,
+						muted: user.permission === ChannelMemberPermission.Muted ?? false,
+						type: user.role === ChannelMemberRole.Owner ? 'Owner' : user.role === ChannelMemberRole.Admin ? 'Admin' : 'regular',
+						ban: user.access === ChannelMemberAccess.Banned ?? false,
+					});
+				}
+				//   console.log(roomUsers);
+				// Assuming 'user_list' is the event name; adjust it based on your client-side implementation
+				this.server.to(roomName).emit('user_list', roomUsers);
+			}
+		} catch (error) {
+			this.logger.error(`Error getting user list for ${roomName}: ${error.message}`);
+		}
 	}
-  }
 
 
 	@SubscribeMessage('disconnect_room')

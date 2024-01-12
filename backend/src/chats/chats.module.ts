@@ -11,9 +11,9 @@ import { ChannelsService } from 'channels/Service/channels.service';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Room]),
-			TypeOrmModule.forFeature([ChannelMember]),
-		TypeOrmModule.forFeature([Channel])],
+	TypeOrmModule.forFeature([ChannelMember]),
+	TypeOrmModule.forFeature([Channel])],
 	controllers: [ChatsController],
-	providers: [ChatsService, ChatGateway,ChannelMemberService, ChannelsService],
+	providers: [ChatsService, ChatGateway, ChannelMemberService, ChannelsService],
 })
 export class ChatsModule { }

@@ -100,9 +100,9 @@ export class ChannelsGateway {
 					validChannels.push(element);
 				}
 			}
-		this.logger.log(`emit server channelPublic `, socket.id);
-		this.server.to(socket.id).emit('channelPublic', validChannels);
-		return channels;
+			this.logger.log(`emit server channelPublic `, socket.id);
+			this.server.to(socket.id).emit('channelPublic', validChannels);
+			return channels;
 		}
 	}
 
@@ -119,9 +119,9 @@ export class ChannelsGateway {
 					validChannels.push(element);
 				}
 			}
-		this.logger.log(`emit server channelPrivate `, socket.id);
-		this.server.to(socket.id).emit('channelPrivate', validChannels);
-		return channels;
+			this.logger.log(`emit server channelPrivate `, socket.id);
+			this.server.to(socket.id).emit('channelPrivate', validChannels);
+			return channels;
 		}
 	}
 
@@ -142,9 +142,9 @@ export class ChannelsGateway {
 					validChannels.push(element);
 				}
 			}
-		this.logger.log(`emit server channelProtected `, socket.id);
-		this.server.to(socket.id).emit('channelProtected', validChannels);
-		return channels;
+			this.logger.log(`emit server channelProtected `, socket.id);
+			this.server.to(socket.id).emit('channelProtected', validChannels);
+			return channels;
 		}
 	}
 

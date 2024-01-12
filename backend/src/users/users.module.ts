@@ -7,9 +7,9 @@ import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([User]),
-			  MulterModule.register({
-				dest: './imgs',
-			  })],
+	MulterModule.register({
+		dest: './imgs',
+	})],
 	controllers: [UsersController],
 	providers: [UsersService],
 })

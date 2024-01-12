@@ -2,7 +2,7 @@ import Container from "react-bootstrap/Container";
 import { useContext } from "react";
 import { UserContext } from "../../contexts/UserContext";
 
-export default function ProfileInfos({userPublic} : {userPublic: any | undefined}) {
+export default function ProfileInfos({ userPublic }: { userPublic: any | undefined }) {
 	let user;
 	const userContext = useContext(UserContext);
 

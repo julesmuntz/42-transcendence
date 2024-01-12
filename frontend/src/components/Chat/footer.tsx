@@ -45,7 +45,7 @@ export const Messages = ({
 				className="nano-content pad-all"
 				tabIndex={0}
 				ref={messagesRef}
-				// onScroll={handleScroll}
+			// onScroll={handleScroll}
 			>
 				<ul
 					className="list-unstyled media-block"

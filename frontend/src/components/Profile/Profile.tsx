@@ -75,8 +75,8 @@ export default function Profile() {
 		<Container className="d-flex">
 			<Container></Container>
 			<Container className="d-flex flex-column justify-content-center align-items-center">
-				<ProfileImg userPublic={undefined}/>
-				<ProfileInfos userPublic={undefined}/>
+				<ProfileImg userPublic={undefined} />
+				<ProfileInfos userPublic={undefined} />
 			</Container>
 			<Container>
 				<ProfileSecurity qrset={{ qrcode, setQrcode }} />

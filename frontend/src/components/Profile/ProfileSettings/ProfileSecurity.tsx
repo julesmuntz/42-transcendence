@@ -96,7 +96,7 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 							<Dropdown.Item onClick={deactivate2FA}>Deactivate 2FA</Dropdown.Item>
 						</>
 					}
-					<ProfileModifier/>
+					<ProfileModifier />
 				</Dropdown.Menu>
 			</Dropdown>
 		</>

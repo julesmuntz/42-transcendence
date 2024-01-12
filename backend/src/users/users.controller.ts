@@ -38,7 +38,7 @@ export class UsersController {
 		// 	ws.write(file.buffer);
 		// })
 		// console.log("WHYYY");
-		await this.usersService.update(id, {avatarPath: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename});
+		await this.usersService.update(id, { avatarPath: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename });
 		return {
 			statusCode: 200,
 			data: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename,
@@ -69,7 +69,7 @@ export class UsersController {
 	@Public()
 	@Get('imgs/:imgpath')
 	seeUploadedFile(@Param('imgpath') image, @Res() res: Response) {
-		return res.sendFile(image, { root: './imgs'});
+		return res.sendFile(image, { root: './imgs' });
 	}
 
 	@Patch(':id')

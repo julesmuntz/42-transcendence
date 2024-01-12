@@ -16,21 +16,19 @@ export default function PublicProfile() {
 	useEffect(() => {
 		let fetchUser = async () => {
 			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${id}`,
-			{
-				method: "GET",
-				headers: {
-					"Authorization": `Bearer ${userContext.user.authToken}`
-				}
-			}).then((res) =>
-			{
-				console.log(res);
-				return (res.json());
-			}).then((ret) : void => {
-				setUser(ret);
-			});
+				{
+					method: "GET",
+					headers: {
+						"Authorization": `Bearer ${userContext.user.authToken}`
+					}
+				}).then((res) => {
+					console.log(res);
+					return (res.json());
+				}).then((ret): void => {
+					setUser(ret);
+				});
 		}
-		if (!done)
-		{
+		if (!done) {
 			fetchUser();
 			setDone(true);
 		}
@@ -40,7 +38,7 @@ export default function PublicProfile() {
 		<Container className="d-flex">
 			<Container></Container>
 			<Container className="d-flex flex-column justify-content-center align-items-center">
-				<ProfileImg userPublic={user}/>
+				<ProfileImg userPublic={user} />
 				<ProfileInfos userPublic={user} />
 			</Container>
 		</Container>

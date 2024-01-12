@@ -60,9 +60,8 @@ export default function ViewChannelPublic() {
 						return navigate(`/chat/${roomId}`);
 				});
 		}
-		else
-		{
-			socket?.emit('joinChannel', { userId: userContext.user.info.id, roomId: roomId})
+		else {
+			socket?.emit('joinChannel', { userId: userContext.user.info.id, roomId: roomId })
 			navigate(`/chat/${roomId}`);
 		}
 

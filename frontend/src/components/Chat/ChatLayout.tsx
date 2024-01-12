@@ -33,7 +33,7 @@ export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => 
 					<div className="col-sm-9 col-xs-12" tabIndex={5001}>
 						<div className="col-inside-lg decor-default chat">
 							{/* <div className="chat-body"> */}
-								{children}
+							{children}
 							{/* </div> */}
 						</div>
 					</div>

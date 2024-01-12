@@ -34,7 +34,7 @@ export class User {
 	@Column()
 	avatarDefault: string;
 
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	avatarPath: string;
 
 	@Column({ nullable: true })
