@@ -40,8 +40,9 @@ export default function Chat() {
       socket?.on('chat', (e) => {
         setMessages((messages) => [e, ...messages]);
       });
-		socket?.on('user_list', (e) => {
-			setUsers((getUser) => [e, ...getUser]);
+		socket?.on('user_list', (e: UserRoom[]) => {
+			console.log(e);
+			setUsers(e);
 		});
 		socket?.on('chat_user', (e : UserRoom) => {
 			setUser(e);
@@ -56,20 +57,16 @@ export default function Chat() {
   }, [socket, roomName, navigate]);
 
 
-
+	// a changer pour le leave channels
 	const leaveRoom = () => {
-		socket?.disconnect();
+		// socket?.disconnect();
 		navigate('/');
 	};
 
   const sendMessage = (message: string) => {
     if (user && roomName && room) {
       socket?.emit('chat', {
-        user: {
-          socketId: user.socketId as string,
-          userId: user.userId,
-          userName: user.userName,
-        },
+        user,
         timeSent: new Date(Date.now()).toLocaleString('en-US'),
         message,
         roomName: room.name,
@@ -83,8 +80,9 @@ export default function Chat() {
         <ChatLayout>
           <Header
             isConnected={isConnected ?? false}
-            users={getUser ?? []}
-            roomName={room?.name}
+            users={user}
+            roomName={room.name}
+			isChannel={room.channel}
             handleUsersClick={() => setToggleUserList((toggleUserList) => !toggleUserList)}
             handleLeaveRoom={() => leaveRoom()}
           />

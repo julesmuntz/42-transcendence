@@ -53,7 +53,7 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 
 	async function deactivate2FA(e: any) {
 		e.preventDefault();
-		return fetch(`http://paul-f4ArUserContext7s11:3030/2fa/turn-off`, {
+		return fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/2fa/turn-off`, {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`

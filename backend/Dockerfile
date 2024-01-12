@@ -6,6 +6,8 @@ WORKDIR /app
 
 COPY package*.json .
 
+RUN mkdir imgs
+
 RUN npm install && npm install --save @nestjs/typeorm typeorm@latest pg\
 	class-validator @nestjs/passport passport passport-42\
 	&& npm install @types/passport-42 && npm i --save @nestjs/config\
@@ -17,6 +19,7 @@ RUN npm install && npm install --save @nestjs/typeorm typeorm@latest pg\
 	&& npm i --save @nestjs/websockets @nestjs/platform-socket.io \
 	&& npm install bcrypt
 
+RUN npm i -D @types/multer
 
 COPY tsconfig.json .
 

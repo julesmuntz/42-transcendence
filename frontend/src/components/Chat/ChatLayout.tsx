@@ -20,23 +20,25 @@ export const useRoomQuery = (roomName: string, isConnected: boolean) => {
 
 export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => {
 	return (
-		<main className="content">
-        <div className="container p-0">
-          <h1 className="h3 mb-3">Messages</h1>
-          <div className="card">
-          	<div className="row g-0">
-          	  <div className="col-12 col-lg-5 col-xl-3 border-right">
-					<CreateChannel />
-          	  </div>
-          	      <div className="col-12 col-lg-7 col-xl-9">
-          	    <div className="position-relative">
-          	      <div className="chat-messages p-4">
-          	        <div className="panel">{children}</div>
-          	      </div>
-          	    </div>
-          	  </div>
-          	</div>
-          </div>
-        </div></main>
-      );
+		<div className="container">
+			<div className="content container-fluid bootstrap snippets bootdey">
+				<div className="row row-broken">
+					<div className="col-sm-3 col-xs-12">
+						<div className="col-inside-lg decor-default chat" style={{ overflow: 'hidden', outline: 'none' }} tabIndex={5000}>
+							<div className="chat-users">
+								<CreateChannel />
+							</div>
+						</div>
+					</div>
+					<div className="col-sm-9 col-xs-12 chat" style={{ overflow: 'hidden', outline: 'none' }} tabIndex={5001}>
+						<div className="col-inside-lg decor-default">
+							<div className="chat-body">
+								{children}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 };

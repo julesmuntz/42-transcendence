@@ -17,7 +17,7 @@ export class FriendsController {
 
 
 	@Post()
-	async add_invite(@Body() body: { createFriendDto: CreateFriendDto }, @Req() req: any): Promise<Friend> {
+	async add_invite(@Body() body: { createFriendDto: any }, @Req() req: any): Promise<Friend> {
 		if (body.createFriendDto.user2.id == req.user.sub)
 			throw new NotFoundException("Error create Friends");
 		return this.friendsService.create(body.createFriendDto);

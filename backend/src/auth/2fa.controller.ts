@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, Controller, Post, Get, UseInterceptors, Res, Req, HttpCode, Body, UnauthorizedException, Redirect } from "@nestjs/common";
+import { ClassSerializerInterceptor, Controller, Post, Get, UseInterceptors, Res, Req, Body, UnauthorizedException, Redirect } from "@nestjs/common";
 import { Response } from "express";
 import { UsersService } from "../users/users.service";
 import { AuthService } from "./auth.service";

@@ -4,6 +4,7 @@ export interface UserRoom {
 	socketId: string
 	muted?: boolean // true = muted, false = not muted
 	type?: string // admin, mod, user
+	ban?: boolean // true = banned, false = not banned
 }
 
 //

@@ -2,17 +2,23 @@ import Container from "react-bootstrap/Container";
 import { useContext } from "react";
 import { UserContext } from "../../contexts/UserContext";
 
-export default function ProfileInfos() {
+export default function ProfileInfos({userPublic} : {userPublic: any | undefined}) {
+	let user;
 	const userContext = useContext(UserContext);
+
+	if (userPublic)
+		user = userPublic;
+	else
+		user = userContext.user.info;
 
 	return (
 		<Container>
 			{/* USERNAME */}
-			<div>{userContext.user.info.username}</div>
+			<div>{user.username}</div>
 			{/* STATUS */}
-			<div>{userContext.user.info.status}</div>
+			<div>{user.status}</div>
 			{/* EMAIL ADDRESS */}
-			<div>{userContext.user.info.email}</div>
+			<div>{user.email}</div>
 			{/* GAME STATS (nb of wins and losses)*/}
 		</Container>
 	);
