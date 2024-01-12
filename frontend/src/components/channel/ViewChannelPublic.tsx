@@ -40,6 +40,8 @@ export default function ViewChannelPublic() {
 
 	}, [channel, socket]);
 
+
+	//a changer !!!!
 	const joinRoom = (roomId: string, type: string) => {
 		console.log(roomId);
 		if (type === 'protected') {

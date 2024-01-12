@@ -41,11 +41,28 @@ export default function Chat() {
         setMessages((messages) => [e, ...messages]);
       });
 		socket?.on('user_list', (e: UserRoom[]) => {
-			console.log(e);
+			setUsers([]);
 			setUsers(e);
 		});
 		socket?.on('chat_user', (e : UserRoom) => {
 			setUser(e);
+				// setToggleUsereList(false);
+		});
+
+		socket?.on('banned', () => {
+			navigate('/');
+		});
+
+		socket?.on('muted', () => {
+			socket?.emit('update_chat_user', { user, roomName: roomName });
+		});
+
+		socket?.on('kick', () => {
+			socket?.emit('update_chat_user', { user, roomName: roomName });
+		});
+
+		socket?.on('promoted', () => {
+			socket?.emit('update_chat_user', { user, roomName: roomName });
 		});
 
     }
@@ -53,13 +70,18 @@ export default function Chat() {
       socket?.off('chat');
       socket?.off('connect_chat');
       socket?.off('user_list');
+	  socket?.off('chat_user');
+	  socket?.off('banned');
+	  socket?.off('muted');
+	  socket?.off('kick');
+	  socket?.off('promoted');
     };
   }, [socket, roomName, navigate]);
 
 
 	// a changer pour le leave channels
 	const leaveRoom = () => {
-		// socket?.disconnect();
+		// socket?.emit('leave_room', { user, roomName: roomName });
 		navigate('/');
 	};
 
@@ -74,6 +96,40 @@ export default function Chat() {
     }
   };
 
+  const handleBanUnBan = (user: UserRoom) => {
+    if (user && roomName) {
+      if (user.ban) {
+        socket?.emit('unbanChannel', { userId: user.userId, roomName: roomName });
+      } else {
+        socket?.emit('banChannel', { userId: user.userId, roomName: roomName });
+      }
+    }
+  };
+
+  const handleMuteUnMute = (user: UserRoom) => {
+	if (user && roomName) {
+	  if (user.muted) {
+		socket?.emit('unmuteChannel', { userId: user.userId, roomName: roomName });
+	  } else {
+		socket?.emit('muteChannel', { userId: user.userId, roomName: roomName });
+	  }
+	}
+  };
+
+  const handleKick = (user: UserRoom) => {
+	if (user && roomName) {
+	  socket?.emit('kickChannel', { userId: user.userId, roomName: roomName });
+	}
+  };
+
+  const handlePromote = (user: UserRoom) => {
+	if (user && roomName) {
+		if (user.type === 'Admin')
+			socket?.emit('demoteChannel', { userId: user.userId, roomName: roomName });
+		else
+			socket?.emit('promoteChannel', { userId: user.userId, roomName: roomName });
+	}
+};
   return (
     <>
       {user?.userId && roomName && room && (
@@ -88,7 +144,7 @@ export default function Chat() {
           />
 
           {toggleUserList && socket ? (
-            <UserList user={getUser ?? []} hostId={room.host.userId} ></UserList>
+            <UserList user={getUser ?? []} hostId={room.host.userId} user_a={user} handleBanUnBan={handleBanUnBan} handelMuteUnMute={handleMuteUnMute} handleKick={handleKick} handlePromote={handlePromote}></UserList>
           ) : (
             <>
               <Messages user={user} messages={messages}></Messages>

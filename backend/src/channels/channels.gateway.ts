@@ -9,8 +9,7 @@ import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io'
 import { ChannelType } from './entities/channel.entity';
 import { UserRoom } from "../shared/chats.interface";
-import { ChannelMemberAccess, ChannelMemberPermission } from './entities/channel-member.entity';
-import e from 'express';
+import { ChannelMemberAccess, ChannelMemberPermission, ChannelMemberRole } from './entities/channel-member.entity';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChannelsGateway {
@@ -199,8 +198,8 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('kickChannel')
-	async handleKickChannel(@MessageBody() payload: { userId: number; channelId: number; }) {
-		const channel = await this.channelsService.findOne(payload.channelId);
+	async handleKickChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
+		const channel = await this.channelsService.findOneByName(payload.roomName);
 		const user = await this.userService.findOne(payload.userId);
 		if (channel && user) {
 			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
@@ -210,6 +209,10 @@ export class ChannelsGateway {
 				if (user.socketId !== '') {
 					await this.server.in(user.socketId).socketsLeave(channel.name);
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
+					if (user.socketId !== '') {
+						await this.server.to(payload.roomName).emit('kick', 'You are kick from this channel');
+						await this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
+					}
 				}
 				return channel;
 			}
@@ -217,8 +220,8 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('banChannel')
-	async handleBanChannel(@MessageBody() payload: { userId: number; channelId: number; }) {
-		const channel = await this.channelsService.findOne(payload.channelId);
+	async handleBanChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
+		const channel = await this.channelsService.findOneByName(payload.roomName);
 		const user = await this.userService.findOne(payload.userId);
 		if (channel && user) {
 			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
@@ -228,6 +231,10 @@ export class ChannelsGateway {
 				if (user.socketId !== '') {
 					await this.server.in(user.socketId).socketsLeave(channel.name);
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
+					if (user.socketId !== '') {
+						await this.server.to(payload.roomName).emit('kick', 'You are kick from this channel');
+						await this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
+					}
 				}
 				return channel;
 			}
@@ -235,14 +242,15 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('unbanChannel')
-	async handleUnbanChannel(@MessageBody() payload: { userId: number; channelId: number; }) {
-		const channel = await this.channelsService.findOne(payload.channelId);
+	async handleUnbanChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
+		const channel = await this.channelsService.findOneByName(payload.roomName);
 		const user = await this.userService.findOne(payload.userId);
 		if (channel && user) {
 			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
 			if (channelMember) {
 				await this.channelUser.delete(channelMember.id);
 				this.logger.log(`Channel ${channel.name} unbanned to ${user.username}`);
+				await this.server.to(payload.roomName).emit('kick', 'You are kick from this channel');
 				return channel;
 			}
 		}
@@ -258,6 +266,9 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.channelUser.update(channelMember.id, { permission: ChannelMemberPermission.Muted });
 				this.logger.log(`Channel ${channel.name} muted to ${user.username}`);
+				if (user.socketId !== '') {
+					await this.server.to(channel.name).emit('muted', 'You are muted from this channel');
+				}
 				return channel;
 			}
 		}
@@ -273,6 +284,41 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.channelUser.update(channelMember.id, { permission: ChannelMemberPermission.Regular });
 				this.logger.log(`Channel ${channel.name} unmuted to ${user.username}`);
+				if (user.socketId !== '') {
+					await this.server.to(channel.name).emit('muted', 'You are muted from this channel');
+				}
+				return channel;
+			}
+		}
+	}
+
+	@SubscribeMessage('promoteChannel')
+	async handlePromoteChannel(@MessageBody() payload: { userId: number; channelId: string; }) {
+		const channel = await this.channelsService.findOneByName(payload.channelId);
+		const user = await this.userService.findOne(payload.userId);
+		if (channel && user) {
+			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			if (channelMember) {
+				await this.channelUser.update(channelMember.id, { role: ChannelMemberRole.Admin });
+				this.logger.log(`Channel ${channel.name} promoted to ${user.username}`);
+				await this.server.to(channel.name).emit('promoted', 'You are promoted from this channel');
+				await this.server.to(user.socketId).emit('promoted', 'You are demoted from this channel');
+				return channel;
+			}
+		}
+	}
+
+	@SubscribeMessage('demoteChannel')
+	async handleDemoteChannel(@MessageBody() payload: { userId: number; channelId: string; }) {
+		const channel = await this.channelsService.findOneByName(payload.channelId);
+		const user = await this.userService.findOne(payload.userId);
+		if (channel && user) {
+			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			if (channelMember) {
+				await this.channelUser.update(channelMember.id, { role: ChannelMemberRole.Regular });
+				this.logger.log(`Channel ${channel.name} demoted to ${user.username}`);
+				await this.server.to(channel.name).emit('promoted', 'You are promoted from this channel');
+				await this.server.to(user.socketId).emit('promoted', 'You are demoted from this channel');
 				return channel;
 			}
 		}
