@@ -59,7 +59,7 @@ export default function CreateChannel() {
 					</Form.Group>
 				)}
 
-				<Button variant="secondary" type="button" onClick={createChannel}>
+				<Button variant="primary" type="button" onClick={createChannel}>
 					+
 				</Button>
 			</Form>

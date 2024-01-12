@@ -1,4 +1,4 @@
-.panel {
+ .panel {
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.075);
     border-radius: 0;
     border: 0;
@@ -24,6 +24,8 @@
 .panel-footer {
     background-color: #26292e;
     border-top: none;
+    position: sticky;
+    bottom: 0;
 }
 
 .panel-control {
@@ -111,14 +113,9 @@
     width: auto;
 }
 
-.pad-hor {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
 .speech {
 
-    position: relative;
+    position: a;
     background: transparent;
     color: #ffffff;
     display: inline-block;
@@ -145,7 +142,6 @@
     right: 0;
     border-top: 7px solid transparent;
     border-bottom: 7px solid transparent;
-    /* border-left: 7px solid #ffdc91; */
     border-right: 0;
     margin: 15px -6px 0 0;
 }
@@ -193,15 +189,15 @@
     color: #a07617;
 }
 
-.btn-secondary,
-.btn-secondary:focus,
-.btn-hover-secondary:hover,
-.btn-hover-secondary:active,
-.btn-hover-secondary.active,
-.btn.btn-active-secondary:active,
-.btn.btn-active-secondary.active,
-.dropdown.open>.btn.btn-active-secondary,
-.btn-group.open .dropdown-toggle.btn.btn-active-secondary {
+.btn-primary,
+.btn-primary:focus,
+.btn-hover-primary:hover,
+.btn-hover-primary:active,
+.btn-hover-primary.active,
+.btn.btn-active-primary:active,
+.btn.btn-active-primary.active,
+.dropdown.open>.btn.btn-active-primary,
+.btn-group.open .dropdown-toggle.btn.btn-active-primary {
     background-color: #579ddb;
     border-color: #5fa2dd;
     color: #fff !important;
@@ -243,12 +239,6 @@
     transition: all .7s;
 }
 
-.chat {
-    width: 100%;
-    margin-top: 50px;
-    height: 80%;
-}
-
 .sideDisplay {
     border-radius: 20px 0 0 20px;
     width: 25%;
@@ -260,67 +250,6 @@
     background-color: rgb(19, 19, 19);
 }
 
-
-
-.chat-online {
-    color: #34ce57
-}
-
-.chat-offline {
-    color: #e4606d
-}
-
-.chat-messages {
-    display: flex;
-    flex-direction: column;
-    max-height: 800px;
-}
-
-.chat-message-left,
-.chat-message-right {
-    display: flex;
-    flex-shrink: 0
-}
-
-.chat-message-left {
-    margin-right: auto
-}
-
-.chat-message-right {
-    flex-direction: row-reverse;
-    margin-left: auto
-}
-
-.py-3 {
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
-    color: white;
-
-}
-
-.px-4 {
-    padding-right: 1.5rem !important;
-    padding-left: 1.5rem !important;
-    background-color: #26292e;
-    color: white;
-    overflow-y: scroll;
-
-}
-
-.flex-grow-0 {
-    flex-grow: 0 !important;
-    color: white;
-}
-
-.border-top {
-    border-top: 1px solid #26292e !important;
-    color: white;
-}
-
-.list-group-item:first-child {
-    border-top-left-radius: 0 !important;
-    border-top-right-radius: 0 !important;
-}
 .list-group-item:focus, a.list-group-item:hover {
     color: hsla(0, 0%, 100%, 0.085);
     background-color: #3f3f3f;
@@ -331,12 +260,10 @@
 }
 
 
-
-
-body{
-    margin-top:20px;
-    background:#eee;
+.row {
+    display: flex;
 }
+
 .row.row-broken {
     padding-bottom: 0;
 }
@@ -346,9 +273,15 @@ body{
 .chat {
     height: calc(100vh - 180px);
 }
-.decor-default {
-    background-color: #ffffff;
+
+.decor-default::-webkit-scrollbar {
+    display: none;
 }
+
+.decor-default {
+    overflow-y: scroll;
+}
+
 .chat-users h6 {
     font-size: 20px;
     margin: 0 0 20px;
@@ -387,6 +320,7 @@ body{
 .chat .avatar .status.offline {
     background: #ed4e6e;
 }
+
 .chat-users .user .status {
     bottom: 0;
     left: 28px;
@@ -412,8 +346,7 @@ body{
     text-overflow: ellipsis;
 }
 
-/*****************CHAT BODY *******************/
-.chat-body h6 {
+ .chat-body h6 {
     font-size: 20px;
     margin: 0 0 20px;
 }
@@ -514,9 +447,8 @@ body{
 .chat-body .answer.right .time {
     padding-right: 12px;
     color: #333333;
-}
+} */
 
-/**************ADD FORM ***************/
 .chat-body .answer-add {
     clear: both;
     position: relative;
@@ -556,21 +488,21 @@ body{
     right: 20px;
 }
 .chat input::-webkit-input-placeholder {
-   color: #fff;
+    color: #fff;
 }
 
-.chat input:-moz-placeholder { /* Firefox 18- */
-   color: #fff;
+.chat input:-moz-placeholder {
+    color: #fff;
 }
 
-.chat input::-moz-placeholder {  /* Firefox 19+ */
-   color: #fff;
+.chat input::-moz-placeholder {
+    color: #fff;
 }
 
 .chat input:-ms-input-placeholder {
-   color: #fff;
+    color: #fff;
 }
 .chat input {
     -webkit-appearance: none;
     border-radius: 0;
-}
+} 

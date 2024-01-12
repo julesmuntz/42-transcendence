@@ -39,7 +39,7 @@ export const Messages = ({
 	return (
 		<div
 			className="nano has-scrollbar"
-			style={{ height: '380px', overflowY: 'auto' }}
+			style={{ overflowY: 'hidden' }}
 		>
 			<div
 				className="nano-content pad-all"
@@ -116,7 +116,7 @@ export const MessageForm = ({ sendMessage }: { sendMessage: (message: string) =>
 					/>
 				</div>
 				<div className="col-xs-3" style={{ width: '20%' }}>
-					<button className="btn btn-secondary btn-block" type="submit" onClick={(e) => submit(e)}>Send</button>
+					<button className="btn btn-primary btn-block" type="submit" onClick={(e) => submit(e)}>Send</button>
 				</div>
 			</div>
 		</div>

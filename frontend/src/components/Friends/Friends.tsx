@@ -155,7 +155,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 					<>Vous êtes bloqué</>
 				) : (
 					<>
-						<Button className="btn btn-secondary pull-right" onClick={() => handleButtonDeleteFriends(UserBlock.id as number)}>
+						<Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(UserBlock.id as number)}>
 							Débloquer
 						</Button>
 					</>
@@ -169,16 +169,16 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 			<>
 				{ViewInvite.user2.id === userContext.user.info.id ? (
 					<>
-						<Button className="btn btn-secondary pull-right" onClick={() => handleButtonAddFriends(ViewInvite.id as number)}>
+						<Button className="btn btn-primary pull-right" onClick={() => handleButtonAddFriends(ViewInvite.id as number)}>
 							Accepter
 						</Button>
-						<Button className="btn btn-secondary pull-right" onClick={() => handleButtonBlocketFriends(IdUserTarget)}>
+						<Button className="btn btn-primary pull-right" onClick={() => handleButtonBlocketFriends(IdUserTarget)}>
 							Bloquer
 						</Button>
 					</>
 				) : (
 					<>
-						<Button className="btn btn-secondary pull-right" onClick={() => handleButtonDeleteFriends(ViewInvite.id as number)}>
+						<Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(ViewInvite.id as number)}>
 							Supprimer la demande
 						</Button>
 					</>
@@ -190,10 +190,10 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 	if (ViewFriends) {
 		return (
 			<>
-				<Button className="btn btn-secondary pull-right" onClick={() => handleButtonDeleteFriends(ViewFriends.id as number)}>
+				<Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(ViewFriends.id as number)}>
 					Supprimer
 				</Button>
-				<Button className="btn btn-secondary pull-right" onClick={() => handleButtonBlocketFriends(IdUserTarget)}>
+				<Button className="btn btn-primary pull-right" onClick={() => handleButtonBlocketFriends(IdUserTarget)}>
 					Bloquer
 				</Button>
 			</>
@@ -202,10 +202,10 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 
 	return (
 		<>
-			<Button className="btn btn-secondary pull-right" onClick={() => handleButtonInviteFriends(IdUserTarget)}>
+			<Button className="btn btn-primary pull-right" onClick={() => handleButtonInviteFriends(IdUserTarget)}>
 				Inviter
 			</Button>
-			<Button className="btn btn-secondary pull-right" onClick={() => handleButtonBlocketFriends(IdUserTarget)}>
+			<Button className="btn btn-primary pull-right" onClick={() => handleButtonBlocketFriends(IdUserTarget)}>
 				Bloquer
 			</Button>
 		</>
