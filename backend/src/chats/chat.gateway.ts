@@ -6,6 +6,7 @@ import { ChatsService } from "./chats.service";
 import { ChannelMemberService } from 'channels/Service/channel-member.service';
 import { ChannelMemberAccess, ChannelMemberPermission, ChannelMemberRole } from 'channels/entities/channel-member.entity';
 import { ChannelsService } from 'channels/Service/channels.service';
+import { promises } from 'dns';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {
@@ -21,6 +22,7 @@ export class ChatGateway {
 	async handleChat(@MessageBody() payload: Message): Promise<Message> {
 		const room = await this.chatService.getRoomByName(payload.roomName);
 		if (room.channel) {
+			console.log(payload.user);
 			if (payload.user.muted) {
 				this.logger.log(`User ${payload.user.userId} is muted`);
 				return;
@@ -32,49 +34,70 @@ export class ChatGateway {
 		return payload;
 	}
 
+
+	async createUserRoom(user: UserRoom, roomName: string) : Promise<UserRoom | undefined>
+	{
+		const room = await this.channel.findOneByName(roomName);
+		if (room) {
+			const channel_user = await this.channelUser.findOneByChannelNameAndUser(roomName, user.userId);
+			if(channel_user){
+				if (channel_user.permission === ChannelMemberPermission.Muted)
+					user.muted = true;
+				else
+					user.muted = false;
+				if (channel_user.access === ChannelMemberAccess.Banned)
+				{
+					this.server.to(user.socketId).emit('banned', 'You are banned from this channel');
+					return undefined;
+				}
+				if (channel_user.role === ChannelMemberRole.Owner)
+					user.type = "Owner";
+				else if (channel_user.role === ChannelMemberRole.Admin)
+					user.type = "Admin";
+				else
+					user.type = "regular";
+			}
+		}
+		return user;
+	}
 	//renvoie la liste des user de la room
 	@SubscribeMessage('join_room')
 	async handleSetClientDataEvent(@MessageBody() payload: { user: UserRoom; roomName: string; }) {
 		if (payload.user.socketId) {
+			const user = await this.createUserRoom(payload.user, payload.roomName);
+			if (!user)
+				return;
 			this.logger.log(`${payload.user.socketId} is joining ${payload.roomName}`);
 			await this.server.in(payload.user.socketId).socketsJoin(payload.roomName);
-
-			const room = await this.channel.findOneByName(payload.roomName);
-			if (room) {
-				const channel_user = await this.channelUser.findOneByChannelNameAndUser(payload.roomName, payload.user.userId);
-				if(channel_user){
-					if (channel_user.permission === ChannelMemberPermission.Muted)
-						payload.user.muted = true;
-					else
-						payload.user.muted = false;
-					if (channel_user.role === ChannelMemberRole.Owner)
-						payload.user.type = "Owner";
-					else if (channel_user.role === ChannelMemberRole.Admin)
-						payload.user.type = "Admin";
-					else
-						payload.user.type = "regular";
-				}
-			}
 			await this.chatService.addUserToRoom(payload.user, payload.roomName);
 			const messages = await this.chatService.getMessagesByRoom(payload.roomName);
 			if (messages) {
 				for (let message of messages)
 					await this.server.to(payload.user.socketId).emit('chat', message);
 			}
-			await this.server.to(payload.user.socketId).emit('chat_user', payload.user);
-			// if (payload.user.type === "Owner" || payload.user.type === "Admin")
-				this.handleUserListEvent(payload.roomName);
+			await this.server.to(payload.user.socketId).emit('chat_user', user);
+			this.handleUserListEvent(payload.roomName);
 		}
 	}
 
+	@SubscribeMessage('update_chat_user')
+	async handleUpdateChatUserEvent(@MessageBody() payload: { user: UserRoom; roomName: string; }) {
+		if (payload.user.socketId) {
+			const user = await this.createUserRoom(payload.user, payload.roomName);
+			if (!user)
+				return;
+			this.logger.log(`${payload.user.socketId} is updating ${payload.roomName}`);
+			await this.server.to(payload.user.socketId).emit('chat_user', user);
+			this.handleUserListEvent(payload.roomName);
+		}
+	}
 	//renvoie la liste des user de la room
 // Corrected handleUserListEvent function
 async handleUserListEvent(roomName: string) {
 	this.logger.log(`Get user list of ${roomName}`);
-
 	try {
 	  const users = await this.channelUser.findAllByChannelName(roomName);
-	console.log(users);
+	// console.log(users);
 	  if (users && users.length > 0) {
 		const roomUsers: UserRoom[] = [];
 
@@ -88,7 +111,7 @@ async handleUserListEvent(roomName: string) {
 			  ban: user.access === ChannelMemberAccess.Banned ?? false,
 			});
 		  }
-		  console.log(roomUsers);
+		//   console.log(roomUsers);
 		// Assuming 'user_list' is the event name; adjust it based on your client-side implementation
 		this.server.to(roomName).emit('user_list', roomUsers);
 	  }
