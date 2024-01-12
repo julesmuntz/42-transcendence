@@ -175,6 +175,29 @@ export class ChannelsGateway {
 		}
 	}
 
+	@SubscribeMessage('joinChannel')
+	async handleJoinChannel(@MessageBody() payload: { userId: number; channelId: string; }) {
+		const channel = await this.channelsService.findOneByName(payload.channelId);
+		const user = await this.userService.findOne(payload.userId);
+		if (channel && user) {
+			const userExist = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			if (!userExist) {
+				const createChannelMemberDto = {
+					'user': user,
+					'channel': channel,
+					'role': 'regular',
+					'access': 'regular',
+					'permission': 'regular',
+				}
+				const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
+				if (channelMember) {
+					this.logger.log(`User "${user.username}" join to Channel "${channel.name}"`);
+					return channel;
+				}
+			}
+		}
+	}
+
 	@SubscribeMessage('kickChannel')
 	async handleKickChannel(@MessageBody() payload: { userId: number; channelId: number; }) {
 		const channel = await this.channelsService.findOne(payload.channelId);

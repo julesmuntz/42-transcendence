@@ -59,7 +59,11 @@ export default function ViewChannelPublic() {
 				});
 		}
 		else
+		{
+			socket?.emit('joinChannel', { userId: userContext.user.info.id, roomId: roomId})
 			navigate(`/chat/${roomId}`);
+		}
+
 	};
 
 	if (channel.length > 0) {

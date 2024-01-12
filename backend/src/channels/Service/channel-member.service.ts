@@ -48,6 +48,21 @@ export class ChannelMemberService {
 		return this.channelmemberRepository.find({ where: { channel } });
 	}
 
+	async findAllByChannelName(channelId: string): Promise<ChannelMember[]> {
+		return this.channelmemberRepository.find({  relations: ['channel', 'user'],
+		where: { channel: { name: channelId } } });
+	}
+
+	async findOneByChannelNameAndUser(channelId: string, userId: number): Promise<ChannelMember> {
+		return this.channelmemberRepository.findOne({
+			relations: ["user", "channel"], // Assurez-vous de charger également la relation du canal
+			where: {
+				user: { id: userId },
+				channel: { name: channelId } // Assurez-vous de comparer les IDs du canal
+			}
+		});
+	}
+
 	async update(id: number, updateChannelMemberDto: UpdateChannelMemberDto): Promise<ChannelMember> {
 		await this.channelmemberRepository.update(id, updateChannelMemberDto);
 		return this.channelmemberRepository.findOne({ where: { id } });

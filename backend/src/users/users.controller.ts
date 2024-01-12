@@ -22,7 +22,7 @@ export class UsersController {
 	@Post('upload/:id')
 	@UseInterceptors(FileInterceptor('customFile', {
 		storage: diskStorage({
-			destination: './imgs',
+			destination: './imgs/',
 			filename: editFileName
 		})
 	}))
