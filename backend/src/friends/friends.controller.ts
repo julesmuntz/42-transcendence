@@ -65,31 +65,6 @@ export class FriendsController {
 		}
 	}
 
-	//modification a aporter
-
-	//les modification verifier en premier si il sont amie ou non delete si besoin est apres create en function.
-	@Patch('bloquet/:id')
-	async bloquet(@Param('id') id: number, @Req() req: any): Promise<Friend> {
-
-		const verifFriend = await this.friendsService.view(req.user.sub, id);
-		const verifblock = await this.friendsService.viewblock(req.user.sub, id);
-		const bloqueFriend = new CreateFriendDto();
-		bloqueFriend.user1 = await this.userService.findOne(req.user.sub);
-		bloqueFriend.user2 = await this.userService.findOne(id);
-		bloqueFriend.type = RelationType.Blocked;
-		if ((req.user.sub != id && (!verifblock || verifblock.user2.id != req.user.sub))) {
-			console.log("bloquet");
-			if (!verifFriend) {
-				return this.friendsService.create(bloqueFriend);
-			} else {
-				this.friendsService.delete(verifFriend.id);
-				return this.friendsService.create(bloqueFriend);
-			}
-		}
-		console.log("NOn ");
-	}
-
-
 	// A tester !!
 	//check que il y a pas deja un truc en db
 

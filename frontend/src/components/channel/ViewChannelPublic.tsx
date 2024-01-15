@@ -67,25 +67,36 @@ export default function ViewChannelPublic() {
 
 	};
 
+	function Category({ children }: { children: React.ReactNode }) {
+		return (
+			<div style={{ border: '1px solid #3f3f3f', borderRadius: '5px' }}>
+				<div>{children}</div>
+			</div>
+		);
+	}
+
 	if (channel.length > 0) {
 		return (
 			<div>
-				{channel.map((channel) => (
-					<a
-						key={channel.name}
-						className="list-group-item list-group-item-action border-0"
-						onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
-					>
-						<div className="color_text d-flex align-items-start">
-							<div className="flex-grow-1 ml-3">
-								{channel.name}
-								<div className="small">
-									{channel.type}
+				<p style={{ fontSize: '15px', textAlign: 'left', backgroundColor: '#26292e' }}>Public</p>
+				<Category>
+					<div>
+						{channel.map((channel) => (
+							<a
+								key={channel.name}
+								className="list-group-item list-group-item-action border-0"
+								onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
+							>
+								<div className="color_text d-flex align-items-start">
+									<div className="flex-grow-1 ml-3">
+										{channel.name}
+									</div>
 								</div>
-							</div>
-						</div>
-					</a>
-				))}
+							</a>
+						))}
+					</div >
+				</Category>
+				<br></br>
 			</div>
 		);
 	}

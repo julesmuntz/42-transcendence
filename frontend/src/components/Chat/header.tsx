@@ -9,6 +9,7 @@ export const Header = ({
 	isChannel,
 	handleUsersClick,
 	handleLeaveRoom,
+	handleDestroyRoom,
 	roomName,
 }: {
 	isConnected: boolean
@@ -16,6 +17,7 @@ export const Header = ({
 	isChannel: boolean
 	handleUsersClick: () => void
 	handleLeaveRoom: () => void
+	handleDestroyRoom : () => void
 	roomName: string
 }) => {
 	return (
@@ -38,9 +40,11 @@ export const Header = ({
 					)}
 
 					{/* Button to show additional options (gear icon) */}
-					<button type="button" className="btn btn-default" data-toggle="dropdown">
-						<i className="fa fa-gear"></i>
+					{isChannel && users.type === 'Owner' &&
+					<button type="button" className="btn btn-default"onClick={() => handleDestroyRoom()}>
+						<span className="mr-1 text-lg text-white">{'🗑️'}</span>
 					</button>
+					}
 				</div>
 			</div>
 

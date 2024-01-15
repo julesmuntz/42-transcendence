@@ -21,12 +21,12 @@ export class ChatsService {
     return newRoom.name;
   }
 
-  async removeRoom(roomName: string): Promise<void> {
-    const findRoom = await this.getRoomByName(roomName);
-    if (findRoom) {
-      await this.roomsRepository.delete(findRoom.id);
-    }
-  }
+	async removeRoom(roomName: string): Promise<void> {
+		const findRoom = await this.getRoomByName(roomName);
+		if (findRoom) {
+			await this.roomsRepository.delete(findRoom.id);
+		}
+	}
 
   async getRoomByName(roomName: string): Promise<Room | undefined> {
     return this.roomsRepository.findOne({ where: { name: roomName } });
@@ -57,10 +57,9 @@ export class ChatsService {
   }
 
   async findRoomsByUserSocketId(socketId: string): Promise<Room[]> {
-    return this.roomsRepository.createQueryBuilder('room')
-      .innerJoinAndSelect('room.users', 'user', 'user.socketId = :socketId', { socketId })
-      .getMany();
-  }
+    return this.roomsRepository.find();
+}
+
 
   async removeUserFromAllRooms(socketId: string): Promise<void> {
     const rooms = await this.findRoomsByUserSocketId(socketId);
@@ -69,17 +68,13 @@ export class ChatsService {
     }
   }
 
-  async removeUserFromRoom(socketId: string, roomName: string): Promise<void> {
-    const room = await this.getRoomByName(roomName);
-    if (room) {
-      room.users = room.users.filter(user => user.socketId !== socketId);
-      if (room.users.length === 0) {
-        await this.removeRoom(roomName);
-      } else {
-        await this.roomsRepository.save(room);
-      }
-    }
-  }
+	async removeUserFromRoom(socketId: string, roomName: string): Promise<void> {
+		const room = await this.getRoomByName(roomName);
+		if (room) {
+			room.users = room.users.filter(user => user.socketId === socketId);
+			await this.roomsRepository.update(room.id, room);
+		}
+	}
 
   async addMessageToRoom(payload: Message): Promise<void> {
     const room = await this.getRoomByName(payload.roomName);

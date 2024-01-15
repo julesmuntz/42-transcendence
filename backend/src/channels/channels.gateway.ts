@@ -66,8 +66,11 @@ export class ChannelsGateway {
 
 	// suprimer channel
 	@SubscribeMessage('deleteChannel')
-	async handleDeletingEvent(@MessageBody() payload: { channelId: number }) {
-		const channel = await this.channelsService.findOne(payload.channelId);
+	async handleDeletingEvent(@MessageBody() payload: { channelId: string }) {
+		console.log("deleteChannel", payload.channelId);
+		const channel = await this.channelsService.findOneByName(payload.channelId);
+
+		console.log("channel", channel);
 		if (channel) {
 			const channelMember = await this.channelUser.findAllByChannel(channel);
 			if (channelMember) {
@@ -210,7 +213,7 @@ export class ChannelsGateway {
 					await this.server.in(user.socketId).socketsLeave(channel.name);
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
 					if (user.socketId !== '') {
-						await this.server.to(payload.roomName).emit('kick', 'You are kick from this channel');
+						await this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
 						await this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
 					}
 				}
@@ -232,7 +235,7 @@ export class ChannelsGateway {
 					await this.server.in(user.socketId).socketsLeave(channel.name);
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
 					if (user.socketId !== '') {
-						await this.server.to(payload.roomName).emit('kick', 'You are kick from this channel');
+						await this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
 						await this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
 					}
 				}
@@ -250,7 +253,7 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.channelUser.delete(channelMember.id);
 				this.logger.log(`Channel ${channel.name} unbanned to ${user.username}`);
-				await this.server.to(payload.roomName).emit('kick', 'You are kick from this channel');
+				await this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
 				return channel;
 			}
 		}
@@ -266,9 +269,7 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.channelUser.update(channelMember.id, { permission: ChannelMemberPermission.Muted });
 				this.logger.log(`Channel ${channel.name} muted to ${user.username}`);
-				if (user.socketId !== '') {
-					await this.server.to(channel.name).emit('muted', 'You are muted from this channel');
-				}
+				await this.server.to(channel.name).emit('update_chat_user', 'You are muted from this channel');
 				return channel;
 			}
 		}
@@ -284,9 +285,7 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.channelUser.update(channelMember.id, { permission: ChannelMemberPermission.Regular });
 				this.logger.log(`Channel ${channel.name} unmuted to ${user.username}`);
-				if (user.socketId !== '') {
-					await this.server.to(channel.name).emit('muted', 'You are muted from this channel');
-				}
+				await this.server.to(channel.name).emit('update_chat_user', 'You are muted from this channel');
 				return channel;
 			}
 		}
@@ -301,8 +300,7 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.channelUser.update(channelMember.id, { role: ChannelMemberRole.Admin });
 				this.logger.log(`Channel ${channel.name} promoted to ${user.username}`);
-				await this.server.to(channel.name).emit('promoted', 'You are promoted from this channel');
-				await this.server.to(user.socketId).emit('promoted', 'You are demoted from this channel');
+				await this.server.to(channel.name).emit('update_chat_user', 'You are promoted from this channel');
 				return channel;
 			}
 		}
@@ -317,8 +315,7 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.channelUser.update(channelMember.id, { role: ChannelMemberRole.Regular });
 				this.logger.log(`Channel ${channel.name} demoted to ${user.username}`);
-				await this.server.to(channel.name).emit('promoted', 'You are promoted from this channel');
-				await this.server.to(user.socketId).emit('promoted', 'You are demoted from this channel');
+				await this.server.to(channel.name).emit('update_chat_user', 'You are promoted from this channel');
 				return channel;
 			}
 		}

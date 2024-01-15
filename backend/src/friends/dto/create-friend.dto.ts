@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 import { RelationType } from '../entities/friend.entity';
 import { User } from 'users/entities/user.entity';
 
@@ -14,4 +14,6 @@ export class CreateFriendDto {
 	@IsEnum(RelationType)
 	type: RelationType;
 
+	@IsOptional()
+	roomName: string;
 }

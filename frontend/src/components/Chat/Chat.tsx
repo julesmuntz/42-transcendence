@@ -13,7 +13,6 @@ export default function Chat() {
   const socket = useContext<Socket | undefined>(WebSocketContext);
 
   const { id: roomName } = useParams<{ id: string }>();
-
   const [isConnected, setIsConnected] = useState(socket?.connected);
   const [messages, setMessages] = useState<Message[]>([]);
   const [toggleUserList, setToggleUserList] = useState<boolean>(false);
@@ -27,43 +26,39 @@ export default function Chat() {
     socketId: socket?.id || "",
   });
 
-
-  // setUser({ userId: userContext.user.info.id, userName: userContext.user.info.username, socketId: socket?.id });
   useEffect(() => {
     if (!roomName) {
-      navigate('/');
+		navigate('/');
     } else {
       socket?.emit('join_room', { user, roomName: roomName });
+
       socket?.on('connect_chat', () => {
         setIsConnected(true);
       });
+
       socket?.on('chat', (e) => {
         setMessages((messages) => [e, ...messages]);
       });
+
       socket?.on('user_list', (e: UserRoom[]) => {
         setUsers([]);
         setUsers(e);
       });
+
       socket?.on('chat_user', (e: UserRoom) => {
         setUser(e);
-        // setToggleUsereList(false);
       });
 
       socket?.on('banned', () => {
         navigate('/');
       });
 
-      socket?.on('muted', () => {
-        socket?.emit('update_chat_user', { user, roomName: roomName });
-      });
-
-      socket?.on('kick', () => {
-        socket?.emit('update_chat_user', { user, roomName: roomName });
-      });
-
-      socket?.on('promoted', () => {
-        socket?.emit('update_chat_user', { user, roomName: roomName });
-      });
+	  socket?.on('update_chat_user', () => {
+		socket?.emit('update_chat_user', { user, roomName: roomName });
+	  });
+	  socket?.on('deleteChannel', () => {
+		navigate('/');
+	  });
 
     }
     return () => {
@@ -72,16 +67,16 @@ export default function Chat() {
       socket?.off('user_list');
       socket?.off('chat_user');
       socket?.off('banned');
-      socket?.off('muted');
-      socket?.off('kick');
-      socket?.off('promoted');
-    };
+	  socket?.off('update_chat_user');
+	  socket?.off('deleteChannel');
+	  setMessages([]);
+	};
   }, [socket, roomName, navigate]);
 
 
   // a changer pour le leave channels
   const leaveRoom = () => {
-    // socket?.emit('leave_room', { user, roomName: roomName });
+    socket?.emit('disconnect_room');
     navigate('/');
   };
 
@@ -130,6 +125,14 @@ export default function Chat() {
         socket?.emit('promoteChannel', { userId: user.userId, roomName: roomName });
     }
   };
+
+  	const handleDestroyRoom = (roomName : string) => {
+		if (roomName) {
+			socket?.emit('deleteChannel', { channelId: roomName });
+		}
+	};
+
+
   return (
     <>
       {user?.userId && roomName && room && (
@@ -141,6 +144,7 @@ export default function Chat() {
             isChannel={room.channel}
             handleUsersClick={() => setToggleUserList((toggleUserList) => !toggleUserList)}
             handleLeaveRoom={() => leaveRoom()}
+			handleDestroyRoom={() => handleDestroyRoom(roomName)}
           />
 
           {toggleUserList && socket ? (
@@ -151,7 +155,6 @@ export default function Chat() {
               <MessageForm sendMessage={sendMessage}></MessageForm>
             </>
           )}
-
         </ChatLayout>
       )}
     </>
