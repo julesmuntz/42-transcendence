@@ -7,7 +7,6 @@ import { RelationType } from './entities/friend.entity';
 import { ChatsService } from 'chats/chats.service';
 import { CreateFriendDto } from './dto/create-friend.dto';
 
-//rajouter les logger
 @WebSocketGateway({ cors: { origin: '*' } })
 export class FriendsGateway {
 	constructor(
@@ -52,6 +51,17 @@ export class FriendsGateway {
 		}
 	}
 
+	async randomString(): Promise<string> {
+		let string = "";
+		const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		for (let i = 0; i < 10; i++)
+			string += possible.charAt(Math.floor(Math.random() * possible.length));
+		const rooms = await this.chatsService.getRoomByName(string);
+			if (rooms)
+				return this.randomString();
+		return string;
+	}
+
 	@SubscribeMessage('accept_friends')
 	async handleAcceptFriends(client: Socket, payload: { id: number }): Promise<void> {
 		const user = await this.userService.findOneBySocketId(client.id);
@@ -59,8 +69,7 @@ export class FriendsGateway {
 		if (user && idUserTarget && user.id != idUserTarget.id) {
 			const friends_view = await this.friendsService.viewinvite(user.id, idUserTarget.id);
 			if (friends_view) {
-				//changer le name de la room pour aleatoire est unique donc check si la room existe deja
-				const string = friends_view.user1.id.toString() + " " + friends_view.user2.id.toString();
+				const string = await this.randomString();
 				const roomName = await this.chatsService.addRoom(string, { userId: friends_view.user1.id, userName: friends_view.user1.username, socketId: "" }, false);
 				const friends = await this.friendsService.update(friends_view.id, { type: RelationType.Friend, roomName: roomName });
 				if (friends) {
