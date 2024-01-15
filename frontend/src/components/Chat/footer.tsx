@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { UserRoom, Room, Message } from '../../shared/chats.interface';
 import { Socket } from 'socket.io-client';
 import './Chat.css';
+import { Link } from 'react-router-dom';
 
 export const Messages = ({
 	user,
@@ -62,7 +63,7 @@ export const Messages = ({
 								<div className={`media-body pad-hor ${speechClass}`}>
 									<div className="speech">
 										{/* <a href="#" className="media-heading"> */}
-										{message.user.userName}
+										<Link to={`/profile/${message.user.userId}`} className="link-text">{message.user.userName}</Link>
 										{/* </a> */}
 										<p>{message.message}</p>
 										<p className="speech-time">

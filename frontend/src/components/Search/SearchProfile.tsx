@@ -3,6 +3,7 @@ import { Info, UserContext } from "../../contexts/UserContext";
 import Form from 'react-bootstrap/Form';
 import "./SearchProfile.css"
 import Friends from "../Friends/Friends";
+import { Link } from "react-router-dom";
 
 export default function SearchProfile() {
 	const userContext = useContext(UserContext);
@@ -46,7 +47,7 @@ export default function SearchProfile() {
 												<h5>
 													<p className="profile-link">
 														<br />
-														{user.username}
+														<Link to={`/profile/${user.id}`} className="link-text">{user.username}</Link>
 													</p>
 												</h5>
 											</div>
