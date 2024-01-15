@@ -40,7 +40,7 @@ export default function CreateChannel() {
 			<Form>
 				<Form.Group controlId="name">
 					<Form.Label>Name</Form.Label>
-					<Form.Control type="text" placeholder="Enter name" />
+					<Form.Control type="text" placeholder="Enter name"/>
 				</Form.Group>
 
 				<Form.Group controlId="type">

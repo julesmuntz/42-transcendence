@@ -6,7 +6,6 @@ import { ChatsService } from "./chats.service";
 import { ChannelMemberService } from 'channels/Service/channel-member.service';
 import { ChannelMemberAccess, ChannelMemberPermission, ChannelMemberRole } from 'channels/entities/channel-member.entity';
 import { ChannelsService } from 'channels/Service/channels.service';
-import { promises } from 'dns';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {

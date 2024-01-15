@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { TFAProfile } from "./TFAProfile";
 import { useParams, useNavigate } from "react-router-dom";
+import Friends from "../Friends/Friends";
 
 
 export default function PublicProfile() {
@@ -40,6 +41,7 @@ export default function PublicProfile() {
 			<Container className="d-flex flex-column justify-content-center align-items-center">
 				<ProfileImg userPublic={user} />
 				<ProfileInfos userPublic={user} />
+				{id && <Friends IdUserTarget={parseInt(id)} />}
 			</Container>
 		</Container>
 	);
