@@ -1,5 +1,5 @@
 import Nav from "react-bootstrap/Nav";
-import { BalloonHeart, PersonCircle, ChatDots, Controller, People, Search } from "react-bootstrap-icons";
+import { PersonFill, ChatLeftDots, Joystick, PeopleFill, Search } from "react-bootstrap-icons";
 import { BrowserRouter, Route, Routes, NavLink } from "react-router-dom";
 import Profile from "../Profile/Profile";
 import Home from "../Home/Home";
@@ -19,22 +19,22 @@ export default function SideBar() {
 				<div className="sidebar-sticky">
 					<Nav.Item className="pb-1">
 						<NavLink to="/profile">
-							<PersonCircle color="gray" size={25} />
+							<PersonFill color="gray" size={25} />
 						</NavLink>
 					</Nav.Item>
 					<Nav.Item className="pb-1">
 						<NavLink to="/chat">
-							<ChatDots color="gray" size={25} />
+							<ChatLeftDots color="gray" size={25} />
 						</NavLink>
 					</Nav.Item>
 					<Nav.Item className="pb-1">
 						<NavLink to="/game">
-							<Controller color="gray" size={25} />
+							<Joystick color="gray" size={25} />
 						</NavLink>
 					</Nav.Item>
 					<Nav.Item className="pb-1">
 						<NavLink to="/friend">
-							<People color="gray" size={25} />
+							<PeopleFill color="gray" size={25} />
 						</NavLink>
 					</Nav.Item>
 					<Nav.Item className="pb-1">

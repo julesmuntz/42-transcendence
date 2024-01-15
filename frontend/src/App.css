@@ -24,5 +24,6 @@ body {
   color: white;
   overflow: auto;
   font-size: 1.8rem;
+  font-family: Uni, sans;
   /* overflow: none */
 }

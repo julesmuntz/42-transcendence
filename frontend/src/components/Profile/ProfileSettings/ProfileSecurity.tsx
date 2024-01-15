@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import { LockFill } from 'react-bootstrap-icons';
+import { GearWideConnected } from 'react-bootstrap-icons';
 import { useContext } from "react";
 import { UserContext } from "../../../contexts/UserContext";
 import ProfileModifier from "./ProfileModifier";
@@ -87,7 +87,7 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 		<>
 			<Dropdown>
 				<Dropdown.Toggle as={CustomToggle}>
-					<LockFill color="gray" size={25} />
+					<GearWideConnected color="gray" size={25} />
 				</Dropdown.Toggle>
 				<Dropdown.Menu variant='dark'>
 					{!userContext.user.info.isTFAEnabled ? <Dropdown.Item eventKey="1" onClick={activate2FA}>Activate 2FA</Dropdown.Item> :

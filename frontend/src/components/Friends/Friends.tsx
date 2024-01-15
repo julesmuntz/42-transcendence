@@ -8,154 +8,54 @@ import { Socket } from 'socket.io-client';
 export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: number; UserTarget: Info }) {
 	const userContext = useContext(UserContext);
 	const [UserBlock, setUserBlock] = useState<IFriends | null>(null);
-	const [ViewInvite, setViewInvite] = useState<IFriends | null>(null);
-	const [ViewFriends, setViewFriends] = useState<IFriends | null>(null);
-	const [refresh, setRefresh] = useState(false);
 	const socket = useContext<Socket | undefined>(WebSocketContext);
 
-	const createFriendDto: IFriends = {
-		user1: userContext.user.info,
-		user2: UserTarget,
-		type: "invited",
-	};
 	useEffect(() => {
-		socket?.on("refresh", () => {
-		});
-		socket?.connect();
-	}
-		, [socket]);
 
-	useEffect(() => {
-		fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/friends/viewblock/${IdUserTarget}`, {
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${userContext.user.authToken}`,
-			},
-		})
-			.then((res) => {
-				if (!res.ok) {
-					throw new Error(res.statusText);
-				}
-				return res.text();
-			})
-			.then((data) => {
-				if (data) {
-					setUserBlock(JSON.parse(data));
-				}
-			})
-			.catch((error) => console.error('Error fetching users:', error));
-	}, [UserBlock, refresh, IdUserTarget, userContext.user.authToken]);
-
-	useEffect(() => {
-		fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/friends/viewinvite/${IdUserTarget}`, {
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${userContext.user.authToken}`,
-			},
-		})
-			.then((res) => {
-				if (!res.ok) {
-					throw new Error(res.statusText);
-				}
-				return res.text();
-			})
-			.then((data) => {
-				if (data) {
-					setViewInvite(JSON.parse(data));
-				}
-			})
-			.catch((error) => console.error('Error fetching users:', error));
-	}, [ViewInvite, refresh, IdUserTarget, userContext.user.authToken]);
-
-	useEffect(() => {
-		fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/friends/viewfriends/${IdUserTarget}`, {
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${userContext.user.authToken}`,
-			},
-		})
-			.then((res) => {
-				if (!res.ok) {
-					throw new Error(res.statusText);
-				}
-				return res.text();
-			})
-			.then((data) => {
-				if (data) {
-					setViewFriends(JSON.parse(data));
-				}
-			})
-			.catch((error) => console.error('Error:', error));
-	}, [ViewFriends, refresh, IdUserTarget, userContext.user.authToken]);
+		if (socket) {
+			socket.emit('refresh_friends', { id: IdUserTarget });
+			socket.on('friends', (e: IFriends | null) => {
+				setUserBlock(e);
+			});
+			return () => {
+				socket.off('friends');
+				setUserBlock(null);
+			};
+		}
+	}, [socket]);
 
 	async function handleButtonInviteFriends(userId: number) {
 		if (userId !== userContext.user.info.id) {
-			fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/friends/`, {
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${userContext.user.authToken}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					createFriendDto,
-				}),
-			})
-				.then(() => {
-					setRefresh((prev) => !prev);
-					socket?.emit("refresh");
-				});
+			socket?.emit('invite_friends', { id: userId });
 		}
 	}
 
 	async function handleButtonBlocketFriends(userId: number) {
 		if (userId !== userContext.user.info.id) {
-			fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/friends/bloquet/${userId}`, {
-				method: "PATCH",
-				headers: {
-					Authorization: `Bearer ${userContext.user.authToken}`,
-				},
-			})
-				.then(() => {
-					setRefresh((prev) => !prev);
-					socket?.emit("refresh");
-				});
+			socket?.emit('block_friends', { id: userId });
 		}
 	}
 
-	async function handleButtonAddFriends(friendId: number) {
-		fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/friends/accept/${friendId}`, {
-			method: "PATCH",
-			headers: {
-				Authorization: `Bearer ${userContext.user.authToken}`,
-			},
-		})
-			.then(() => {
-				setRefresh((prev) => !prev);
-				socket?.emit("refresh");
-			});
+	async function handleButtonAddFriends(userId: number) {
+		if (userId !== userContext.user.info.id) {
+			socket?.emit('accept_friends', { id: userId });
+		}
 	}
 
-	async function handleButtonDeleteFriends(friendId: number) {
-		fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/friends/${friendId}`, {
-			method: "DELETE",
-			headers: {
-				Authorization: `Bearer ${userContext.user.authToken}`,
-			},
-		})
-			.then(() => {
-				setRefresh((prev) => !prev);
-				socket?.emit("refresh");
-			});
+	async function handleButtonDeleteFriends(userId: number) {
+		if (userId !== userContext.user.info.id) {
+			socket?.emit('delete_friends', { id: userId });
+		}
 	}
 
-	if (UserBlock) {
+	if (UserBlock && UserBlock.type === "blocked") {
 		return (
 			<>
 				{UserBlock.user2.id === userContext.user.info.id ? (
 					<>Vous êtes bloqué</>
 				) : (
 					<>
-						<Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(UserBlock.id as number)}>
+						<Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(IdUserTarget)}>
 							Débloquer
 						</Button>
 					</>
@@ -164,12 +64,12 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 		);
 	}
 
-	if (ViewInvite) {
+	if (UserBlock && UserBlock.type === "invited") {
 		return (
 			<>
-				{ViewInvite.user2.id === userContext.user.info.id ? (
+				{UserBlock.user2.id === userContext.user.info.id ? (
 					<>
-						<Button className="btn btn-primary pull-right" onClick={() => handleButtonAddFriends(ViewInvite.id as number)}>
+						<Button className="btn btn-primary pull-right" onClick={() => handleButtonAddFriends(IdUserTarget)}>
 							Accepter
 						</Button>
 						<Button className="btn btn-primary pull-right" onClick={() => handleButtonBlocketFriends(IdUserTarget)}>
@@ -178,7 +78,7 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 					</>
 				) : (
 					<>
-						<Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(ViewInvite.id as number)}>
+						<Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(IdUserTarget)}>
 							Supprimer la demande
 						</Button>
 					</>
@@ -187,10 +87,10 @@ export default function Friends({ IdUserTarget, UserTarget }: { IdUserTarget: nu
 		);
 	}
 
-	if (ViewFriends) {
+	if (UserBlock && UserBlock.type === "friend") {
 		return (
 			<>
-				<Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(ViewFriends.id as number)}>
+				<Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(IdUserTarget)}>
 					Supprimer
 				</Button>
 				<Button className="btn btn-primary pull-right" onClick={() => handleButtonBlocketFriends(IdUserTarget)}>

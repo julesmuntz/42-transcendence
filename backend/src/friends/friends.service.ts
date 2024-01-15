@@ -61,7 +61,7 @@ export class FriendsService {
 		});
 	}
 
-	async update(id: number, updateFriendDto: UpdateFriendDto): Promise<any> {
+	async update(id: number, updateFriendDto: UpdateFriendDto): Promise<Friend> {
 		await this.friendRepository.update(id, updateFriendDto);
 		return this.friendRepository.findOne({ where: { id } });
 	}
