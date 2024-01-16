@@ -29,12 +29,12 @@ function WebSocketProvider({
   useEffect(() => {
     if (user?.info.id && user.authToken) {
       const socketIOClient = io(`http://${process.env.REACT_APP_HOSTNAME}:3030`, {
-        query: { userId: user?.info.id, token: user.authToken },
-        autoConnect: true,
+        extraHeaders: {
+          'authorization': `Bearer ${user.authToken}`
+        }
       });
-      console.log("socket !")
       setSocket(socketIOClient);
-      socketIOClient.on("connect", () => { socketIOClient.emit("saveusersocket", user?.info.id); });
+      socketIOClient.on("connect", () => { socketIOClient.emit("saveusersocket", user?.info.id);});
       socketIOClient.on("notification", (notification: Notification) => {
         const notificationFunctions = {
           [NotificationType.Info]: toast.info,

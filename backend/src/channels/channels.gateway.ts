@@ -1,24 +1,20 @@
-import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { ChannelsService } from 'channels/Service/channels.service';
-import { CreateChannelDto } from 'channels/dto/create-channel.dto';
-import { UsersService } from 'users/users.service';
-import { ChannelMemberService } from 'channels/Service/channel-member.service';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer, MessageBody } from '@nestjs/websockets';
 import { ChatsService } from 'chats/chats.service';
-import { CreateChannelMemberDto } from 'channels/dto/create-channel-member.dto';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io'
-import { ChannelType } from './entities/channel.entity';
+import { Channel, ChannelType } from './entities/channel.entity';
 import { UserRoom } from "../shared/chats.interface";
-import { ChannelMemberAccess, ChannelMemberPermission, ChannelMemberRole } from './entities/channel-member.entity';
+import { ChannelMember, ChannelMemberAccess, ChannelMemberPermission, ChannelMemberRole } from './entities/channel-member.entity';
+import { DataSource } from 'typeorm';
+import { User } from 'users/entities/user.entity';
+import { Room } from 'chats/entities/chat.entity';
+import * as bcrypt from 'bcrypt';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChannelsGateway {
 	constructor(
-		private readonly channelsService: ChannelsService,
-		// private socketService: SocketsService,
-		private readonly userService: UsersService,
-		private readonly channelUser: ChannelMemberService,
 		private chatService: ChatsService,
+		private dataSources: DataSource
 	) { }
 
 	@WebSocketServer() server: Server;
@@ -26,37 +22,27 @@ export class ChannelsGateway {
 
 	// create channel
 	@SubscribeMessage('createChannel')
-	async handleCreatingEvent(@MessageBody() payload: { createChannelDto: CreateChannelDto; userId: string }) {
-		const channelExist = await this.channelsService.findOneByName(payload.createChannelDto.name);
+	async handleCreatingEvent(@MessageBody() payload: { createChannelDto: { name: string; type: ChannelType; passwordHash: string | undefined;}; userId: string }) {
+		const channelExist = await this.dataSources.manager.findOne(Channel, { where: { name: payload.createChannelDto.name } });
 		if (!channelExist) {
-			const channel = await this.channelsService.create(payload.createChannelDto);
+			if (payload.createChannelDto.passwordHash)
+			payload.createChannelDto.passwordHash = await bcrypt.hash(payload.createChannelDto.passwordHash, 10);
+			const channel = await this.dataSources.manager.save(Channel, payload.createChannelDto);
+			console.log(channel);
 			if (channel) {
-				const user = await this.userService.findOne(parseInt(payload.userId));
+				const user = await this.dataSources.manager.findOne(User, { where: { id: parseInt(payload.userId) } });
 				if (user) {
-					const createChannelMemberDto = {
-						'user': user,
-						'channel': channel,
-						'role': 'owner',
-					}
-					const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
+					const channelMember = await this.dataSources.manager.save(ChannelMember, { user: user, channel: channel, role: ChannelMemberRole.Owner})
 					if (channelMember) {
-						const room = await this.chatService.addRoom(channel.name, {
-							'userId': parseInt(payload.userId),
-							'userName': user.username,
-							'socketId': '',
-						}, true);
+						const room = await this.dataSources.manager.save(Room, { 'name': channel.name, host: { userId: parseInt(payload.userId), userName: user.username, socketId: '' }, users: [], message: [],channel:true });
 						if (room) {
 							this.logger.log(`Channel ${channel.name} created`);
-							if (channel.type === ChannelType.Public)
-								this.server.emit('updateChannelListPublic', channel);
-							else if (channel.type === ChannelType.Protected)
-								this.server.emit('updateChannelListProtected', channel);
-							else if (channel.type === ChannelType.Private)
-								this.server.to(user.socketId).emit('updateChannelListPrivate', channel);
+							if (channel.type === ChannelType.Private)
+								this.server.to(user.socketId).emit('updateChannelList', channel);
+							else
+							this.server.emit('updateChannelList', channel);
 
 							return channel;
-						} else {
-							console.log("Error: room not created !");
 						}
 					}
 				}
@@ -66,108 +52,46 @@ export class ChannelsGateway {
 
 	// suprimer channel
 	@SubscribeMessage('deleteChannel')
-	async handleDeletingEvent(@MessageBody() payload: { channelId: string }) {
-		console.log("deleteChannel", payload.channelId);
-		const channel = await this.channelsService.findOneByName(payload.channelId);
-
-		console.log("channel", channel);
+	async handleDeletingEvent(@MessageBody() payload: { roomName: string }) {
+		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
 		if (channel) {
-			const channelMember = await this.channelUser.findAllByChannel(channel);
-			if (channelMember) {
-				channelMember.forEach(async (element) => {
-					await this.channelUser.delete(element.id);
-				});
-			}
-			await this.channelsService.delete(channel.id);
-			await this.chatService.removeRoom(channel.name);
+			this.dataSources.manager.delete(ChannelMember, { channel: channel});
+			this.dataSources.manager.delete(Channel, { id: channel.id });
+			this.dataSources.manager.delete(Room, { name: channel.name });
 			this.logger.log(`Channel ${channel.name} deleted`);
 			this.server.emit('deleteChannel', channel);
 			return channel;
 		}
 	}
 
-	//get all channel
-	@SubscribeMessage('getChannelListPublic')
-	async handleGetChannelListPublic(socket: Socket) {
-		const channels = await this.channelsService.findAllType(ChannelType.Public);
-		const user = await this.userService.findOneBySocketId(socket.id);
+	@SubscribeMessage('getChannel')
+	async handleGetChannel(socket: Socket) {
+		const user = await this.dataSources.manager.findOne(User, { where: { socketId: socket.id } });
+		const channel = await this.dataSources.manager.find(Channel);
 		let validChannels = [];
-
-		if (channels && user) {
-			for (const element of channels) {
-				const channelMember = await this.channelUser.findOneByChannelAndUser(element, user.id);
-				if (channelMember && channelMember.access !== ChannelMemberAccess.Banned) {
+		if (channel && user) {
+			for (const element of channel) {
+				const channelMember = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {id: element.id}, user: {id: user.id}, access: ChannelMemberAccess.Regular } });
+				if (channelMember)
 					validChannels.push(element);
-				}
-				else if (!channelMember) {
+				else if (element.type !== ChannelType.Private)
 					validChannels.push(element);
-				}
 			}
-			this.logger.log(`emit server channelPublic `, socket.id);
-			this.server.to(socket.id).emit('channelPublic', validChannels);
-			return channels;
-		}
-	}
-
-	@SubscribeMessage('getChannelListPrivate')
-	async handleGetChannelListPrivate(socket: Socket) {
-		const channels = await this.channelsService.findAllType(ChannelType.Private);
-		const user = await this.userService.findOneBySocketId(socket.id);
-		let validChannels = [];
-
-		if (channels && user) {
-			for (const element of channels) {
-				const channelMember = await this.channelUser.findOneByChannelAndUser(element, user.id);
-				if (channelMember && channelMember.access !== ChannelMemberAccess.Banned) {
-					validChannels.push(element);
-				}
-			}
-			this.logger.log(`emit server channelPrivate `, socket.id);
-			this.server.to(socket.id).emit('channelPrivate', validChannels);
-			return channels;
-		}
-	}
-
-
-	@SubscribeMessage('getChannelListProtected')
-	async handleGetChannelListProtected(socket: Socket) {
-		const channels = await this.channelsService.findAllType(ChannelType.Protected);
-		const user = await this.userService.findOneBySocketId(socket.id);
-		let validChannels = [];
-
-		if (channels && user) {
-			for (const element of channels) {
-				const channelMember = await this.channelUser.findOneByChannelAndUser(element, user.id);
-				if (channelMember && channelMember.access !== ChannelMemberAccess.Banned) {
-					validChannels.push(element);
-				}
-				else if (!channelMember) {
-					validChannels.push(element);
-				}
-			}
-			this.logger.log(`emit server channelProtected `, socket.id);
-			this.server.to(socket.id).emit('channelProtected', validChannels);
-			return channels;
+			this.logger.log(`emit server getChannel `, socket.id);
+			this.server.to(socket.id).emit('channelList', validChannels);
+			return channel;
 		}
 	}
 
 	//verifier si le user est dans la room
 	@SubscribeMessage('inviteChannels')
 	async handleInviteChannels(@MessageBody() payload: { userId: number; channelId: number; }) {
-		console.log("USER INVITED")
-		const channel = await this.channelsService.findOne(payload.channelId);
-		const user = await this.userService.findOne(payload.userId);
+		const channel = await this.dataSources.manager.findOne(Channel, { where: { id: payload.channelId } });
+		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
-			const userExist = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			const userExist = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {id: channel.id}, user: {id : user.id} } });
 			if (!userExist) {
-				const createChannelMemberDto = {
-					'user': user,
-					'channel': channel,
-					'role': 'regular',
-					'access': 'regular',
-					'permission': 'regular',
-				}
-				const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
+				const channelMember = await this.dataSources.manager.save(ChannelMember, { user: user, channel: channel});
 				if (channelMember) {
 					this.logger.log(`User "${user.username}" invited to Channel "${channel.name}"`);
 					this.server.to(user.socketId).emit('updateChannelListPrivate', channel);
@@ -179,35 +103,54 @@ export class ChannelsGateway {
 
 	@SubscribeMessage('joinChannel')
 	async handleJoinChannel(@MessageBody() payload: { userId: number; channelId: string; }) {
-		const channel = await this.channelsService.findOneByName(payload.channelId);
-		const user = await this.userService.findOne(payload.userId);
+		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.channelId } });
+		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
-			const userExist = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			const userExist = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {id: channel.id}, user: {id : user.id} } });
 			if (!userExist) {
-				const createChannelMemberDto = {
-					'user': user,
-					'channel': channel,
-					'role': 'regular',
-					'access': 'regular',
-					'permission': 'regular',
-				}
-				const channelMember = await this.channelUser.create(createChannelMemberDto as CreateChannelMemberDto);
+				const channelMember = await this.dataSources.manager.save(ChannelMember, { user: user, channel: channel });
 				if (channelMember) {
 					this.logger.log(`User "${user.username}" join to Channel "${channel.name}"`);
+					this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
 					return channel;
 				}
+			}
+			else
+				this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
+		}
+	}
+
+	@SubscribeMessage('passwordChannel')
+	async handlePasswordChannel(@MessageBody() payload: { channelId: string, password: string, userId: number }) {
+		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.channelId } });
+		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
+		if (channel && user) {
+			const compare = await bcrypt.compare(payload.password, channel.passwordHash);
+			console.log(compare);
+			if (compare) {
+				const userExist = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {id: channel.id}, user: {id : user.id} } });
+				if (!userExist) {
+					const channelMember = await this.dataSources.manager.save(ChannelMember, { user: user, channel: channel });
+					if (channelMember) {
+						this.logger.log(`User "${user.username}" join to Channel "${channel.name}"`);
+						this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
+						return channel;
+					}
+				}
+				else
+					this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
 			}
 		}
 	}
 
 	@SubscribeMessage('kickChannel')
 	async handleKickChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
-		const channel = await this.channelsService.findOneByName(payload.roomName);
-		const user = await this.userService.findOne(payload.userId);
+		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
+		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
-			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			const channelMember = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: channel.id}, user: {id: user.id} }});
 			if (channelMember) {
-				await this.channelUser.delete(channelMember.id);
+				this.dataSources.manager.delete(ChannelMember, { id: channelMember.id });
 				this.logger.log(`Channel ${channel.name} kicked to ${user.username}`);
 				if (user.socketId !== '') {
 					await this.server.in(user.socketId).socketsLeave(channel.name);
@@ -224,12 +167,12 @@ export class ChannelsGateway {
 
 	@SubscribeMessage('banChannel')
 	async handleBanChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
-		const channel = await this.channelsService.findOneByName(payload.roomName);
-		const user = await this.userService.findOne(payload.userId);
+		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
+		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
-			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			const channelMember = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: channel.id }, user: {id: user.id} }});
 			if (channelMember) {
-				await this.channelUser.update(channelMember.id, { access: ChannelMemberAccess.Banned });
+				await this.dataSources.manager.save(ChannelMember, { id: channelMember.id, access: ChannelMemberAccess.Banned });
 				this.logger.log(`Channel ${channel.name} banned to ${user.username}`);
 				if (user.socketId !== '') {
 					await this.server.in(user.socketId).socketsLeave(channel.name);
@@ -246,12 +189,12 @@ export class ChannelsGateway {
 
 	@SubscribeMessage('unbanChannel')
 	async handleUnbanChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
-		const channel = await this.channelsService.findOneByName(payload.roomName);
-		const user = await this.userService.findOne(payload.userId);
+		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
+		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
-			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			const channelMember = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: channel.id} , user: {id: user.id}} });
 			if (channelMember) {
-				await this.channelUser.delete(channelMember.id);
+				await this.dataSources.manager.delete(ChannelMember, { id: channelMember.id });
 				this.logger.log(`Channel ${channel.name} unbanned to ${user.username}`);
 				await this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
 				return channel;
@@ -261,13 +204,13 @@ export class ChannelsGateway {
 
 	//a finir pour les permissions
 	@SubscribeMessage('muteChannel')
-	async handleMuteChannel(@MessageBody() payload: { userId: number; channelId: number; }) {
-		const channel = await this.channelsService.findOne(payload.channelId);
-		const user = await this.userService.findOne(payload.userId);
+	async handleMuteChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
+		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
+		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
-			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			const channelMember = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: channel.id}, user: {id: user.id} }});
 			if (channelMember) {
-				await this.channelUser.update(channelMember.id, { permission: ChannelMemberPermission.Muted });
+				await this.dataSources.manager.save(ChannelMember, { id: channelMember.id, permission: ChannelMemberPermission.Muted });
 				this.logger.log(`Channel ${channel.name} muted to ${user.username}`);
 				await this.server.to(channel.name).emit('update_chat_user', 'You are muted from this channel');
 				return channel;
@@ -277,13 +220,13 @@ export class ChannelsGateway {
 
 	//a finir pour les permissions
 	@SubscribeMessage('unmuteChannel')
-	async handleUnmuteChannel(@MessageBody() payload: { userId: number; channelId: number; }) {
-		const channel = await this.channelsService.findOne(payload.channelId);
-		const user = await this.userService.findOne(payload.userId);
+	async handleUnmuteChannel(@MessageBody() payload: { userId: number;  roomName: string;}) {
+		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
+		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
-			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			const channelMember = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: channel.id} , user: {id: user.id} }});
 			if (channelMember) {
-				await this.channelUser.update(channelMember.id, { permission: ChannelMemberPermission.Regular });
+				await this.dataSources.manager.save(ChannelMember, { id: channelMember.id, permission: ChannelMemberPermission.Regular });
 				this.logger.log(`Channel ${channel.name} unmuted to ${user.username}`);
 				await this.server.to(channel.name).emit('update_chat_user', 'You are muted from this channel');
 				return channel;
@@ -292,13 +235,13 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('promoteChannel')
-	async handlePromoteChannel(@MessageBody() payload: { userId: number; channelId: string; }) {
-		const channel = await this.channelsService.findOneByName(payload.channelId);
-		const user = await this.userService.findOne(payload.userId);
+	async handlePromoteChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
+		const channel =  await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
+		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
-			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			const channelMember = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: channel.id} , user: {id: user.id} }});
 			if (channelMember) {
-				await this.channelUser.update(channelMember.id, { role: ChannelMemberRole.Admin });
+				await this.dataSources.manager.save(ChannelMember, { id: channelMember.id, role: ChannelMemberRole.Admin });
 				this.logger.log(`Channel ${channel.name} promoted to ${user.username}`);
 				await this.server.to(channel.name).emit('update_chat_user', 'You are promoted from this channel');
 				return channel;
@@ -307,13 +250,13 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('demoteChannel')
-	async handleDemoteChannel(@MessageBody() payload: { userId: number; channelId: string; }) {
-		const channel = await this.channelsService.findOneByName(payload.channelId);
-		const user = await this.userService.findOne(payload.userId);
+	async handleDemoteChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
+		const channel =  await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
+		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
-			const channelMember = await this.channelUser.findOneByChannelAndUser(channel, user.id);
+			const channelMember = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: channel.id} , user: {id: user.id} }});
 			if (channelMember) {
-				await this.channelUser.update(channelMember.id, { role: ChannelMemberRole.Regular });
+				await this.dataSources.manager.save(ChannelMember, { id: channelMember.id, role: ChannelMemberRole.Regular });
 				this.logger.log(`Channel ${channel.name} demoted to ${user.username}`);
 				await this.server.to(channel.name).emit('update_chat_user', 'You are promoted from this channel');
 				return channel;
@@ -324,12 +267,10 @@ export class ChannelsGateway {
 	@SubscribeMessage('leave_room')
 	async handleLeaveRoomEvent(@MessageBody() payload: { user: UserRoom; roomName: string; }) {
 		if (payload.user.socketId) {
-			console.log("leave_room", payload.user.socketId, payload.roomName);
 			this.logger.log(`${payload.user.socketId} is leaving ${payload.roomName}`);
 			await this.server.in(payload.user.socketId).socketsLeave(payload.roomName);
 			await this.chatService.removeUserFromRoom(payload.user.socketId, payload.roomName);
-			await this.channelsService.removeUserFromChannel(payload.user.userId, payload.roomName);
+			this.dataSources.manager.delete(ChannelMember, { user: {id : payload.user.userId}, channel: {name : payload.roomName} });
 		}
 	}
-
 }

@@ -37,8 +37,6 @@ export class FriendsGateway {
 		this.handleRefreshFriendsAllsocketId(client.id);
 	}
 
-
-
 	@SubscribeMessage('invite_friends')
 	async handleInviteFriends(client: Socket, payload: { id: number }): Promise<void> {
 		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client.id} })
@@ -49,9 +47,7 @@ export class FriendsGateway {
 				this.logger.log`User ${user.username} inviting ${idUserTarget.username}`;
 				this.server.to(client.id).emit('friends', friends);
 				if (idUserTarget.socketId)
-				{
 					this.server.to(idUserTarget.socketId).emit('friends', friends);
-				}
 			}
 
 		}
@@ -98,7 +94,6 @@ export class FriendsGateway {
 		const idUserTarget = await this.dataSource.manager.findOne(User, { where: {id: payload.id} })
 		if (user && idUserTarget && user.id != idUserTarget.id) {
 			const friends_view = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id:  payload.id }, user2: { id: user.id } },	{ user1: { id: user.id }, user2: { id:  payload.id } },],});
-			console.log(friends_view);
 			if (friends_view)
 				this.dataSource.manager.delete(Friend, { id: friends_view.id });
 			const friends = await this.dataSource.manager.save(Friend, { user1: user, user2: idUserTarget, type: RelationType.Blocked });
@@ -131,6 +126,35 @@ export class FriendsGateway {
 			{
 				this.server.to(idUserTarget.socketId).emit('friends', null);
 				this.handleRefreshFriendsAllsocketId(idUserTarget.socketId);
+			}
+		}
+	}
+
+	@SubscribeMessage('notification_friendsInvited')
+	async handleNotificationFriendsInvited(client: Socket, payload: {id: number}): Promise<void> {
+		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client.id} });
+		let idUserTarget = null;
+		if (payload.id)
+			idUserTarget = await this.dataSource.manager.findOne(User, { where: {id: payload.id} });
+		if (user) {
+			const friends = await this.dataSource.manager.find(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id: user.id }, type: RelationType.Invited },	{ user2: { id: user.id }, type: RelationType.Invited },],});
+			if (friends.length > 0) {
+				this.logger.log(`User ${user.username} refreshing friends invited`);
+				this.server.to(client.id).emit('friendsInvited', friends);
+				if (idUserTarget && idUserTarget.socketId)
+				{
+					this.logger.log(`User ${idUserTarget.username} refreshing friends invited`);
+					this.server.to(idUserTarget.socketId).emit('friendsInvited', friends);
+				}
+			}
+			else {
+				this.logger.log(`User ${user.username} refreshing friends invited`);
+				this.server.to(client.id).emit('friendsInvited', null);
+				if (idUserTarget && idUserTarget.socketId)
+				{
+					this.logger.log(`User ${idUserTarget.username} refreshing friends invited`);
+					this.server.to(idUserTarget.socketId).emit('friendsInvited', null);
+				}
 			}
 		}
 	}

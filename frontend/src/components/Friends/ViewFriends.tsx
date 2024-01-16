@@ -1,12 +1,12 @@
 
 import { useContext, useEffect, useState } from "react";
-import { IFriends, UserContext, Info } from "../../contexts/UserContext";
+import { IFriends, UserContext } from "../../contexts/UserContext";
 import { useNavigate } from 'react-router-dom'
 import "./css/ViewFriends.css"
 import { WebSocketContext } from "../../contexts/WebSocketContext";
 import { Socket } from 'socket.io-client';
-import Friends from "./Friends";
 import { Link } from "react-router-dom";
+import Image from 'react-bootstrap/Image'
 
 //ajouter pour voir les demande d'amis et les accepter ou les refuser.
 //amelioration : faire socket.io pour les amis pour que quand on accepte une demande d'amis sa mette a jour la liste d'amis de l'autre personne
@@ -26,14 +26,13 @@ export default function ViewFriends() {
 			socket?.off('Viewfriends');
 			setViewFriends(null);
 		};
-	}, [socket]);
+	}, [socket, viewFriends]);
 
-	async function handleButtonDeleteFriends(userId: number) {
-		if (userId !== userContext.user.info.id) {
-			socket?.emit('delete_friends', { id: userId });
-		}
-	}
-
+	// async function handleButtonDeleteFriends(userId: number) {
+	// 	if (userId !== userContext.user.info.id) {
+	// 		socket?.emit('delete_friends', { id: userId });
+	// 	}
+	// }
 
 	const joinnRoom = (roomId: string) => {
 		navigate(`/chat/${roomId}`);
@@ -51,7 +50,7 @@ export default function ViewFriends() {
 										<div className="row">
 											<div className="col-md-2 col-sm-2">
 												{friend.user2.id !== userContext.user.info.id ? (<img src={friend.user2.avatarDefault} alt={friend.user2.username} className="profile-photo-lg" />) :
-													(<img src={friend.user1.avatarDefault} alt={friend.user1.username} className="profile-photo-lg" />)
+													(<Image src={friend.user1.avatarDefault} alt={friend.user1.username} className="profile-photo-lg" roundedCircle fluid />)
 												}
 											</div>
 											<div className="col-md-7 col-sm-7">
@@ -64,12 +63,12 @@ export default function ViewFriends() {
 														}
 													</p>
 												</h5>
-												<a className="table-link text-info" onClick={() => joinnRoom(friend.roomName as string)}>
+												<div className="table-link text-info" onClick={() => joinnRoom(friend.roomName as string)}>
 													<span className="fa-stack">
 														<i className="fa fa-square fa-stack-2x"></i>
 														<i className="fa fa-comment fa-stack-1x fa-inverse"></i>
 													</span>
-												</a>
+												</div>
 											</div>
 										</div>
 									</div>

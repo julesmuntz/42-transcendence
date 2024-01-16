@@ -23,17 +23,14 @@ export default function ProfileModifier() {
 		if (e.target.files[0]) {
 			const src = URL.createObjectURL(e.target.files[0]);
 			setSrcImg(src);
-			console.log(src);
 		}
 	}
 
 	const modifyInfos = async (e: any) => {
 		e.preventDefault();
-		console.log(e.target);
 		const form: FormData = new FormData();
 		form.append('customFile', e.target[0].files[0]);
 		const newUsername = e.target[1].value;
-		console.log("helloooo");
 
 		if (e.target[0].files[0])
 			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/upload/${userContext.user.info.id}`, {
@@ -43,12 +40,9 @@ export default function ProfileModifier() {
 				},
 				body: form
 			}).then((res) => {
-				console.log(res);
 				return (res.json());
 			}).then((ret) => {
-				console.log(ret);
 				if (ret.statusCode === 200) {
-					console.log("coco");
 					const newUser = userContext.user.info;
 					newUser.avatarPath = ret.data;
 					userContext.login(newUser, userContext.user.authToken);
@@ -66,7 +60,6 @@ export default function ProfileModifier() {
 			}).then((res) => {
 				return (res.json());
 			}).then((ret) => {
-				console.log(ret);
 				if (ret.statusCode === 200) {
 					const newUser = userContext.user.info;
 					newUser.username = newUsername;

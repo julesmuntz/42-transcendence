@@ -1,6 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { UserRoom, Room, Message } from "../../shared/chats.interface"
-import { Socket } from 'socket.io-client';
+import { UserRoom } from "../../shared/chats.interface"
 import "./Chat.css"
 
 export const Header = ({

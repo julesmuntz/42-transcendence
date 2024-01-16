@@ -28,7 +28,7 @@ export class AuthController {
 
 		expirationDate.setDate(expirationDate.getDate() + 7);
 		res.cookie('access_token', `${result}`, { expires: expirationDate });
-		console.log(result);
+	
 		return res.redirect(`http://${process.env.HOSTNAME}:3000`);
 	}
 

@@ -79,9 +79,9 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 		</Button>
 	));
 
-	const modifyInfos = () => {
+	// const modifyInfos = () => {
 
-	}
+	// }
 
 	return (
 		<>

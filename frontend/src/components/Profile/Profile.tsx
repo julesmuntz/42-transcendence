@@ -7,6 +7,7 @@ import ProfileSecurity from "./ProfileSettings/ProfileSecurity";
 import ProfileInfos from "./ProfileInfos";
 
 import "./Profile.css";
+import FriendNotifications from "./FriendNotifications";
 
 export default function Profile() {
 	const userContext = useContext(UserContext);
@@ -68,6 +69,7 @@ export default function Profile() {
 		}
 	}, [qrcode]);
 
+
 	if (is2FAActive)
 		return (<TFAProfile qrset={{ qrcode, setQrcode }} />);
 
@@ -77,6 +79,7 @@ export default function Profile() {
 			<Container className="d-flex flex-column justify-content-center align-items-center">
 				<ProfileImg userPublic={undefined} />
 				<ProfileInfos userPublic={undefined} />
+				<FriendNotifications/>
 			</Container>
 			<Container>
 				<ProfileSecurity qrset={{ qrcode, setQrcode }} />

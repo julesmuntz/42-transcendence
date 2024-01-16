@@ -1,13 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import './App.css';
 import SideNav from "./components/SideNav/SideNav";
 import LoginPage from './components/LoginPage/LoginPage';
-import { UserContext, Info } from "./contexts/UserContext";
+import { UserContext } from "./contexts/UserContext";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import TwoFA from './components/LoginPage/TwoFA';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import WebSocketProvider, { WebSocketContext } from './contexts/WebSocketContext';
+import WebSocketProvider from './contexts/WebSocketContext';
 
 interface JwtPayload {
 	users: {
@@ -33,7 +33,6 @@ function App() {
 
 	useEffect(() => {
 		const getUser = async (id: number, token: string) => {
-			console.log(process.env.REACT_APP_HOSTNAME);
 			const result = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${id}`, {
 				method: "GET",
 				headers: {
@@ -50,7 +49,6 @@ function App() {
 		};
 
 		if (!userContext.user.auth && token) {
-			console.log("The cookie access_token exists and is set");
 			const user = jwtDecode<JwtPayload>(token);
 			const info = user.users;
 			getUser(info.id, token);

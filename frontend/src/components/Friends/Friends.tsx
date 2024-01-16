@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { IFriends, Info, UserContext } from "../../contexts/UserContext";
+import { IFriends, UserContext } from "../../contexts/UserContext";
 import Button from 'react-bootstrap/Button';
 import { WebSocketContext } from "../../contexts/WebSocketContext";
 import { Socket } from 'socket.io-client';
@@ -16,13 +16,15 @@ export default function Friends({ IdUserTarget }: { IdUserTarget: number }) {
 			socket.emit('refresh_friends', { id: IdUserTarget });
 			socket.on('friends', (e: IFriends | null) => {
 				setUserBlock(e);
+				if (e && e.type === "invited")
+					socket.emit('notification_friendsInvited', { id: IdUserTarget });
 			});
 			return () => {
 				socket.off('friends');
 				setUserBlock(null);
 			};
 		}
-	}, [socket]);
+	}, [socket, IdUserTarget]);
 
 	async function handleButtonInviteFriends(userId: number) {
 		if (userId !== userContext.user.info.id) {

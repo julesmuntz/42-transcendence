@@ -3,18 +3,21 @@ import ProfileImg from "./ProfileImg";
 import ProfileInfos from "./ProfileInfos";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
-import { TFAProfile } from "./TFAProfile";
 import { useParams, useNavigate } from "react-router-dom";
 import Friends from "../Friends/Friends";
-
 
 export default function PublicProfile() {
 	const { id } = useParams();
 	const userContext = useContext(UserContext);
 	let [user, setUser] = useState(undefined);
 	let [done, setDone] = useState(false);
-
+	const nav = useNavigate();
 	useEffect(() => {
+
+		if (id &&userContext.user.info.id === parseInt(id)) {
+			nav('/profile');
+		}
+
 		let fetchUser = async () => {
 			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${id}`,
 				{
@@ -23,7 +26,6 @@ export default function PublicProfile() {
 						"Authorization": `Bearer ${userContext.user.authToken}`
 					}
 				}).then((res) => {
-					console.log(res);
 					return (res.json());
 				}).then((ret): void => {
 					setUser(ret);
@@ -33,7 +35,9 @@ export default function PublicProfile() {
 			fetchUser();
 			setDone(true);
 		}
-	}, [user, id, userContext]);
+	}, [user, id, userContext, nav, done]);
+
+
 
 	return (
 		<Container className="d-flex">

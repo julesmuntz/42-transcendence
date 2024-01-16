@@ -33,7 +33,6 @@ export class TFAController {
 				body.TFACode,
 				updatedUser.TFASecret
 			);
-		console.log(isCodeValid);
 		if (!isCodeValid) {
 			throw new UnauthorizedException("Wrong authentication code");
 		}
@@ -48,8 +47,6 @@ export class TFAController {
 		@Res({ passthrough: true }) res: Response,
 		@Body() body: { id: number, TFASecret: string, TFACode: string }
 	) {
-		console.log(body);
-		console.log('totoooo');
 		const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, body.TFASecret);
 		if (!isCodeValid) {
 			throw new UnauthorizedException("Wrong authentication code");
@@ -59,9 +56,7 @@ export class TFAController {
 		res.setHeader('Access-Control-Allow-Origin', `http://${process.env.HOSTNAME}:3000`);
 		const user = await this.usersService.findOne(body.id);
 		const access_token = await this.TFAService.generateJwt(user);
-		console.log(access_token);
 		const u = await this.usersService.update(body.id, statusOnline);
-		console.log(u)
 		res.cookie('access_token', `${access_token}`, { expires: expirationDate }).send({ status: 'ok' });
 	}
 

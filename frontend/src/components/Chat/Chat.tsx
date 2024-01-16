@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 import { UserContext } from '../../contexts/UserContext';
-import { Message, Room, UserRoom } from "../../shared/chats.interface";
+import { Message, UserRoom } from "../../shared/chats.interface";
 import { Header, UserList } from './header';
 import { ChatLayout, useRoomQuery } from './ChatLayout';
 import { MessageForm, Messages } from './footer';
@@ -24,14 +24,14 @@ export default function Chat() {
     userId: userContext.user.info.id,
     userName: userContext.user.info.username,
     socketId: socket?.id || "",
+    avatarPath: userContext.user.info.avatarPath,
   });
 
   useEffect(() => {
-    if (!roomName) {
+    if (!roomName || !socket) {
 		navigate('/');
     } else {
-      socket?.emit('join_room', { user, roomName: roomName });
-
+socket?.emit('join_room', { user, roomName: roomName });
       socket?.on('connect_chat', () => {
         setIsConnected(true);
       });
@@ -62,14 +62,15 @@ export default function Chat() {
 
     }
     return () => {
-      socket?.off('chat');
-      socket?.off('connect_chat');
-      socket?.off('user_list');
-      socket?.off('chat_user');
-      socket?.off('banned');
-	  socket?.off('update_chat_user');
-	  socket?.off('deleteChannel');
-	  setMessages([]);
+		socket?.off('chat');
+		socket?.off('connect_chat');
+		socket?.off('user_list');
+		socket?.off('chat_user');
+		socket?.off('banned');
+		socket?.off('update_chat_user');
+		socket?.off('deleteChannel');
+		setMessages([]);
+		setToggleUserList(false);
 	};
   }, [socket, roomName, navigate]);
 
@@ -128,7 +129,7 @@ export default function Chat() {
 
   	const handleDestroyRoom = (roomName : string) => {
 		if (roomName) {
-			socket?.emit('deleteChannel', { channelId: roomName });
+			socket?.emit('deleteChannel', { roomName: roomName });
 		}
 	};
 

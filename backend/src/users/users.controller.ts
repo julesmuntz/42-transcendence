@@ -27,17 +27,6 @@ export class UsersController {
 		})
 	}))
 	async handleUpload(@UploadedFile() file: any, @Param('id') id: number): Promise<any> {
-		console.log(file);
-		// const ws = createWriteStream("./imgs/" + file.originalname);
-		// console.log(ws);
-		// ws.on('open', function(fd) {
-		// 	console.log("KIKI");
-		// 	console.log(existsSync("./imgs/" + file.originalname));
-		// 	console.log(existsSync("./imgs/" + file.originalname));
-		// 	console.log(existsSync("./imgs/" + file.originalname));
-		// 	ws.write(file.buffer);
-		// })
-		// console.log("WHYYY");
 		await this.usersService.update(id, { avatarPath: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename });
 		return {
 			statusCode: 200,
@@ -74,7 +63,6 @@ export class UsersController {
 
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto): Promise<any> {
-		console.log(updateUserDto);
 		await this.usersService.update(id, updateUserDto);
 		return {
 			statusCode: 200,

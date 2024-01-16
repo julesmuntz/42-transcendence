@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import "./SearchProfile.css"
 import Friends from "../Friends/Friends";
 import { Link } from "react-router-dom";
+import Image from 'react-bootstrap/Image';
 
 export default function SearchProfile() {
 	const userContext = useContext(UserContext);
@@ -41,7 +42,7 @@ export default function SearchProfile() {
 									<div className="nearby-user" key={user.id}>
 										<div className="row">
 											<div className="col-md-2 col-sm-2">
-												<img src={user.avatarDefault} alt={user.username} className="profile-photo-lg" />
+												<Image src={user.avatarDefault} alt={user.username} className="profile-photo-lg" roundedCircle fluid />
 											</div>
 											<div className="col-md-7 col-sm-7">
 												<h5>

@@ -3,11 +3,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { UserContext } from "../../contexts/UserContext";
 import { WebSocketContext } from "../../contexts/WebSocketContext";
-import ViewChannelPublic from "./ViewChannelPublic";
-import ViewChannelPrivate from "./ViewChannelPrivate";
-import { userInfo } from "os";
-import { channel } from "diagnostics_channel";
-import ViewChannelProtected from "./ViewChannelProtected";
+import ViewChannel from "./ViewChannel";
 
 export default function CreateChannel() {
 	const userContext = useContext(UserContext);
@@ -29,7 +25,6 @@ export default function CreateChannel() {
 			return;
 		}
 		const createChannelDto = { name, type, passwordHash };
-		console.log(createChannelDto);
 		const userId = userContext.user.info.id;
 		socket?.emit('createChannel', { createChannelDto, userId });
 	}
@@ -64,9 +59,7 @@ export default function CreateChannel() {
 				</Button>
 			</Form>
 
-			<ViewChannelPublic />
-			<ViewChannelProtected />
-			<ViewChannelPrivate />
+			<ViewChannel/>
 
 		</div>
 	);

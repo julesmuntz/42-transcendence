@@ -19,7 +19,7 @@ export class AuthService {
 	async login(userDetails: UserDetails): Promise<string | User> {
 		const user = await this.usersService.findemail(userDetails.email);
 		if (!user) {
-			console.log("create users !");
+			userDetails.avatarPath = userDetails.avatarDefault;
 			const usercreate = await this.usersService.create(userDetails as CreateUserDto);
 			if (usercreate) {
 				return this.generateJwt(usercreate);
@@ -29,7 +29,6 @@ export class AuthService {
 				return user;
 			} else {
 				const u = await this.usersService.update(user.id, statusOnline);
-				console.log(u)
 				return this.generateJwt(user);
 			}
 		}
@@ -44,8 +43,6 @@ export class AuthService {
 
 		const otpauthUrl = authenticator.keyuri(user.email, "ft_transcendence", secret);
 		const users = await this.usersService.setTFASecret(secret, user.id);
-		console.log(users);
-		console.log(secret);
 		return { secret, otpauthUrl };
 	}
 
