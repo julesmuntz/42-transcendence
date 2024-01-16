@@ -57,8 +57,8 @@ export class ChatsService {
   }
 
   async findRoomsByUserSocketId(socketId: string): Promise<Room[]> {
-    return this.roomsRepository.find();
-}
+    return this.roomsRepository.find({relations: ['users'], where: { users: { socketId } } });
+	}
 
 
   async removeUserFromAllRooms(socketId: string): Promise<void> {

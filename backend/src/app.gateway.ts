@@ -9,7 +9,10 @@ import { Socket, Server } from 'socket.io';
 import { SocketsService } from './sockets.service';
 import { User, UserStatus } from 'users/entities/user.entity';
 import { DataSource } from 'typeorm';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
+import { Room } from 'chats/entities/chat.entity';
+import { JwtAuthGuard } from 'auth/guard/jwt.Guards';
+
 
 @WebSocketGateway({ cors: true })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -20,6 +23,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@WebSocketServer() server: Server;
 	private logger = new Logger('AppGateway');
+
+	@UseGuards(JwtAuthGuard)
 	handleConnection(socket: Socket) {
 		this.logger.log("Server: connection established");
 		socket.emit('message', 'Server: connection established');
@@ -29,6 +34,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async handleDisconnect(socket: Socket) {
 		this.logger.log("Server: connection stopped");
 		const user = this.socketService.removeSocket(socket);
+
 		if (!user)
 			return undefined;
 		const connectedUser = await this.dataSource.manager.findOneBy(User, {

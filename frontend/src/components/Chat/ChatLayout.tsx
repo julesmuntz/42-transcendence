@@ -2,9 +2,6 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import { Room } from '../../shared/chats.interface';
-import ViewChannelPrivate from '../channel/ViewChannelPrivate';
-import ViewChannelPublic from '../channel/ViewChannelPublic';
-import ViewChannelProtected from '../channel/ViewChannelProtected';
 import CreateChannel from '../channel/createChannel';
 
 export const useRoomQuery = (roomName: string, isConnected: boolean) => {
@@ -30,11 +27,11 @@ export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => 
 							</div>
 						</div>
 					</div>
-					<div className="col-sm-9 col-xs-12" tabIndex={5001}>
-						<div className="col-inside-lg decor-default chat">
-							{/* <div className="chat-body"> */}
-							{children}
-							{/* </div> */}
+					<div className="col-sm-9 col-xs-12 big-chat-div" tabIndex={5001}>
+						<div className="col-inside-lg chat">
+							<div className="chat-body">
+								{children}
+							</div>
 						</div>
 					</div>
 				</div>

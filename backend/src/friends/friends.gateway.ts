@@ -1,33 +1,30 @@
-import { SubscribeMessage, WebSocketGateway, WebSocketServer, MessageBody } from '@nestjs/websockets'
+import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets'
 import { Logger } from '@nestjs/common'
 import { Server, Socket } from 'socket.io'
-import { UsersService } from 'users/users.service';
-import { FriendsService } from './friends.service';
-import { RelationType } from './entities/friend.entity';
-import { ChatsService } from 'chats/chats.service';
-import { CreateFriendDto } from './dto/create-friend.dto';
+import { DataSource } from 'typeorm';
+import { User } from 'users/entities/user.entity';
+import { Room } from 'chats/entities/chat.entity';
+import { Friend, RelationType } from './entities/friend.entity';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class FriendsGateway {
 	constructor(
-		private readonly userService: UsersService,
-		private readonly friendsService: FriendsService,
-		private readonly chatsService: ChatsService
-	) { }
+		private dataSource: DataSource,
+	) {}
 
 	@WebSocketServer() server: Server;
 	private logger = new Logger('FriendsGateway');
 
 	@SubscribeMessage('refresh_friends')
 	async handleRefreshFriends(client: Socket, payload: { id: number }): Promise<void> {
-		const user = await this.userService.findOneBySocketId(client.id);
+		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client.id} })
 		let friends;
 		if (user) {
-			friends = await this.friendsService.viewblock(user.id, payload.id);
+			friends = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id: payload.id }, user2: { id: user.id }, type: RelationType.Blocked },	{ user1: { id: user.id }, user2: { id: payload.id }, type: RelationType.Blocked },],});
 			if (!friends)
-				friends = await this.friendsService.viewinvite(user.id, payload.id);
+				friends = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id:  payload.id }, user2: { id: user.id }, type: RelationType.Invited },	{ user1: { id: user.id }, user2: { id:  payload.id }, type: RelationType.Invited },],});
 			if (!friends)
-				friends = await this.friendsService.viewfriends(user.id, payload.id);
+				friends = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id:  payload.id }, user2: { id: user.id }, type: RelationType.Friend },	{ user1: { id: user.id }, user2: { id:  payload.id }, type: RelationType.Friend },],});
 			if (friends) {
 				this.logger.log`User ${user.username} refreshing friends ${payload.id}`;
 				this.server.to(client.id).emit('friends', friends);
@@ -35,12 +32,17 @@ export class FriendsGateway {
 		}
 	}
 
+	@SubscribeMessage('refresh_friends_all')
+	async handleRefreshFriendsAll(client: Socket): Promise<void> {
+		this.handleRefreshFriendsAllsocketId(client.id);
+	}
+
 	@SubscribeMessage('invite_friends')
 	async handleInviteFriends(client: Socket, payload: { id: number }): Promise<void> {
-		const user = await this.userService.findOneBySocketId(client.id);
-		const idUserTarget = await this.userService.findOne(payload.id);
+		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client.id} })
+		const idUserTarget = await this.dataSource.manager.findOne(User, { where: {id: payload.id} })
 		if (user && idUserTarget && user.id != idUserTarget.id) {
-			const friends = await this.friendsService.create({ user1: user, user2: idUserTarget, type: RelationType.Invited } as CreateFriendDto);
+			const friends = await this.dataSource.manager.save(Friend, { user1: user, user2: idUserTarget, type: RelationType.Invited });
 			if (friends) {
 				this.logger.log`User ${user.username} inviting ${idUserTarget.username}`;
 				this.server.to(client.id).emit('friends', friends);
@@ -56,7 +58,7 @@ export class FriendsGateway {
 		const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 		for (let i = 0; i < 10; i++)
 			string += possible.charAt(Math.floor(Math.random() * possible.length));
-		const rooms = await this.chatsService.getRoomByName(string);
+		const rooms = await this.dataSource.manager.findOne(Room, { where: {name: string} })
 			if (rooms)
 				return this.randomString();
 		return string;
@@ -64,19 +66,23 @@ export class FriendsGateway {
 
 	@SubscribeMessage('accept_friends')
 	async handleAcceptFriends(client: Socket, payload: { id: number }): Promise<void> {
-		const user = await this.userService.findOneBySocketId(client.id);
-		const idUserTarget = await this.userService.findOne(payload.id);
+		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client.id} })
+		const idUserTarget = await this.dataSource.manager.findOne(User, { where: {id: payload.id} })
 		if (user && idUserTarget && user.id != idUserTarget.id) {
-			const friends_view = await this.friendsService.viewinvite(user.id, idUserTarget.id);
+			const friends_view = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id:  payload.id }, user2: { id: user.id }, type: RelationType.Invited },	{ user1: { id: user.id }, user2: { id:  payload.id }, type: RelationType.Invited },],});
 			if (friends_view) {
 				const string = await this.randomString();
-				const roomName = await this.chatsService.addRoom(string, { userId: friends_view.user1.id, userName: friends_view.user1.username, socketId: "" }, false);
-				const friends = await this.friendsService.update(friends_view.id, { type: RelationType.Friend, roomName: roomName });
+				const roomName = await this.dataSource.manager.save(Room, { name: string, host: { userId: friends_view.user1.id, userName: friends_view.user1.username, socketId: "" }, users: [], message: [], channel: false })
+				const friends = await this.dataSource.manager.save(Friend, { id: friends_view.id, type: RelationType.Friend, roomName: roomName.name });
 				if (friends) {
 					this.logger.log`User ${user.username} accepting ${idUserTarget.username}`;
 					this.server.to(client.id).emit('friends', friends);
+					this.handleRefreshFriendsAllsocketId(client.id);
 					if (idUserTarget.socketId)
+					{
 						this.server.to(idUserTarget.socketId).emit('friends', friends);
+						this.handleRefreshFriendsAllsocketId(idUserTarget.socketId);
+					}
 				}
 			}
 		}
@@ -84,35 +90,87 @@ export class FriendsGateway {
 
 	@SubscribeMessage('block_friends')
 	async handleBlockFriends(client: Socket, payload: { id: number }): Promise<void> {
-		const user = await this.userService.findOneBySocketId(client.id);
-		const idUserTarget = await this.userService.findOne(payload.id);
+		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client.id} })
+		const idUserTarget = await this.dataSource.manager.findOne(User, { where: {id: payload.id} })
 		if (user && idUserTarget && user.id != idUserTarget.id) {
-			const friends_view = await this.friendsService.view(user.id, idUserTarget.id);
+			const friends_view = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id:  payload.id }, user2: { id: user.id } },	{ user1: { id: user.id }, user2: { id:  payload.id } },],});
 			if (friends_view)
-				this.friendsService.delete(friends_view.id);
-			const friends = await this.friendsService.create({ user1: user, user2: idUserTarget, type: RelationType.Blocked } as CreateFriendDto);
+				this.dataSource.manager.delete(Friend, { id: friends_view.id });
+			const friends = await this.dataSource.manager.save(Friend, { user1: user, user2: idUserTarget, type: RelationType.Blocked });
 			if (friends) {
 				this.server.to(client.id).emit('friends', friends);
+				this.handleRefreshFriendsAllsocketId(client.id);
 				if (idUserTarget.socketId)
+				{
 					this.server.to(idUserTarget.socketId).emit('friends', friends);
+					this.handleRefreshFriendsAllsocketId(idUserTarget.socketId);
+				}
 			}
 		}
 	}
 
 	@SubscribeMessage('delete_friends')
 	async handleDeleteFriends(client: Socket, payload: { id: number }): Promise<void> {
-		const user = await this.userService.findOneBySocketId(client.id);
-		const idUserTarget = await this.userService.findOne(payload.id);
+		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client.id} })
+		const idUserTarget = await this.dataSource.manager.findOne(User, { where: {id: payload.id} })
 		if (user && idUserTarget && user.id != idUserTarget.id) {
-			const friends_view = await this.friendsService.view(user.id, idUserTarget.id);
+			const friends_view = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id:  payload.id }, user2: { id: user.id } },	{ user1: { id: user.id }, user2: { id:  payload.id } },],});
 			if (friends_view) {
 				this.logger.log`User ${user.username} deleting ${idUserTarget.username}`;
-				this.chatsService.removeRoom(friends_view.roomName);
-				this.friendsService.delete(friends_view.id);
+				this.dataSource.manager.delete(Room, { name: friends_view.roomName });
+				this.dataSource.manager.delete(Friend, { id: friends_view.id });
 			}
 			this.server.to(client.id).emit('friends', null);
+			this.handleRefreshFriendsAllsocketId(client.id);
 			if (idUserTarget.socketId)
+			{
 				this.server.to(idUserTarget.socketId).emit('friends', null);
+				this.handleRefreshFriendsAllsocketId(idUserTarget.socketId);
+			}
 		}
 	}
+
+	@SubscribeMessage('notification_friendsInvited')
+	async handleNotificationFriendsInvited(client: Socket, payload: {id: number}): Promise<void> {
+		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client.id} });
+		let idUserTarget = null;
+		if (payload.id)
+			idUserTarget = await this.dataSource.manager.findOne(User, { where: {id: payload.id} });
+		if (user) {
+			const friends = await this.dataSource.manager.find(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id: user.id }, type: RelationType.Invited },	{ user2: { id: user.id }, type: RelationType.Invited },],});
+			if (friends.length > 0) {
+				this.logger.log(`User ${user.username} refreshing friends invited`);
+				this.server.to(client.id).emit('friendsInvited', friends);
+				if (idUserTarget && idUserTarget.socketId)
+				{
+					this.logger.log(`User ${idUserTarget.username} refreshing friends invited`);
+					this.server.to(idUserTarget.socketId).emit('friendsInvited', friends);
+				}
+			}
+			else {
+				this.logger.log(`User ${user.username} refreshing friends invited`);
+				this.server.to(client.id).emit('friendsInvited', null);
+				if (idUserTarget && idUserTarget.socketId)
+				{
+					this.logger.log(`User ${idUserTarget.username} refreshing friends invited`);
+					this.server.to(idUserTarget.socketId).emit('friendsInvited', null);
+				}
+			}
+		}
+	}
+
+	async handleRefreshFriendsAllsocketId(client: string): Promise<void> {
+		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client} })
+		if (user) {
+			const friends = await this.dataSource.manager.find(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id: user.id }, type: RelationType.Friend },	{ user2: { id: user.id }, type: RelationType.Friend },],});
+			if (friends) {
+				this.logger.log(`User ${user.username} refreshing friends all`);
+				if (friends.length > 0)
+					this.server.to(client).emit('Viewfriends', friends);
+				else
+					this.server.to(client).emit('Viewfriends', null);
+			}
+		}
+	}
+
 }

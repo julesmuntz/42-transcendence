@@ -3,26 +3,23 @@ import { Logger } from '@nestjs/common'
 import { Message, UserRoom } from "../shared/chats.interface";
 import { Server, Socket } from 'socket.io'
 import { ChatsService } from "./chats.service";
-import { ChannelMemberService } from 'channels/Service/channel-member.service';
-import { ChannelMemberAccess, ChannelMemberPermission, ChannelMemberRole } from 'channels/entities/channel-member.entity';
-import { ChannelsService } from 'channels/Service/channels.service';
-import { promises } from 'dns';
+import { ChannelMember, ChannelMemberAccess, ChannelMemberPermission, ChannelMemberRole } from 'channels/entities/channel-member.entity';
+import { DataSource } from 'typeorm';
+import { Channel } from 'channels/entities/channel.entity';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {
 	constructor(private chatService: ChatsService,
-		private readonly channelUser: ChannelMemberService,
-		private readonly channel: ChannelsService) { }
+		private dataSource:DataSource
+		) { }
 
 	@WebSocketServer() server: Server;
 	private logger = new Logger('ChatGateway');
 
-	//si channel check si le user est pas mute
 	@SubscribeMessage('chat')
-	async handleChat(@MessageBody() payload: Message): Promise<Message> {
+	async handleChat(@MessageBody() payload: Message) {
 		const room = await this.chatService.getRoomByName(payload.roomName);
 		if (room.channel) {
-			console.log(payload.user);
 			if (payload.user.muted) {
 				this.logger.log(`User ${payload.user.userId} is muted`);
 				return;
@@ -31,14 +28,13 @@ export class ChatGateway {
 		this.logger.log(`Received message: ${payload}`);
 		await this.chatService.addMessageToRoom(payload);
 		this.server.to(payload.roomName).emit('chat', payload);
-		return payload;
 	}
 
 
 	async createUserRoom(user: UserRoom, roomName: string): Promise<UserRoom | undefined> {
-		const room = await this.channel.findOneByName(roomName);
+		const room = await this.dataSource.manager.findOne(Channel, { where: { name: roomName }})
 		if (room) {
-			const channel_user = await this.channelUser.findOneByChannelNameAndUser(roomName, user.userId);
+			const channel_user = await this.dataSource.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {id: room.id}, user: {id: user.userId} }})
 			if (channel_user) {
 				if (channel_user.permission === ChannelMemberPermission.Muted)
 					user.muted = true;
@@ -54,6 +50,7 @@ export class ChatGateway {
 					user.type = "Admin";
 				else
 					user.type = "regular";
+				user.avatarPath = channel_user.user.avatarPath;
 			}
 		}
 		return user;
@@ -94,11 +91,9 @@ export class ChatGateway {
 	async handleUserListEvent(roomName: string) {
 		this.logger.log(`Get user list of ${roomName}`);
 		try {
-			const users = await this.channelUser.findAllByChannelName(roomName);
-			// console.log(users);
+			const users =  await this.dataSource.manager.find(ChannelMember, {relations: ['channel', 'user'], where: { channel: {name: roomName} }})
 			if (users && users.length > 0) {
 				const roomUsers: UserRoom[] = [];
-
 				for (const user of users) {
 					roomUsers.push({
 						userId: user.user.id,
@@ -107,10 +102,9 @@ export class ChatGateway {
 						muted: user.permission === ChannelMemberPermission.Muted ?? false,
 						type: user.role === ChannelMemberRole.Owner ? 'Owner' : user.role === ChannelMemberRole.Admin ? 'Admin' : 'regular',
 						ban: user.access === ChannelMemberAccess.Banned ?? false,
+						avatarPath: user.user.avatarPath,
 					});
 				}
-				//   console.log(roomUsers);
-				// Assuming 'user_list' is the event name; adjust it based on your client-side implementation
 				this.server.to(roomName).emit('user_list', roomUsers);
 			}
 		} catch (error) {

@@ -17,8 +17,6 @@ export default function ProfileImg({ userPublic }: { userPublic: any | undefined
 	else if (user === "online")
 		statusColor = "#0a5";
 
-	console.log(user.avatarPath);
-
 	return (
 		<div className="relative-profile-pic">
 			<div

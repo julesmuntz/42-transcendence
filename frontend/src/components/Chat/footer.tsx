@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { UserRoom, Room, Message } from '../../shared/chats.interface';
-import { Socket } from 'socket.io-client';
+import React, { useRef } from 'react';
+import { UserRoom, Message } from '../../shared/chats.interface';
 import './Chat.css';
+import Image from'react-bootstrap/Image';
 
 export const Messages = ({
 	user,
@@ -10,77 +10,48 @@ export const Messages = ({
 	user: Pick<UserRoom, 'userId' | 'userName'>;
 	messages: Message[];
 }) => {
-	const messagesRef = useRef<HTMLDivElement>(null);
-	const [isUserAtBottom, setIsUserAtBottom] = useState(true);
+	// const messagesRef = useRef<HTMLDivElement>(null);
+	// const [isUserAtBottom, setIsUserAtBottom] = useState(true);
 
-	useEffect(() => {
-		const messagesContainer = messagesRef.current;
-		if (messagesContainer && isUserAtBottom) {
-			messagesContainer.scrollTop = messagesContainer.scrollHeight;
-		}
-	}, [messages, isUserAtBottom]);
+	// useEffect(() => {
+	// 	const messagesContainer = messagesRef.current;
+	// 	if (messagesContainer && isUserAtBottom) {
+	// 		messagesContainer.scrollTop = messagesContainer.scrollHeight;
+	// 	}
+	// }, [messages, isUserAtBottom]);
 
-	const handleScroll = () => {
-		console.log('toto');
-		const messagesContainer = messagesRef.current;
-		if (
-			messagesContainer &&
-			messagesContainer.scrollHeight - messagesContainer.scrollTop ===
-			messagesContainer.clientHeight
-		) {
-			setIsUserAtBottom(true);
-		} else {
-			setIsUserAtBottom(false);
-		}
-	};
+	// const handleScroll = () => {
+	// 	const messagesContainer = messagesRef.current;
+	// 	if (
+	// 		messagesContainer &&
+	// 		messagesContainer.scrollHeight - messagesContainer.scrollTop ===
+	// 		messagesContainer.clientHeight
+	// 	) {
+	// 		setIsUserAtBottom(true);
+	// 	} else {
+	// 		setIsUserAtBottom(false);
+	// 	}
+	// };
 
 	const reversedMessages = messages.slice().reverse();
 
 	return (
-		<div
-			className="nano has-scrollbar"
-			style={{ overflowY: 'hidden' }}
-		>
-			<div
-				className="nano-content pad-all"
-				tabIndex={0}
-				ref={messagesRef}
-			// onScroll={handleScroll}
-			>
-				<ul
-					className="list-unstyled media-block"
-					style={{ marginBottom: '0', paddingBottom: '10px' }}
-				>
-					{reversedMessages.map((message, index) => {
-						const isUserMessage = user.userId === message.user.userId;
-						const speechClass = isUserMessage ? 'speech-right' : '';
-						return (
-							<li key={index} className="mar-btm">
-								<div className={isUserMessage ? 'media-right' : 'media-left'}>
-									{/* <img src="" className="img-circle img-sm" alt="Profile Picture" /> */}
-								</div>
-								<div className={`media-body pad-hor ${speechClass}`}>
-									<div className="speech">
-										{/* <a href="#" className="media-heading"> */}
-										{message.user.userName}
-										{/* </a> */}
-										<p>{message.message}</p>
-										<p className="speech-time">
-											<i className="fa fa-clock-o fa-fw"></i> {message.timeSent}
-										</p>
-									</div>
-								</div>
-							</li>
-						);
-					})}
-				</ul>
-			</div>
-			<div className="nano-pane">
-				<div
-					className="nano-slider"
-					style={{ height: '141px', transform: 'translate(0px, 0px)' }}
-				></div>
-			</div>
+		<div className="scrollable">
+			{reversedMessages.map((message, index) => {
+				const isUserMessage = user.userId === message.user.userId;
+				const answerClass = isUserMessage ? 'answer right' : 'answer left';
+				return (
+					<div key={index} className={answerClass}>
+						<div className="avatar">
+							<Image src={message.user.avatarPath} alt="User name" roundedCircle fluid />
+							<div className="status offline"></div>
+						</div>
+						<div className="name">{message.user.userName}</div>
+						<div className="text">{message.message}</div>
+						<div className="time">{message.timeSent}</div>
+					</div>
+				);
+			})}
 		</div>
 	);
 };
@@ -104,7 +75,7 @@ export const MessageForm = ({ sendMessage }: { sendMessage: (message: string) =>
 	}
 
 	return (
-		<div className="panel-footer">
+		<div className="answer-add">
 			<div className="row">
 				<div className="col-xs-9" style={{ width: '80%' }}>
 					<input

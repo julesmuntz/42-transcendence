@@ -33,7 +33,6 @@ export function TFAProfile({ qrset }: { qrset: { qrcode: string, setQrcode: any 
 				codeInputNames.forEach((name) => {
 					const input = document.getElementsByName(name)[0] as HTMLInputElement;
 					code += input.value;
-					console.log(code);
 				});
 				if (code.length === 6)
 					sendCode(code);
