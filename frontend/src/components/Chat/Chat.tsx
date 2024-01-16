@@ -19,6 +19,7 @@ export default function Chat() {
 
   const { data: room } = useRoomQuery(roomName as string, isConnected ?? false) || {};
   const [getUser, setUsers] = useState<UserRoom[]>([]);
+  const [done, setDone] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState<UserRoom>({
     userId: userContext.user.info.id,
@@ -28,13 +29,22 @@ export default function Chat() {
   });
 
   useEffect(() => {
-    if (!roomName || !socket) {
-		navigate('/');
+    if (!socket?.connected)
+    {
+        setDone(!done);
+        return ;
+    }
+    let newUser = user;
+    newUser.socketId = socket?.id || '';
+    setUser(newUser);
+    if (!roomName) {
+		  navigate('/');
     } else {
-socket?.emit('join_room', { user, roomName: roomName });
+      socket?.emit('join_room', { user, roomName: roomName });
       socket?.on('connect_chat', () => {
         setIsConnected(true);
       });
+      setIsConnected(true);
 
       socket?.on('chat', (e) => {
         setMessages((messages) => [e, ...messages]);
@@ -72,7 +82,7 @@ socket?.emit('join_room', { user, roomName: roomName });
 		setMessages([]);
 		setToggleUserList(false);
 	};
-  }, [socket, roomName, navigate]);
+  }, [socket, roomName, navigate, done]);
 
 
   // a changer pour le leave channels
@@ -133,10 +143,9 @@ socket?.emit('join_room', { user, roomName: roomName });
 		}
 	};
 
-
   return (
     <>
-      {user?.userId && roomName && room && (
+      {user?.userId && roomName  && room && (
         <ChatLayout>
           <Header
             isConnected={isConnected ?? false}

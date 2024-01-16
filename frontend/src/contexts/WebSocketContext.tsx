@@ -25,6 +25,7 @@ function WebSocketProvider({
 }): React.JSX.Element {
   const { user } = useContext(UserContext);
   const [socket, setSocket] = useState<Socket | undefined>(undefined);
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
     if (user?.info.id && user.authToken) {
@@ -50,6 +51,10 @@ function WebSocketProvider({
     }
   }, [user?.info.id, user.authToken]);
   const value = useMemo(() => socket, [socket]);
+  function sleep(ms: any) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   return (
     <WebSocketContext.Provider value={value}>
       {children}
