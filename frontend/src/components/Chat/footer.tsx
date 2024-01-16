@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import { UserRoom, Message } from '../../shared/chats.interface';
 import './Chat.css';
-import Image from'react-bootstrap/Image';
+import Image from 'react-bootstrap/Image';
+import { Link } from 'react-router-dom';
 
 export const Messages = ({
 	user,
@@ -46,7 +47,7 @@ export const Messages = ({
 							<Image src={message.user.avatarPath} alt="User name" roundedCircle fluid />
 							<div className="status offline"></div>
 						</div>
-						<div className="name">{message.user.userName}</div>
+						<div className="name"><Link to={`/profile/${message.user.userId}`} className="link-text">{message.user.userName}</Link></div>
 						<div className="text">{message.message}</div>
 						<div className="time">{message.timeSent}</div>
 					</div>

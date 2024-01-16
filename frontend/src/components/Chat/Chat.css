@@ -145,9 +145,9 @@
 }
 
 .list-group-item:focus,
-a.list-group-item:hover {
+.list-group-item:hover {
     color: hsla(0, 0%, 100%, 0.085);
-    background-color: #3f3f3f;
+    background-color: #3f3f3f !important;
     border-radius: 5px;
 }
 
