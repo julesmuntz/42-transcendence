@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import { Room } from '../../shared/chats.interface';
-import CreateChannel from '../channel/createChannel';
+import CreateChannel from '../Channel/createChannel';
 
 export const useRoomQuery = (roomName: string, isConnected: boolean) => {
 	const query = useQuery({
@@ -15,7 +15,7 @@ export const useRoomQuery = (roomName: string, isConnected: boolean) => {
 	return query;
 };
 
-export const ChatLayout = ({ children }: { children: React.ReactElement[] }) => {
+export const ChatLayout = ({ children }: { children: React.ReactElement[] | undefined }) => {
 	return (
 		<div className="container">
 			<div className="content container-fluid bootstrap snippets bootdey">

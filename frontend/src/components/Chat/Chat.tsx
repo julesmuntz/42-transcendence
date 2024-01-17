@@ -3,9 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 import { IFriends, UserContext, useEmits } from '../../contexts/UserContext';
 import { Message, UserRoom } from "../../shared/chats.interface";
-import { Header, UserList } from './header';
+import { Header, UserList } from './Header';
 import { ChatLayout, useRoomQuery } from './ChatLayout';
-import { MessageForm, Messages } from './footer';
+import { MessageForm, Messages } from './Footer';
 import { WebSocketContext, useSocketEvent } from '../../contexts/WebSocketContext';
 
 export default function Chat() {
@@ -73,7 +73,7 @@ export default function Chat() {
 				}
 			});
 			if (!roomName) {
-				navigate('/');
+				// navigate('/');
 			} else {
 				socket?.emit('join_room', {
 					user: {
@@ -160,6 +160,20 @@ export default function Chat() {
 		if (roomName) {
 			socket?.emit('changeType', { roomName: roomName });
 		}
+	}
+
+	if (!roomName) {
+		return (
+			<ChatLayout>
+				{[
+					<div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "calc(100vh - 220px)" }}>
+						<div style={{ color: "gray"}}>
+							Join or create a channel
+						</div>
+					</div>
+				]}
+			</ChatLayout>
+		)
 	}
 
 	return (

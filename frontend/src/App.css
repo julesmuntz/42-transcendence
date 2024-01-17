@@ -29,12 +29,12 @@ body {
 
 .link-text,
 .link-text:visited {
-  color: #0d6efd;
+  color: #ff7c14;
   font-weight: bold;
 }
 
 .link-text:hover {
-  color: #0b5ed7;
+  color: #e47011;
   font-style: italic;
   text-decoration: underline;
 }
