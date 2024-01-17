@@ -1,11 +1,10 @@
-import React, { useRef } from 'react';
 import { UserRoom, Message } from '../../shared/chats.interface';
 import './Chat.css';
 import Image from 'react-bootstrap/Image';
 import { Link } from 'react-router-dom';
 import { IFriends } from '../../contexts/UserContext';
 
-export const Messages = ({
+export default function Messages({
 	user,
 	messages,
 	friends,
@@ -13,7 +12,8 @@ export const Messages = ({
 	user: Pick<UserRoom, 'userId' | 'userName'>;
 	messages: Message[];
 	friends: IFriends[] | null;
-}) => {
+})
+{
 	// const messagesRef = useRef<HTMLDivElement>(null);
 	// const [isUserAtBottom, setIsUserAtBottom] = useState(true);
 
@@ -90,41 +90,3 @@ export const Messages = ({
 	}
 
 };
-
-export const MessageForm = ({ sendMessage }: { sendMessage: (message: string) => void }) => {
-	const textAreaRef = useRef<HTMLInputElement>(null)
-
-	const submit = (e: any) => {
-		e.preventDefault()
-		const value = textAreaRef?.current?.value
-		if (value) {
-			sendMessage(value)
-			textAreaRef.current.value = ''
-		}
-	}
-
-	const handleKeyDown = (e: any) => {
-		if (e.key === 'Enter') {
-			submit(e)
-		}
-	}
-
-	return (
-		<div className="answer-add">
-			<div className="row">
-				<div className="col-xs-9" style={{ width: '80%' }}>
-					<input
-						type="text"
-						placeholder="Enter your text"
-						className="form-control chat-input"
-						ref={textAreaRef}
-						onKeyDown={(e) => handleKeyDown(e)}
-					/>
-				</div>
-				<div className="col-xs-3" style={{ width: '20%' }}>
-					<button className="btn btn-primary btn-block" type="submit" onClick={(e) => submit(e)}>Send</button>
-				</div>
-			</div>
-		</div>
-	)
-}

@@ -12,9 +12,9 @@ export default function ProfileImg({ userPublic }: { userPublic: any | undefined
 		user = userContext.user.info;
 	let statusColor = "violet";
 
-	if (user === "offline")
+	if (user.status === "offline")
 		statusColor = "gray";
-	else if (user === "online")
+	else if (user.status === "online")
 		statusColor = "#0a5";
 
 	return (
