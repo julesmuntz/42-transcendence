@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { UserRoom, Message } from '../../shared/chats.interface';
+import { UserRoom, Message, ChannelType } from '../../shared/chats.interface';
 
 @Entity()
 export class Room {
@@ -20,4 +20,11 @@ export class Room {
 
 	@Column()
 	channel: boolean;
+
+	@Column({
+		type: 'enum',
+		enum: ChannelType,
+		default: ChannelType.Public,
+	})
+	type: ChannelType;
 }

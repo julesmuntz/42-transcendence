@@ -28,7 +28,7 @@ export default function Chat() {
 	});
 
 	useSocketEvent(socket, 'chat', (e: Message) => {
-			setMessages((messages) => [e, ...messages]);
+		setMessages((messages) => [e, ...messages]);
 	});
 	useSocketEvent(socket, 'connect_chat', () => {
 		setIsConnected(true);
@@ -84,7 +84,7 @@ export default function Chat() {
 	}, [socket, roomName, navigate, userContext]);
 
 	const leaveRoom = () => {
-		socket?.emit('disconnect_room', {roomName: roomName});
+		socket?.emit('disconnectRoom', { roomName: roomName });
 		navigate('/');
 	};
 
@@ -134,24 +134,32 @@ export default function Chat() {
 		}
 	};
 
-	const handleDestroyRoom = (roomName : string) => {
+	const handleDestroyRoom = (roomName: string) => {
 		if (roomName) {
 			socket?.emit('deleteChannel', { roomName: roomName });
 		}
 	};
 
+	const handleChangePasswordEvent = (roomName: string, password: string) => {
+		if (roomName) {
+			socket?.emit('changePassword', { roomName: roomName, password: password });
+		}
+	}
+
 	return (
 		<>
-			{user?.userId && roomName	&& room && (
+			{user?.userId && roomName && room && (
 				<ChatLayout>
 					<Header
 						isConnected={isConnected ?? false}
 						users={user}
 						roomName={room.name}
+						roomType={room.type}
 						isChannel={room.channel}
 						handleUsersClick={() => setToggleUserList((toggleUserList) => !toggleUserList)}
 						handleLeaveRoom={() => leaveRoom()}
-			handleDestroyRoom={() => handleDestroyRoom(roomName)}
+						handleDestroyRoom={() => handleDestroyRoom(roomName)}
+						handleChangePasswordEvent={(password: string) => handleChangePasswordEvent(roomName, password)}
 					/>
 
 					{toggleUserList && socket ? (

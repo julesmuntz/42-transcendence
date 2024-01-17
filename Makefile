@@ -29,8 +29,8 @@ fclean: clean
 	@ echo "Removing all volumes"
 	@ if [ -n "$$(docker volume ls -q)" ]; then docker volume rm $$(docker volume ls -q); fi
 	@ echo "Removing .env"
-	@ if [ -e $(ENV_FILE) ]; then rm -rf .env; fi
-	@ if [ -e $(F_ENV_FILE) ]; then rm -rf .env; fi
+	@ if [ -e $(ENV_FILE) ]; then rm -rf $(ENV_FILE); fi
+	@ if [ -e $(F_ENV_FILE) ]; then rm -rf $(F_ENV_FILE); fi
 	@ docker system prune -f -a
 
 .PHONY: all up down clean fclean re

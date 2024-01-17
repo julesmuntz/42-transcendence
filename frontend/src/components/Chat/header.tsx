@@ -1,4 +1,4 @@
-import { UserRoom } from "../../shared/chats.interface"
+import { UserRoom, ChannelType } from "../../shared/chats.interface"
 import "./Chat.css"
 
 export const Header = ({
@@ -8,7 +8,9 @@ export const Header = ({
 	handleUsersClick,
 	handleLeaveRoom,
 	handleDestroyRoom,
+	handleChangePasswordEvent,
 	roomName,
+	roomType
 }: {
 	isConnected: boolean
 	users: UserRoom
@@ -16,8 +18,11 @@ export const Header = ({
 	handleUsersClick: () => void
 	handleLeaveRoom: () => void
 	handleDestroyRoom : () => void
+	handleChangePasswordEvent: (password: string) => void
 	roomName: string
-}) => {
+	roomType: ChannelType
+	}) => {
+
 	return (
 		<div className="panel-heading">
 			<div className="panel-control">
@@ -42,9 +47,21 @@ export const Header = ({
 					<button type="button" className="btn btn-default"onClick={() => handleDestroyRoom()}>
 						<span className="mr-1 text-lg text-white">{'🗑️'}</span>
 					</button>
-					//metre un bouton pour changer le password de la room
-					
 					}
+
+					{isChannel && (users.type === 'Owner' && roomType === 'protected') && (
+						<button type="button" className="btn btn-default" onClick={() => {
+							const password = prompt('Enter new password');
+							if (!password) {
+								alert('Please fill in all fields');
+								return;
+							}
+							handleChangePasswordEvent(password);
+						}
+						}>
+							<span className="mr-1 text-lg text-white">{'🔒'}</span>
+						</button>
+					)}
 				</div>
 			</div>
 

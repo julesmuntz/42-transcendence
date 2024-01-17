@@ -16,10 +16,17 @@ export interface Message {
 	roomName: string
 }
 
+export enum ChannelType {
+	Public = 'public',
+	Protected = 'protected',
+	Private = 'private',
+}
+
 export interface Room {
 	name: string
 	host: UserRoom
 	users: UserRoom[]
 	message: Message[]
 	channel: boolean // true = channel room, false = chat room
+	type: ChannelType
 }
