@@ -6,7 +6,7 @@ import { TFAProfile } from "./TFAProfile";
 import ProfileSecurity from "./ProfileSettings/ProfileSecurity";
 import ProfileInfos from "./ProfileInfos";
 
-import "./Profile.css";
+import "./css/Profile.css";
 import FriendNotifications from "./FriendNotifications";
 
 export default function Profile() {
@@ -58,6 +58,8 @@ export default function Profile() {
 
 	if (is2FAActive)
 		return (<TFAProfile qrset={{ qrcode, setQrcode }} />);
+
+	console.log(userContext.user);
 
 	return (
 		<Container className="d-flex">

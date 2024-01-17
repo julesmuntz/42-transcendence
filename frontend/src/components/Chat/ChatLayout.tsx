@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import { Room } from '../../shared/chats.interface';
-import CreateChannel from '../Channel/createChannel';
+import CreateChannel from '../Channel/CreateChannel';
 
 export const useRoomQuery = (roomName: string, isConnected: boolean) => {
 	const query = useQuery({
