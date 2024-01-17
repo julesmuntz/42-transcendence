@@ -51,7 +51,18 @@ export class ChatGateway {
 				else
 					user.type = "regular";
 				user.avatarPath = channel_user.user.avatarPath;
+				if (room.type === 'protected' && channel_user.pass === false)
+				{
+					this.server.to(user.socketId).emit('banned', 'You are banned from this channel');
+					return undefined;
+				}
 			}
+			else
+			{
+				this.server.to(user.socketId).emit('banned', 'You are banned from this channel');
+				return undefined;
+			}
+
 		}
 		return user;
 	}
@@ -71,6 +82,7 @@ export class ChatGateway {
 					await this.server.to(payload.user.socketId).emit('chat', message);
 			}
 			await this.server.to(payload.user.socketId).emit('chat_user', user);
+			this.server.to(payload.user.socketId).emit('connect_chat');
 			this.handleUserListEvent(payload.roomName);
 		}
 	}
@@ -111,12 +123,4 @@ export class ChatGateway {
 			this.logger.error(`Error getting user list for ${roomName}: ${error.message}`);
 		}
 	}
-
-
-	@SubscribeMessage('disconnect_room')
-	async handledisconnectRoomEvent(client: Socket) {
-		await this.chatService.removeUserFromAllRooms(client.id);
-		this.logger.log(`${client.id} is disconnect all rooms`);
-	}
-
 }

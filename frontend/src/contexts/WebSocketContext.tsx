@@ -7,60 +7,65 @@ import 'react-toastify/dist/ReactToastify.css';
 export const WebSocketContext = createContext<Socket | undefined>(undefined);
 
 enum NotificationType {
-  Info,
-  Success,
-  Warning,
-  Error,
+	Info,
+	Success,
+	Warning,
+	Error,
 }
 
 interface Notification {
-  type: NotificationType;
-  message: string;
+	type: NotificationType;
+	message: string;
+}
+
+export const useSocketEvent = (socket: Socket | undefined, event: string, handler: any): void => {
+	useEffect(() => {
+		socket?.on(event, handler);
+		return (): void => {
+			socket?.off(event);
+		};
+	}, [socket, event, handler]);
 }
 
 function WebSocketProvider({
-  children,
+	children,
 }: {
-  children: ReactNode;
+	children: ReactNode;
 }): React.JSX.Element {
-  const { user } = useContext(UserContext);
-  const [socket, setSocket] = useState<Socket | undefined>(undefined);
-  const [connected, setConnected] = useState(false);
+	const { user } = useContext(UserContext);
+	const [socket, setSocket] = useState<Socket | undefined>(undefined);
 
-  useEffect(() => {
-    if (user?.info.id && user.authToken) {
-      const socketIOClient = io(`http://${process.env.REACT_APP_HOSTNAME}:3030`, {
-        extraHeaders: {
-          'authorization': `Bearer ${user.authToken}`
-        }
-      });
-      setSocket(socketIOClient);
-      socketIOClient.on("connect", () => { socketIOClient.emit("saveusersocket", user?.info.id);});
-      socketIOClient.on("notification", (notification: Notification) => {
-        const notificationFunctions = {
-          [NotificationType.Info]: toast.info,
-          [NotificationType.Success]: toast.success,
-          [NotificationType.Warning]: toast.warning,
-          [NotificationType.Error]: toast.error,
-        };
-        notificationFunctions[notification.type](notification.message);
-      });
-      return () => {
-        socketIOClient.disconnect();
-      };
-    }
-  }, [user?.info.id, user.authToken]);
-  const value = useMemo(() => socket, [socket]);
-  function sleep(ms: any) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+	useEffect(() => {
+		if (user?.info.id && user.authToken) {
+			const socketIOClient = io(`http://${process.env.REACT_APP_HOSTNAME}:3030`, {
+				extraHeaders: {
+					'authorization': `Bearer ${user.authToken}`
+				}
+			});
+			setSocket(socketIOClient);
+			socketIOClient.on("connect", () => { socketIOClient.emit("saveusersocket", user?.info.id);});
+			socketIOClient.on("notification", (notification: Notification) => {
+				const notificationFunctions = {
+					[NotificationType.Info]: toast.info,
+					[NotificationType.Success]: toast.success,
+					[NotificationType.Warning]: toast.warning,
+					[NotificationType.Error]: toast.error,
+				};
+				notificationFunctions[notification.type](notification.message);
+			});
+			return () => {
+				socketIOClient.disconnect();
+			};
+		}
+	}, [user?.info.id, user.authToken]);
+	const value = useMemo(() => socket, [socket]);
 
-  return (
-    <WebSocketContext.Provider value={value}>
-      {children}
-      {/* <ToastContainer /> */}
-    </WebSocketContext.Provider>
-  );
+	return (
+		<WebSocketContext.Provider value={value}>
+			{children}
+			{/* <ToastContainer /> */}
+		</WebSocketContext.Provider>
+	);
 }
 
 export default WebSocketProvider;

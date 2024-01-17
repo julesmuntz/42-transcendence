@@ -49,20 +49,6 @@ export default function Profile() {
 		await getQrcode();
 	};
 
-	async function deactivate2FA(e: any) {
-		e.preventDefault();
-		return fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/2fa/turn-off`, {
-			method: "POST",
-			headers: {
-				"Authorization": `Bearer ${userContext.user.authToken}`
-			}
-		}).then(() => {
-			const newUser = userContext.user.info;
-			newUser.isTFAEnabled = false;
-			userContext.login(newUser, userContext.user.authToken);
-		});
-	}
-
 	useEffect(() => {
 		if (qrcode) {
 			setIs2FAActive(true);

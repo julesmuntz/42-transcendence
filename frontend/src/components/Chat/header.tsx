@@ -42,6 +42,8 @@ export const Header = ({
 					<button type="button" className="btn btn-default"onClick={() => handleDestroyRoom()}>
 						<span className="mr-1 text-lg text-white">{'🗑️'}</span>
 					</button>
+					//metre un bouton pour changer le password de la room
+					
 					}
 				</div>
 			</div>
