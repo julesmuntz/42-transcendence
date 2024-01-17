@@ -7,13 +7,12 @@ import { ChatGateway } from './chat.gateway';
 import { ChannelMemberService } from 'channels/Service/channel-member.service';
 import { ChannelMember } from 'channels/entities/channel-member.entity';
 import { Channel } from 'channels/entities/channel.entity';
-import { ChannelsService } from 'channels/Service/channels.service';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Room]),
 	TypeOrmModule.forFeature([ChannelMember]),
 	TypeOrmModule.forFeature([Channel])],
 	controllers: [ChatsController],
-	providers: [ChatsService, ChatGateway, ChannelMemberService, ChannelsService],
+	providers: [ChatsService, ChatGateway, ChannelMemberService],
 })
 export class ChatsModule { }

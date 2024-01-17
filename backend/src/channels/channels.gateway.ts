@@ -77,7 +77,7 @@ export class ChannelsGateway {
 				else if (element.type !== ChannelType.Private)
 					validChannels.push(element);
 			}
-			this.logger.log(`emit server getChannel `, socket.id);
+			this.logger.log(`emit server getChannel ${socket.id}`);
 			this.server.to(socket.id).emit('channelList', validChannels);
 			return channel;
 		}
@@ -128,17 +128,22 @@ export class ChannelsGateway {
 			const compare = await bcrypt.compare(payload.password, channel.passwordHash);
 			console.log(compare);
 			if (compare) {
-				const userExist = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {id: channel.id}, user: {id : user.id} } });
+				const userExist = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {id: channel.id}, user: {id : user.id}} });
+				console.log(userExist);
 				if (!userExist) {
-					const channelMember = await this.dataSources.manager.save(ChannelMember, { user: user, channel: channel });
+					const channelMember = await this.dataSources.manager.save(ChannelMember, { user: user, channel: channel, pass: true });
 					if (channelMember) {
 						this.logger.log(`User "${user.username}" join to Channel "${channel.name}"`);
-						this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
+						await this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
 						return channel;
 					}
 				}
 				else
+				{
+					await this.dataSources.manager.save(ChannelMember, { id: userExist.id, pass: true });
 					this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
+				}
+
 			}
 		}
 	}
@@ -264,13 +269,32 @@ export class ChannelsGateway {
 		}
 	}
 
-	@SubscribeMessage('leave_room')
-	async handleLeaveRoomEvent(@MessageBody() payload: { user: UserRoom; roomName: string; }) {
-		if (payload.user.socketId) {
-			this.logger.log(`${payload.user.socketId} is leaving ${payload.roomName}`);
-			await this.server.in(payload.user.socketId).socketsLeave(payload.roomName);
-			await this.chatService.removeUserFromRoom(payload.user.socketId, payload.roomName);
-			this.dataSources.manager.delete(ChannelMember, { user: {id : payload.user.userId}, channel: {name : payload.roomName} });
+	@SubscribeMessage('disconnect_room')
+	async handledisconnectRoomEvent(client: Socket, payload: {roomName: string}) {
+		await this.chatService.removeUserFromRoom(client.id, payload.roomName);
+		const room  = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
+		const channelMember = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: room.id} , user: {socketId: client.id} }});
+		this.dataSources.manager.save(ChannelMember, { id: channelMember.id, pass: false });
+		this.logger.log(`${client.id} is disconnect rooms`);
+	}
+
+	@SubscribeMessage('change_password')
+	async handleChangePasswordEvent(client: Socket, payload: {roomName: string, password: string}) {
+		const room  = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
+		if (room && payload.password) {
+			const clientChannel = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: room.id} , user: {socketId: client.id} , role: ChannelMemberRole.Owner}});
+			if (!clientChannel)
+				return;
+			const channel = await this.dataSources.manager.save(Channel, { id: room.id, passwordHash: await bcrypt.hash(payload.password, 10) });
+			if (!channel)
+				return;
+			const channelMember = await this.dataSources.manager.find(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: channel.id} }});
+			for (const element of channelMember) {
+				this.dataSources.manager.save(ChannelMember, { id: element.id, pass: false });
+			}
+			this.logger.log(`Change password of room ${room.name}`);
+			return room;
 		}
 	}
+
 }

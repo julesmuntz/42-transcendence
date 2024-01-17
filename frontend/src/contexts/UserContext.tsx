@@ -32,7 +32,17 @@ interface ContextProps {
 
 export function useEmits(socket: any, event: string, data: any) {
 	useEffect(() => {
-		socket?.emit(event, data);
+		const initializeEmits = async () => {
+			await new Promise<void>(resolve => {
+				if (socket?.connected) {
+					resolve();
+				} else {
+					socket?.on('connect', () => resolve());
+				}
+			});
+			socket.emit(event, data);
+		};
+		initializeEmits();
 	}, [socket, event, data]);
 }
 

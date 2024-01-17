@@ -54,4 +54,7 @@ export class ChannelMember {
 		default: ChannelMemberPermission.Regular,
 	})
 	permission: ChannelMemberPermission;
+
+	@Column({ default: false })
+	pass: boolean;
 }

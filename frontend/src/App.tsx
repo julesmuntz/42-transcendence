@@ -7,7 +7,6 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import TwoFA from './components/LoginPage/TwoFA';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import WebSocketProvider from './contexts/WebSocketContext';
 
 interface JwtPayload {
 	users: {
@@ -74,11 +73,9 @@ function App() {
 	if (userContext.user.authToken)
 		return (
 			<div className="App">
-				<WebSocketProvider>
 					<QueryClientProvider client={queryClient}>
 						<SideNav />
 					</QueryClientProvider>
-				</WebSocketProvider>
 			</div>
 		);
 	return (
