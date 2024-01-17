@@ -285,8 +285,10 @@ export class ChannelsGateway {
 			const clientChannel = await this.dataSources.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: room.id} , user: {socketId: client.id} , role: ChannelMemberRole.Owner}});
 			if (!clientChannel)
 				return;
-			this.dataSources.manager.save(Channel, { id: room.id, passwordHash: await bcrypt.hash(payload.password, 10) });
-			const channelMember = await this.dataSources.manager.find(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: room.id} }});
+			const channel = await this.dataSources.manager.save(Channel, { id: room.id, passwordHash: await bcrypt.hash(payload.password, 10) });
+			if (!channel)
+				return;
+			const channelMember = await this.dataSources.manager.find(ChannelMember, {relations: ['channel', 'user'], where: {channel: {id: channel.id} }});
 			for (const element of channelMember) {
 				this.dataSources.manager.save(ChannelMember, { id: element.id, pass: false });
 			}
