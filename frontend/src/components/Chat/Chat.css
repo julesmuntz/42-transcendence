@@ -22,6 +22,7 @@
     border-radius: 20px;
     /* background-color: #26292e; */
     height: 50px;
+    width: fit-content;
     padding: 0px;
 }
 
@@ -34,7 +35,7 @@
 
 .panel-control {
     height: 100%;
-    position: absolute;
+    /* position: absolute; */
     right: 50px;
     padding-top: 15px;
     padding-right: 0px;
@@ -48,6 +49,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: absolute;
+    /* width: 500px; */
+    top: 0px;
+    left: 0px;
 }
 
 .panel-control>.btn:last-child,
@@ -217,6 +222,7 @@
 
 .chat-body {
     display: flex;
+    position: relative;
     flex-direction: column;
     justify-content: center;
     align-items: center;

@@ -34,7 +34,7 @@ export class FriendsGateway {
 
 	@SubscribeMessage('refresh_friends_all')
 	async handleRefreshFriendsAll(client: Socket): Promise<void> {
-		this.handleRefreshFriendsAllsocketId(client.id);
+		this.handleRefreshFriendsAllsocketId(client.id, RelationType.Friend);
 	}
 
 	@SubscribeMessage('invite_friends')
@@ -77,11 +77,11 @@ export class FriendsGateway {
 				if (friends) {
 					this.logger.log`User ${user.username} accepting ${idUserTarget.username}`;
 					this.server.to(client.id).emit('friends', friends);
-					this.handleRefreshFriendsAllsocketId(client.id);
+					this.handleRefreshFriendsAllsocketId(client.id, RelationType.Friend);
 					if (idUserTarget.socketId)
 					{
 						this.server.to(idUserTarget.socketId).emit('friends', friends);
-						this.handleRefreshFriendsAllsocketId(idUserTarget.socketId);
+						this.handleRefreshFriendsAllsocketId(idUserTarget.socketId, RelationType.Friend);
 					}
 				}
 			}
@@ -99,11 +99,13 @@ export class FriendsGateway {
 			const friends = await this.dataSource.manager.save(Friend, { user1: user, user2: idUserTarget, type: RelationType.Blocked });
 			if (friends) {
 				this.server.to(client.id).emit('friends', friends);
-				this.handleRefreshFriendsAllsocketId(client.id);
+				this.handleRefreshFriendsAllsocketId(client.id, RelationType.Friend);
+				this.handleRefreshFriendsAllsocketId(client.id, RelationType.Blocked);
 				if (idUserTarget.socketId)
 				{
 					this.server.to(idUserTarget.socketId).emit('friends', friends);
-					this.handleRefreshFriendsAllsocketId(idUserTarget.socketId);
+					this.handleRefreshFriendsAllsocketId(idUserTarget.socketId, RelationType.Friend);
+					this.handleRefreshFriendsAllsocketId(idUserTarget.socketId, RelationType.Blocked);
 				}
 			}
 		}
@@ -121,11 +123,11 @@ export class FriendsGateway {
 				this.dataSource.manager.delete(Friend, { id: friends_view.id });
 			}
 			this.server.to(client.id).emit('friends', null);
-			this.handleRefreshFriendsAllsocketId(client.id);
+			this.handleRefreshFriendsAllsocketId(client.id, RelationType.Friend);
 			if (idUserTarget.socketId)
 			{
 				this.server.to(idUserTarget.socketId).emit('friends', null);
-				this.handleRefreshFriendsAllsocketId(idUserTarget.socketId);
+				this.handleRefreshFriendsAllsocketId(idUserTarget.socketId, RelationType.Friend);
 			}
 		}
 	}
@@ -159,16 +161,39 @@ export class FriendsGateway {
 		}
 	}
 
-	async handleRefreshFriendsAllsocketId(client: string): Promise<void> {
+	@SubscribeMessage('friendsBlocked')
+	async handleFriendsBlocked(client: Socket): Promise<void> {
+		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client.id} });
+		if (user) {
+			const friends = await this.dataSource.manager.find(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id: user.id }, type: RelationType.Blocked },	{ user2: { id: user.id }, type: RelationType.Blocked },],});
+			if (friends.length > 0) {
+				this.logger.log(`User ${user.username} refreshing friends blocked`);
+				this.server.to(client.id).emit('friendsBlocked', friends);
+			}
+			else {
+				this.logger.log(`User ${user.username} refreshing friends blocked`);
+				this.server.to(client.id).emit('friendsBlocked', null);
+			}
+		}
+	}
+
+	async handleRefreshFriendsAllsocketId(client: string, type : RelationType): Promise<void> {
 		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client} })
 		if (user) {
-			const friends = await this.dataSource.manager.find(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id: user.id }, type: RelationType.Friend },	{ user2: { id: user.id }, type: RelationType.Friend },],});
+			const friends = await this.dataSource.manager.find(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id: user.id }, type: type },	{ user2: { id: user.id }, type: type },],});
 			if (friends) {
 				this.logger.log(`User ${user.username} refreshing friends all`);
 				if (friends.length > 0)
-					this.server.to(client).emit('Viewfriends', friends);
+					if (type !== RelationType.Blocked)
+						this.server.to(client).emit('Viewfriends', friends);
+					else
+						this.server.to(client).emit('friendsBlocked', friends);
 				else
+				{
 					this.server.to(client).emit('Viewfriends', null);
+					this.server.to(client).emit('friendsBlocked', null);
+				}
+
 			}
 		}
 	}

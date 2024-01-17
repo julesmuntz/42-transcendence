@@ -23,6 +23,10 @@ export default function ViewChannel() {
 			setChannel([]);
 			setChannel(data);
 		});
+		socket?.on('updateType', () => {
+			console.log('updateType');
+			socket?.emit('getChannel');
+		});
 		socket?.on('updateChannelList', (data: Channel) => {
 			setChannel((channel) => [...channel, data]);
 		});
