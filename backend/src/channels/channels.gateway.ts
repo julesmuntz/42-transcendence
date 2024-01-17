@@ -69,14 +69,14 @@ export class ChannelsGateway {
 		let validChannels = [];
 		if (channel && user) {
 			for (const element of channel) {
-				const channelMember = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: element.id }, user: { id: user.id }, access: ChannelMemberAccess.Regular } });
-				if (channelMember)
+				const channelMember = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: element.id }, user: { id: user.id }} });
+				if (channelMember && channelMember.access !== ChannelMemberAccess.Banned)
 					validChannels.push(element);
-				else if (element.type !== ChannelType.Private)
+				else if (element.type !== ChannelType.Private && !channelMember)
 					validChannels.push(element);
 			}
-			this.logger.log(`emit server getChannel ${socket.id}`);
 			this.server.to(socket.id).emit('channelList', validChannels);
+			this.logger.log(`emit server getChannel ${socket.id}`);
 			return channel;
 		}
 	}
@@ -199,6 +199,8 @@ export class ChannelsGateway {
 				await this.dataSources.manager.delete(ChannelMember, { id: channelMember.id });
 				this.logger.log(`Channel ${channel.name} unbanned to ${user.username}`);
 				await this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
+				if (channel.type !== ChannelType.Private && user.socketId !== '')
+					await this.server.to(user.socketId).emit('updateChannelList', channel);
 				return channel;
 			}
 		}
@@ -277,7 +279,6 @@ export class ChannelsGateway {
 
 	@SubscribeMessage('changePassword')
 	async handleChangePasswordEvent(client: Socket, payload: { roomName: string, password: string }) {
-		this.logger.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
 		const room = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
 		if (room && payload.password) {
 			const clientChannel = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: room.id }, user: { socketId: client.id }, role: ChannelMemberRole.Owner } });
@@ -291,6 +292,22 @@ export class ChannelsGateway {
 				this.dataSources.manager.save(ChannelMember, { id: element.id, pass: false });
 			}
 			this.logger.log(`Change password of room ${room.name}`);
+			return room;
+		}
+	}
+
+	@SubscribeMessage('changeType')
+	async handleChangeTypeEvent(client: Socket, payload: { roomName: string}) {
+		const room = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
+		if (room) {
+			const clientChannel = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: room.id }, user: { socketId: client.id }, role: ChannelMemberRole.Owner } });
+			if (!clientChannel)
+				return;
+			const channel = await this.dataSources.manager.save(Channel, { id: room.id, type: ChannelType.Public , passwordHash: null});
+			if (!channel)
+				return;
+			this.logger.log(`Change type of room ${room.name}`);
+			this.server.emit('updateType');
 			return room;
 		}
 	}

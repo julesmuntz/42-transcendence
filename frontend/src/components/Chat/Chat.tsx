@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
-import { UserContext } from '../../contexts/UserContext';
+import { IFriends, UserContext, useEmits } from '../../contexts/UserContext';
 import { Message, UserRoom } from "../../shared/chats.interface";
 import { Header, UserList } from './header';
 import { ChatLayout, useRoomQuery } from './ChatLayout';
@@ -27,6 +27,8 @@ export default function Chat() {
 		avatarPath: userContext.user.info.avatarPath,
 	});
 
+	const [friendBlock, setFriendBlock] = useState<IFriends[] | null>(null);
+
 	useSocketEvent(socket, 'chat', (e: Message) => {
 		setMessages((messages) => [e, ...messages]);
 	});
@@ -45,12 +47,20 @@ export default function Chat() {
 	});
 	useSocketEvent(socket, 'chat_user', (e: UserRoom) => {
 		setUser(e);
+		if (e.type === 'regular')
+			setToggleUserList(false);
 	});
 	useSocketEvent(socket, 'deleteChannel', () => {
 		navigate('/');
 	});
 	useSocketEvent(socket, 'banned', () => {
 		navigate('/');
+	});
+
+	useEmits(socket, 'friendsBlocked', null);
+	useSocketEvent(socket, 'friendsBlocked', (e: IFriends[]) => {
+		setFriendBlock(null);
+		setFriendBlock(e);
 	});
 
 	useEffect(() => {
@@ -146,6 +156,12 @@ export default function Chat() {
 		}
 	}
 
+	const handleChangeTypeEvent = (roomName: string) => {
+		if (roomName) {
+			socket?.emit('changeType', { roomName: roomName });
+		}
+	}
+
 	return (
 		<>
 			{user?.userId && roomName && room && (
@@ -160,13 +176,14 @@ export default function Chat() {
 						handleLeaveRoom={() => leaveRoom()}
 						handleDestroyRoom={() => handleDestroyRoom(roomName)}
 						handleChangePasswordEvent={(password: string) => handleChangePasswordEvent(roomName, password)}
+						handleChangeTypeEvent={() => handleChangeTypeEvent(roomName)}
 					/>
 
 					{toggleUserList && socket ? (
 						<UserList user={getUser ?? []} hostId={room.host.userId} user_a={user} handleBanUnBan={handleBanUnBan} handelMuteUnMute={handleMuteUnMute} handleKick={handleKick} handlePromote={handlePromote}></UserList>
 					) : (
 						<>
-							<Messages user={user} messages={messages}></Messages>
+							<Messages user={user} messages={messages} friends={friendBlock}></Messages>
 							<MessageForm sendMessage={sendMessage}></MessageForm>
 						</>
 					)}

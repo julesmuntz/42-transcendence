@@ -9,6 +9,7 @@ export const Header = ({
 	handleLeaveRoom,
 	handleDestroyRoom,
 	handleChangePasswordEvent,
+	handleChangeTypeEvent,
 	roomName,
 	roomType
 }: {
@@ -17,16 +18,22 @@ export const Header = ({
 	isChannel: boolean
 	handleUsersClick: () => void
 	handleLeaveRoom: () => void
-	handleDestroyRoom : () => void
+	handleDestroyRoom: () => void
 	handleChangePasswordEvent: (password: string) => void
+	handleChangeTypeEvent: () => void
 	roomName: string
 	roomType: ChannelType
-	}) => {
+}) => {
 
 	return (
 		<div className="panel-heading">
 			<div className="panel-control">
 				<div className="btn-group">
+					{/* Display the room name and connection status */}
+					<h3 className="panel-title">
+						{roomName}
+						{/* {roomName} <span className="ml-1">{isConnected ? '🟢' : '🔴'}</span> */}
+					</h3>
 					{/* Button to leave the room if it's a channel */}
 					{isChannel && (
 						<button className="btn btn-default" type="button" onClick={() => handleLeaveRoom()}>
@@ -44,9 +51,9 @@ export const Header = ({
 
 					{/* Button to show additional options (gear icon) */}
 					{isChannel && users.type === 'Owner' &&
-					<button type="button" className="btn btn-default"onClick={() => handleDestroyRoom()}>
-						<span className="mr-1 text-lg text-white">{'🗑️'}</span>
-					</button>
+						<button type="button" className="btn btn-default" onClick={() => handleDestroyRoom()}>
+							<span className="mr-1 text-lg text-white">{'🗑️'}</span>
+						</button>
 					}
 
 					{isChannel && (users.type === 'Owner' && roomType === 'protected') && (
@@ -62,13 +69,19 @@ export const Header = ({
 							<span className="mr-1 text-lg text-white">{'🔒'}</span>
 						</button>
 					)}
+
+					{isChannel && (users.type === 'Owner' && roomType === 'protected') && (
+						<button type="button" className="btn btn-default" onClick={() => {
+							if (window.confirm('Remove the password?'))
+								handleChangeTypeEvent();
+						}
+						}>
+							<span className="mr-1 text-lg text-white">{'🔑'}</span>
+						</button>
+					)}
 				</div>
 			</div>
 
-			{/* Display the room name and connection status */}
-			<h3 className="panel-title">
-				{roomName} <span className="ml-1">{isConnected ? '🟢' : '🔴'}</span>
-			</h3>
 		</div>
 	);
 
