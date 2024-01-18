@@ -37,7 +37,7 @@ export default function MessageForm({ sendMessage }: { sendMessage: (message: st
 					/>
 				</div>
 				<div className="col-xs-3" style={{ width: '20%' }}>
-					<button className="btn btn-primary btn-block" type="submit" onClick={(e) => submit(e)}>Send</button>
+					<button className="btn btn-primary btn-block" type="submit" onClick={(e) => submit(e)}>send</button>
 				</div>
 			</div>
 		</div>

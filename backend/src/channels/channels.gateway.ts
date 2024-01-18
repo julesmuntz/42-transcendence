@@ -81,9 +81,8 @@ export class ChannelsGateway {
 		}
 	}
 
-	//verifier si le user est dans la room
-	@SubscribeMessage('inviteChannels')
-	async handleInviteChannels(@MessageBody() payload: { userId: number; channelId: number; }) {
+	@SubscribeMessage('inviteChannel')
+	async handleInviteChannel(@MessageBody() payload: { userId: number; channelId: number; }) {
 		const channel = await this.dataSources.manager.findOne(Channel, { where: { id: payload.channelId } });
 		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {

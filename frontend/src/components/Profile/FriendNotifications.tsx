@@ -38,10 +38,12 @@ export default function FriendNotifications() {
 		});
 	}, [socket]);
 
+	if (!notifs)
+		return null;
 
 	return (
 		<Container className="d-flex friend-invites">
-			<h3>Friend Invites</h3>
+			<p>Friend Requests</p>
 			{notifs?.map((notif, index) => {
 			if (notif?.user1.id !== userContext.user.info.id) {
 			return (
@@ -50,7 +52,7 @@ export default function FriendNotifications() {
 				</Container>
 			);
 			} else {
-				return null; // or any other value that makes sense in your context
+				return null;
 			}
 		})}
 		</Container>

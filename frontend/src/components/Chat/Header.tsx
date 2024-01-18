@@ -10,6 +10,7 @@ export const Header = ({
 	handleDestroyRoom,
 	handleChangePasswordEvent,
 	handleChangeTypeEvent,
+	handleInvite,
 	roomName,
 	roomType
 }: {
@@ -21,6 +22,7 @@ export const Header = ({
 	handleDestroyRoom: () => void
 	handleChangePasswordEvent: (password: string) => void
 	handleChangeTypeEvent: () => void
+	handleInvite(): void
 	roomName: string
 	roomType: ChannelType
 }) => {
@@ -33,7 +35,7 @@ export const Header = ({
 					<h3 className="panel-title">
 						{isChannel ? (roomName) : (`Direct message`)}
 						{/* {roomName} <span className="ml-1">{isConnected ? '🟢' : '🔴'}</span> */}
-						</h3>
+					</h3>
 					{/* Button to leave the room if it's a channel */}
 					{isChannel && (
 						<button className="btn btn-default" type="button" onClick={() => handleLeaveRoom()}>
@@ -77,6 +79,15 @@ export const Header = ({
 						}
 						}>
 							<span className="mr-1 text-lg text-white">{'🔑'}</span>
+						</button>
+					)}
+
+					{isChannel && (users.type === 'Owner' && roomType === 'private') && (
+						<button type="button" className="btn btn-default" onClick={() => {
+							handleInvite();
+						}
+						}>
+							<span className="mr-1 text-lg text-white">{'📩'}</span>
 						</button>
 					)}
 				</div>
