@@ -33,4 +33,6 @@ fclean: clean
 	@ if [ -e $(F_ENV_FILE) ]; then rm -rf $(F_ENV_FILE); fi
 	@ docker system prune -f -a
 
+re: fclean all
+
 .PHONY: all up down clean fclean re
