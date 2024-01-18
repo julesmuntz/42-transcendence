@@ -12,6 +12,7 @@ import { DataSource } from 'typeorm';
 import { Logger, UseGuards } from '@nestjs/common';
 import { Room } from 'chats/entities/chat.entity';
 import { JwtAuthGuard } from 'auth/guard/jwt.Guards';
+import { PongService } from 'pong/pong.service';
 
 
 @WebSocketGateway({ cors: true })
@@ -19,6 +20,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	constructor(
 		private socketService: SocketsService,
 		private dataSource: DataSource,
+		private pongService: PongService,
 	) { }
 
 	@WebSocketServer() server: Server;
@@ -32,6 +34,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	//le deconnecter du chat
 	async handleDisconnect(socket: Socket) {
+		if (this.pongService.isInGame(socket))
+			this.pongService.kick(socket);
 		this.logger.log("Server: connection stopped");
 		const user = this.socketService.removeSocket(socket);
 

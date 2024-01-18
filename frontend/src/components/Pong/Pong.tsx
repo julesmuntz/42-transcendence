@@ -21,7 +21,7 @@ import {
 import Board from './Board';
 import './Pong.css';
 
-const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(`http://${process.env.REACT_APP_HOSTNAME}:8001`);
+const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(`http://${process.env.REACT_APP_HOSTNAME}:3030`);
 
 export default class Pong extends React.Component<{}, {
 	id: number,
@@ -38,7 +38,7 @@ export default class Pong extends React.Component<{}, {
 		super(props);
 		this.state = {
 			id: 0,
-			connected: false,
+			connected: true,
 			t: {
 				update: new Date(),
 				kickoff: new Date()
@@ -47,11 +47,12 @@ export default class Pong extends React.Component<{}, {
 			player1: { ...playerLeftReset },
 			player2: { ...playerRightReset },
 			ball: { ...ballReset },
-			ratio: window.innerWidth / board.w,
+			ratio: Math.min(
+				window.innerWidth / board.w,
+				window.innerHeight / board.h),
 			upIsPressed: false,
 			downIsPressed: false,
 		}
-		this.manageResize();
 		window.addEventListener('keydown', (e: KeyboardEvent) => this.manageKeydown(e));
 		window.addEventListener('keyup', (e: KeyboardEvent) => this.manageKeyup(e));
 		window.addEventListener('resize', () => this.manageResize());
@@ -69,8 +70,8 @@ export default class Pong extends React.Component<{}, {
 			newPing.latency = new Date().getTime() - newPing.timePingSent[n].getTime();
 			this.setState({ ping: newPing });
 		});
-		socket.on('accept', (id: number) => { this.setState({ id: id }); });
-		socket.on('update', (data: DataUpdate) => {
+		socket.on('pong_accept', (id: number) => { console.log(`Accepted ${id}`); this.setState({ id: id }); });
+		socket.on('pong_update', (data: DataUpdate) => {
 			this.setState({
 				t: { update: new Date(data.t.update),
 					kickoff: new Date(data.t.kickoff) },
@@ -96,15 +97,15 @@ export default class Pong extends React.Component<{}, {
 		this.manageResize();
 		this.setSocketListeners();
 		this.setPeriodicFunctions();
-		socket.emit('join');
+		socket.emit('pong_join');
 	}
 
 	componentWillUnmount() {
 		socket.off('connect');
 		socket.off('disconnect');
 		socket.off('ping');
-		socket.off('accept');
-		socket.off('update');
+		socket.off('pong_accept');
+		socket.off('pong_update');
 	}
 
 	manageKeydown(e: KeyboardEvent) {
@@ -112,11 +113,11 @@ export default class Pong extends React.Component<{}, {
 			return ;
 		if (e.key === "s" || e.key === "ArrowDown") {
 			this.setState({ downIsPressed: true });
-			socket.emit('move', 1);
+			socket.emit('pong_move', 1);
 		}
 		if (e.key === "w" || e.key === "ArrowUp") {
 			this.setState({ upIsPressed: true });
-			socket.emit('move', -1);
+			socket.emit('pong_move', -1);
 		}
 		if (e.key === "p") {
 			var newPing = this.state.ping;
@@ -130,18 +131,20 @@ export default class Pong extends React.Component<{}, {
 			this.setState({ downIsPressed: false });
 		if (e.key === "w" || e.key === "ArrowUp")
 			this.setState({ upIsPressed: false });
-		if (!this.state.downIsPressed && !this.state.upIsPressed)
-			socket.emit('move', 0);
+		if ((this.state.downIsPressed || this.state.upIsPressed)
+			&& !(this.state.downIsPressed && this.state.upIsPressed))
+			socket.emit('pong_move', 0);
 	}
 
 	manageResize() {
-		this.setState({ ratio: window.innerWidth / board.w });
-		if (board.h * this.state.ratio >= window.innerHeight)
-			this.setState({ ratio: window.innerHeight / board.h });
+		this.setState({ ratio: Math.min(
+			window.innerWidth / board.w,
+			window.innerHeight / board.h)
+		});
 	}
 
 	refresh() {
-		socket.emit('refresh');
+		socket.emit('pong_refresh');
 	}
 
 	render() {

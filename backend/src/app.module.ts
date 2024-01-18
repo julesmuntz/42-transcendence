@@ -14,6 +14,7 @@ import { SocketsService } from 'sockets.service';
 import { AppGateway } from 'app.gateway';
 import { ChannelsGateway } from 'channels/channels.gateway';
 import { PongModule } from 'pong/pong.module';
+import { PongService } from 'pong/pong.service';
 
 @Module({
 	imports: [ConfigModule.forRoot(),
@@ -43,6 +44,7 @@ import { PongModule } from 'pong/pong.module';
 		},
 		AppGateway,
 		SocketsService,
+		PongService,
 	],
 })
 

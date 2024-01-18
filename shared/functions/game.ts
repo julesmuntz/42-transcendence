@@ -2,8 +2,12 @@ import { ballReset, ballLaunchVx, board, paddle } from '../config/pong.config';
 import { DataBall, DataPlayer, DataTime, DataUpdate } from '../interfaces/data.interface';
 
 export function launchBall(ball: DataBall, player: DataPlayer, t: DataTime) {
-	ball = { ...ballReset };
+	ball.x = ballReset.x;
+	ball.y = ballReset.y;
 	ball.vx = (player.position === 0) ? -ballLaunchVx : ballLaunchVx;
+	ball.vy = ballReset.vy;
+	ball.r = ballReset.r;
+	ball.kickoff = ballReset.kickoff;
 	t.kickoff = new Date();
 }
 

@@ -1,14 +1,14 @@
 import { DataUpdate, DataMove } from './data.interface';
 
 export interface ServerToClientEvents {
-	accept: (playerId: number) => void;
 	ping: (n: number) => void;
-	update: (data: DataUpdate) => void;
+	pong_accept: (playerId: number) => void;
+	pong_update: (data: DataUpdate) => void;
 }
 
 export interface ClientToServerEvents {
-	join: () => void;
 	ping: (n: number) => void;
-	move: (direction: number) => void;
-	refresh: () => void;
+	pong_join: () => void;
+	pong_move: (direction: number) => void;
+	pong_refresh: () => void;
 }
