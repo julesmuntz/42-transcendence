@@ -7,7 +7,6 @@ import { Public } from 'auth/decorator/public.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Express, Response } from 'express';
-import { createWriteStream, existsSync } from 'fs';
 import { editFileName } from './file-upload.utils';
 
 @Controller('users')

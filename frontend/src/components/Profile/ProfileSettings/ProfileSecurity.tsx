@@ -65,7 +65,6 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 		});
 	}
 
-
 	const CustomToggle = React.forwardRef<Ref, Props>((props, ref) => (
 		<Button
 			variant='dark'

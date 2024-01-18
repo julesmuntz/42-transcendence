@@ -13,6 +13,7 @@ import { JwtAuthGuard } from './auth/guard/jwt.Guards';
 import { SocketsService } from 'sockets.service';
 import { AppGateway } from 'app.gateway';
 import { ChannelsGateway } from 'channels/channels.gateway';
+import { PongModule } from 'pong/pong.module';
 
 @Module({
 	imports: [ConfigModule.forRoot(),
@@ -27,11 +28,12 @@ import { ChannelsGateway } from 'channels/channels.gateway';
 		synchronize: true,
 	}),
 		AuthModule,
-		UsersModule,
 		FriendsModule,
 		GamesModule,
-		ChatsModule,
 		ChannelsModule,
+		ChatsModule,
+		PongModule,
+		UsersModule,
 	],
 	controllers: [],
 	providers: [

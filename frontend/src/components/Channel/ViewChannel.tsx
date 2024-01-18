@@ -106,7 +106,7 @@ export default function ViewChannel() {
 										onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
 									>
 										<div className="color_text d-flex align-items-start">
-											<div className="flex-grow-1 ml-3">
+											<div style={{wordBreak: "break-all"}} className="flex-grow-1 ml-3">
 												{channel.name}
 											</div>
 										</div>
@@ -129,7 +129,7 @@ export default function ViewChannel() {
 										onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
 									>
 										<div className="color_text d-flex align-items-start">
-											<div className="flex-grow-1 ml-3">
+											<div style={{wordBreak: "break-all"}} className="flex-grow-1 ml-3">
 												{channel.name}
 											</div>
 										</div>
@@ -152,7 +152,7 @@ export default function ViewChannel() {
 										onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
 									>
 										<div className="color_text d-flex align-items-start">
-											<div className="flex-grow-1 ml-3">
+											<div style={{wordBreak: "break-all"}} className="flex-grow-1 ml-3">
 												{channel.name}
 											</div>
 										</div>

@@ -71,6 +71,7 @@ function App() {
 	}
 
 	if (userContext.user.authToken)
+		console.log(userContext.user.info);
 		return (
 			<div className="App">
 					<QueryClientProvider client={queryClient}>

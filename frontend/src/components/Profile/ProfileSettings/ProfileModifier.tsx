@@ -5,6 +5,7 @@ import Image from 'react-bootstrap/Image';
 import Form from 'react-bootstrap/Form';
 import { useContext, useState } from "react";
 import { UserContext } from "../../../contexts/UserContext";
+import '../css/ProfileModifier.css';
 
 export default function ProfileModifier() {
 	const [show, setShow] = useState(false);
@@ -73,7 +74,7 @@ export default function ProfileModifier() {
 			<Dropdown.Item onClick={handleShow}>
 				Modify profile information
 			</Dropdown.Item>
-			<Modal show={show} onHide={handleClose} animation={false}>
+			<Modal className='modal-style' data-bs-theme="dark" show={show} onHide={handleClose} animation={false}>
 				<Modal.Header closeButton>
 					<Modal.Title>Profile Modification</Modal.Title>
 				</Modal.Header>
@@ -97,10 +98,10 @@ export default function ProfileModifier() {
 								fluid />
 						</Form.Group>
 						<Form.Group>
-							<Form.Label>
+							<Form.Label className='py-3 pe-3'>
 								Username
 							</Form.Label>
-							<input type="text" name="" id="" placeholder={userContext.user.info.username} />
+							<input type="text" className='username' placeholder={userContext.user.info.username} />
 						</Form.Group>
 						<Button type='submit'>Save changes</Button>
 					</Form>

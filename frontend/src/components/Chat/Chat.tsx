@@ -5,7 +5,8 @@ import { IFriends, UserContext, useEmits } from '../../contexts/UserContext';
 import { Message, UserRoom } from "../../shared/chats.interface";
 import { Header, UserList } from './Header';
 import { ChatLayout, useRoomQuery } from './ChatLayout';
-import { MessageForm, Messages } from './Footer';
+import MessageForm from './MessageForm';
+import Messages from './Messages';
 import { WebSocketContext, useSocketEvent } from '../../contexts/WebSocketContext';
 
 export default function Chat() {
@@ -51,10 +52,10 @@ export default function Chat() {
 			setToggleUserList(false);
 	});
 	useSocketEvent(socket, 'deleteChannel', () => {
-		navigate('/');
+		// navigate('/');
 	});
 	useSocketEvent(socket, 'banned', () => {
-		navigate('/');
+		// navigate('/');
 	});
 
 	useEmits(socket, 'friendsBlocked', null);
@@ -72,19 +73,15 @@ export default function Chat() {
 					socket?.on('connect', () => resolve());
 				}
 			});
-			if (!roomName) {
-				// navigate('/');
-			} else {
-				socket?.emit('join_room', {
-					user: {
-						userId: userContext.user.info.id,
-						userName: userContext.user.info.username,
-						socketId: socket?.id || "",
-						avatarPath: userContext.user.info.avatarPath,
-					},
-					roomName: roomName
-				});
-			}
+			socket?.emit('join_room', {
+				user: {
+					userId: userContext.user.info.id,
+					userName: userContext.user.info.username,
+					socketId: socket?.id || "",
+					avatarPath: userContext.user.info.avatarPath,
+				},
+				roomName: roomName
+			});
 		};
 		initializeChat();
 		return () => {

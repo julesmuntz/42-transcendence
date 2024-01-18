@@ -1,0 +1,16 @@
+.modal-content .form-label {
+	color: white;
+}
+
+.modal-content {
+	font-size: 1.2em;
+}
+
+.modal-content input.username:focus {
+	color: white;
+}
+
+.modal-title.h4 {
+	color: white;
+}
+

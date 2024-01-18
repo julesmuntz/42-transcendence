@@ -2,8 +2,8 @@ import Form from 'react-bootstrap/Form';
 import styled from "styled-components";
 import { UserContext } from '../../contexts/UserContext';
 import { useContext } from 'react';
-import "../LoginPage/css/TwoFA.css"
-import "./Profile.css"
+import "../LoginPage/css/TwoFA.css";
+import "./css/Profile.css";
 
 const TwofaBody = styled.div`
 	height: 100vh;
