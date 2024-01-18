@@ -75,7 +75,7 @@ export class FriendsGateway {
 				const roomName = await this.dataSource.manager.save(Room, { name: string, host: { userId: friends_view.user1.id, userName: friends_view.user1.username, socketId: "" }, users: [], message: [], channel: false })
 				const friends = await this.dataSource.manager.save(Friend, { id: friends_view.id, type: RelationType.Friend, roomName: roomName.name });
 				if (friends) {
-					this.logger.log`User ${user.username} accepting ${idUserTarget.username}`;
+					this.logger.log(`User ${user.username} accepting ${idUserTarget.username}`);
 					this.server.to(client.id).emit('friends', friends);
 					this.handleRefreshFriendsAllsocketId(client.id, RelationType.Friend);
 					if (idUserTarget.socketId)
@@ -116,7 +116,6 @@ export class FriendsGateway {
 
 	@SubscribeMessage('delete_friends')
 	async handleDeleteFriends(client: Socket, payload: { id: number }): Promise<void> {
-		console.log('delete_friends')
 		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client.id} })
 		const idUserTarget = await this.dataSource.manager.findOne(User, { where: {id: payload.id} })
 		if (user && idUserTarget && user.id != idUserTarget.id) {
@@ -132,8 +131,8 @@ export class FriendsGateway {
 			if (idUserTarget.socketId)
 			{
 				this.server.to(idUserTarget.socketId).emit('friends', null);
-				this.server.to(idUserTarget.socketId).emit('friendsInviteRemoved');
 				this.handleRefreshFriendsAllsocketId(idUserTarget.socketId, RelationType.Friend);
+				this.server.to(idUserTarget.socketId).emit('friendsInviteRemoved');
 			}
 		}
 	}

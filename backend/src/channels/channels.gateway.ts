@@ -27,7 +27,6 @@ export class ChannelsGateway {
 			if (payload.createChannelDto.passwordHash)
 				payload.createChannelDto.passwordHash = await bcrypt.hash(payload.createChannelDto.passwordHash, 10);
 			const channel = await this.dataSources.manager.save(Channel, payload.createChannelDto);
-			console.log(channel);
 			if (channel) {
 				const user = await this.dataSources.manager.findOne(User, { where: { id: parseInt(payload.userId) } });
 				if (user) {
@@ -58,7 +57,7 @@ export class ChannelsGateway {
 			this.dataSources.manager.delete(Room, { name: channel.name });
 			this.logger.log(`Channel ${channel.name} deleted`);
 			this.server.emit('deleteChannel');
-			this.server.emit('updateType');
+			this.server.emit('updateListChannel');
 			return channel;
 		}
 	}
@@ -125,10 +124,8 @@ export class ChannelsGateway {
 		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
 			const compare = await bcrypt.compare(payload.password, channel.passwordHash);
-			console.log(compare);
 			if (compare) {
 				const userExist = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: channel.id }, user: { id: user.id } } });
-				console.log(userExist);
 				if (!userExist) {
 					const channelMember = await this.dataSources.manager.save(ChannelMember, { user: user, channel: channel, pass: true });
 					if (channelMember) {
@@ -152,7 +149,7 @@ export class ChannelsGateway {
 		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
 			const channelMember = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: channel.id }, user: { id: user.id } } });
-			if (channelMember) {
+			if (channelMember && channelMember.role !== ChannelMemberRole.Owner) {
 				this.dataSources.manager.delete(ChannelMember, { id: channelMember.id });
 				this.logger.log(`Channel ${channel.name} kicked to ${user.username}`);
 				if (user.socketId !== '') {
@@ -183,6 +180,7 @@ export class ChannelsGateway {
 					if (user.socketId !== '') {
 						await this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
 						await this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
+						await this.server.to(user.socketId).emit('updateListChannel', 'You are kick from this channel');
 					}
 				}
 				return channel;
@@ -308,7 +306,7 @@ export class ChannelsGateway {
 			if (!channel)
 				return;
 			this.logger.log(`Change type of room ${room.name}`);
-			this.server.emit('updateType');
+			this.server.emit('updateListChannel');
 			return room;
 		}
 	}

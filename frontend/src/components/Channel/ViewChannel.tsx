@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext, useEmits } from "../../contexts/UserContext";
+import { UserContext } from "../../contexts/UserContext";
 import { WebSocketContext } from "../../contexts/WebSocketContext";
 import { useNavigate } from 'react-router-dom'
 
@@ -16,25 +16,37 @@ export default function ViewChannel() {
 	const userContext = useContext(UserContext);
 	const navigate = useNavigate();
 
-	useEmits(socket, 'getChannel', null);
+	useEffect(() => {
+		const initializeEmits = async () => {
+			await new Promise<void>(resolve => {
+				if (socket?.connected) {
+					resolve();
+				} else {
+					socket?.on('connect', () => resolve());
+				}
+			});
+			socket?.emit('getChannel');
+		};
+		initializeEmits();
+	}, [socket]);
 
 	useEffect(() => {
 		socket?.on('channelList', (data: Channel[]) => {
 			setChannel([]);
 			setChannel(data);
 		});
-		socket?.on('updateType', () => {
+		socket?.on('updateListChannel', () => {
 			socket?.emit('getChannel');
 		});
 		socket?.on('updateChannelList', (data: Channel) => {
 			setChannel((channel) => [...channel, data]);
 		});
-		socket?.on('passwordChannel', (roomId: string) => {navigate(`/chat/${roomId}`);	});
+		socket?.on('passwordChannel', (roomId: string) => { navigate(`/chat/${roomId}`); });
 		return () => {
 			socket?.off('channelList');
 			socket?.off('updateChannelList');
 			socket?.off('passwordChannel');
-			socket?.off('updateType');
+			socket?.off('updateListChannel');
 		};
 
 	}, [channel, socket, navigate]);
@@ -47,8 +59,8 @@ export default function ViewChannel() {
 				alert('Please fill in all fields');
 				return;
 			}
-			socket?.emit('passwordChannel', {channelId: roomId, password: password, userId: userContext.user.info.id})
-		}else
+			socket?.emit('passwordChannel', { channelId: roomId, password: password, userId: userContext.user.info.id })
+		} else
 			socket?.emit('joinChannel', { userId: userContext.user.info.id, channelId: roomId });
 	};
 
@@ -75,7 +87,7 @@ export default function ViewChannel() {
 										onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
 									>
 										<div className="color_text d-flex align-items-start">
-											<div style={{wordBreak: "break-all"}} className="flex-grow-1 ml-3">
+											<div style={{ wordBreak: "break-all" }} className="flex-grow-1 ml-3">
 												{channel.name}
 											</div>
 										</div>
@@ -98,7 +110,7 @@ export default function ViewChannel() {
 										onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
 									>
 										<div className="color_text d-flex align-items-start">
-											<div style={{wordBreak: "break-all"}} className="flex-grow-1 ml-3">
+											<div style={{ wordBreak: "break-all" }} className="flex-grow-1 ml-3">
 												{channel.name}
 											</div>
 										</div>
@@ -121,7 +133,7 @@ export default function ViewChannel() {
 										onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
 									>
 										<div className="color_text d-flex align-items-start">
-											<div style={{wordBreak: "break-all"}} className="flex-grow-1 ml-3">
+											<div style={{ wordBreak: "break-all" }} className="flex-grow-1 ml-3">
 												{channel.name}
 											</div>
 										</div>

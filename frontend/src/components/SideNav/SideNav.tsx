@@ -74,7 +74,7 @@ export default function SideBar() {
 				<Route path="/" element={<Profile />}></Route>
 				<Route path="/friend" element={<ViewFriends />}></Route>
 				<Route path="/search" element={<SearchProfile />}></Route>
-				<Route path="/game" element={<Pong />}></Route>
+				{/* <Route path="/game" element={<Pong />}></Route> */}
 				<Route path="/chat/:id" element={<Chat />}></Route>
 				<Route path="/chat" element={<Chat />}></Route>
 			</Routes>

@@ -62,14 +62,13 @@ export class ChatGateway {
 				this.server.to(user.socketId).emit('banned', 'You are banned from this channel');
 				return undefined;
 			}
-
 		}
 		return user;
 	}
 	//renvoie la liste des user de la room
 	@SubscribeMessage('join_room')
 	async handleSetClientDataEvent(@MessageBody() payload: { user: UserRoom; roomName: string; }) {
-		if (payload.user.socketId) {
+		if (payload.user.socketId && payload.roomName) {
 			const user = await this.createUserRoom(payload.user, payload.roomName);
 			if (!user)
 				return;
@@ -101,26 +100,25 @@ export class ChatGateway {
 	//renvoie la liste des user de la room
 	// Corrected handleUserListEvent function
 	async handleUserListEvent(roomName: string) {
+
+		if (!roomName)
+			return;
 		this.logger.log(`Get user list of ${roomName}`);
-		try {
-			const users =  await this.dataSource.manager.find(ChannelMember, {relations: ['channel', 'user'], where: { channel: {name: roomName} }})
-			if (users && users.length > 0) {
-				const roomUsers: UserRoom[] = [];
-				for (const user of users) {
-					roomUsers.push({
-						userId: user.user.id,
-						userName: user.user.username,
-						socketId: user.user.socketId,
-						muted: user.permission === ChannelMemberPermission.Muted ?? false,
-						type: user.role === ChannelMemberRole.Owner ? 'Owner' : user.role === ChannelMemberRole.Admin ? 'Admin' : 'regular',
-						ban: user.access === ChannelMemberAccess.Banned ?? false,
-						avatarPath: user.user.avatarPath,
-					});
-				}
-				this.server.to(roomName).emit('user_list', roomUsers);
+		const users =  await this.dataSource.manager.find(ChannelMember, {relations: ['channel', 'user'], where: { channel: {name: roomName} }})
+		if (users && users.length > 0) {
+			const roomUsers: UserRoom[] = [];
+			for (const user of users) {
+				roomUsers.push({
+					userId: user.user.id,
+					userName: user.user.username,
+					socketId: user.user.socketId,
+					muted: user.permission === ChannelMemberPermission.Muted ?? false,
+					type: user.role === ChannelMemberRole.Owner ? 'Owner' : user.role === ChannelMemberRole.Admin ? 'Admin' : 'regular',
+					ban: user.access === ChannelMemberAccess.Banned ?? false,
+					avatarPath: user.user.avatarPath,
+				});
 			}
-		} catch (error) {
-			this.logger.error(`Error getting user list for ${roomName}: ${error.message}`);
+			this.server.to(roomName).emit('user_list', roomUsers);
 		}
 	}
 }
