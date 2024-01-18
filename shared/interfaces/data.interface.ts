@@ -5,7 +5,7 @@ export interface DataMove {
 
 export interface DataUpdate {
 	t: DataTime;
-	ping: DataPing;
+	ping?: DataPing;
 	player1: DataPlayer;
 	player2: DataPlayer;
 	ball: DataBall;
