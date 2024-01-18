@@ -95,7 +95,10 @@ export class FriendsGateway {
 		if (user && idUserTarget && user.id != idUserTarget.id) {
 			const friends_view = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id:  payload.id }, user2: { id: user.id } },	{ user1: { id: user.id }, user2: { id:  payload.id } },],});
 			if (friends_view)
+			{
 				this.dataSource.manager.delete(Friend, { id: friends_view.id });
+				this.dataSource.manager.delete(Room, { name: friends_view.roomName });
+			}
 			const friends = await this.dataSource.manager.save(Friend, { user1: user, user2: idUserTarget, type: RelationType.Blocked });
 			if (friends) {
 				this.server.to(client.id).emit('friends', friends);
@@ -113,13 +116,15 @@ export class FriendsGateway {
 
 	@SubscribeMessage('delete_friends')
 	async handleDeleteFriends(client: Socket, payload: { id: number }): Promise<void> {
+		console.log('delete_friends')
 		const user = await this.dataSource.manager.findOne(User, { where: {socketId: client.id} })
 		const idUserTarget = await this.dataSource.manager.findOne(User, { where: {id: payload.id} })
 		if (user && idUserTarget && user.id != idUserTarget.id) {
 			const friends_view = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id:  payload.id }, user2: { id: user.id } },	{ user1: { id: user.id }, user2: { id:  payload.id } },],});
 			if (friends_view) {
-				this.logger.log`User ${user.username} deleting ${idUserTarget.username}`;
-				this.dataSource.manager.delete(Room, { name: friends_view.roomName });
+				this.logger.log(`User ${user.username} deleting ${idUserTarget.username}`);
+				if (friends_view.roomName)
+					this.dataSource.manager.delete(Room, { name: friends_view.roomName });
 				this.dataSource.manager.delete(Friend, { id: friends_view.id });
 			}
 			this.server.to(client.id).emit('friends', null);
@@ -127,6 +132,7 @@ export class FriendsGateway {
 			if (idUserTarget.socketId)
 			{
 				this.server.to(idUserTarget.socketId).emit('friends', null);
+				this.server.to(idUserTarget.socketId).emit('friendsInviteRemoved');
 				this.handleRefreshFriendsAllsocketId(idUserTarget.socketId, RelationType.Friend);
 			}
 		}

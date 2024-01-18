@@ -24,22 +24,17 @@ export default function ViewChannel() {
 			setChannel(data);
 		});
 		socket?.on('updateType', () => {
-			console.log('updateType');
 			socket?.emit('getChannel');
 		});
 		socket?.on('updateChannelList', (data: Channel) => {
 			setChannel((channel) => [...channel, data]);
 		});
-		socket?.on('deleteChannel', (data: Channel) => {
-			setChannel((channel) => channel.filter((channel) => channel.id !== data.id));
-		});
 		socket?.on('passwordChannel', (roomId: string) => {navigate(`/chat/${roomId}`);	});
-
 		return () => {
 			socket?.off('channelList');
 			socket?.off('updateChannelList');
-			socket?.off('deleteChannel');
 			socket?.off('passwordChannel');
+			socket?.off('updateType');
 		};
 
 	}, [channel, socket, navigate]);
@@ -56,32 +51,6 @@ export default function ViewChannel() {
 		}else
 			socket?.emit('joinChannel', { userId: userContext.user.info.id, channelId: roomId });
 	};
-
-	// async function getUserIdByUsername(target: string): Promise<number | null> {
-	// 	const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/search/${target}`, {
-	// 		method: 'GET',
-	// 		headers: {
-	// 			Authorization: `Bearer ${userContext.user.authToken}`,
-	// 			'Content-Type': 'application/json',
-	// 		},
-	// 	});
-	// 	const data = await response.json();
-	// 	if (data.error || data.length === 0) {
-	// 		return null;
-	// 	}
-	// 	return data[0].id;
-	// }
-
-	// async function inviteToChannel(channelId: number) {
-	// 	const userName = prompt('Enter username');
-	// 	const userId = await getUserIdByUsername(userName || '');
-	// 	if (userId) {
-	// 		socket?.emit('inviteChannels', { userId, channelId });
-	// 	}
-	// 	else {
-	// 		alert('User not found');
-	// 	}
-	// }
 
 	function Category({ children }: { children: React.ReactNode }) {
 		return (
