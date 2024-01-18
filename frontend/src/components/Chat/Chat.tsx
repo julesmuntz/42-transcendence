@@ -94,7 +94,7 @@ export default function Chat() {
 
 	const leaveRoom = () => {
 		socket?.emit('disconnectRoom', { roomName: roomName });
-		navigate('/');
+		navigate('/chat');
 	};
 
 	const sendMessage = (message: string) => {
@@ -165,7 +165,7 @@ export default function Chat() {
 		return (
 			<ChatLayout>
 				{[
-					<div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "calc(100vh - 220px)" }}>
+					<div key="join-create-channel" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "calc(100vh - 220px)" }}>
 						<div style={{ color: "gray"}}>
 							Join or create a channel
 						</div>

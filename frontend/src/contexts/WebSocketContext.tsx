@@ -54,6 +54,8 @@ function WebSocketProvider({
 				notificationFunctions[notification.type](notification.message);
 			});
 			return () => {
+				socketIOClient.off("connect");
+				socketIOClient.off("notification");
 				socketIOClient.disconnect();
 			};
 		}

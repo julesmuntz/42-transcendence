@@ -38,7 +38,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.pongService.kick(socket);
 		this.logger.log("Server: connection stopped");
 		const user = this.socketService.removeSocket(socket);
-
+		
 		if (!user)
 			return undefined;
 		const connectedUser = await this.dataSource.manager.findOneBy(User, {

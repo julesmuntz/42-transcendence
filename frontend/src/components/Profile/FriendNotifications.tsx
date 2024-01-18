@@ -38,24 +38,21 @@ export default function FriendNotifications() {
 		});
 	}, [socket]);
 
-	if (notifs)
-	{
-		return (
-			<Container className="d-flex friend-invites">
-				<h3>Friend Invites</h3>
-				{notifs?.map((notif, index) => {
-				if (notif.user1.id !== userContext.user.info.id) {
-				return (
-					<Container key={index} className="link-to-friend">
-						<Link to={`/profile/${notif.user1.id}`} className="link-text">{notif.user1.username}</Link>
-					</Container>
-				);
-				} else {
-					return null; // or any other value that makes sense in your context
-				}
-			})}
-			</Container>
-		);
-	}
-	return (<></>);
+
+	return (
+		<Container className="d-flex friend-invites">
+			<h3>Friend Invites</h3>
+			{notifs?.map((notif, index) => {
+			if (notif?.user1.id !== userContext.user.info.id) {
+			return (
+				<Container key={index} className="link-to-friend">
+					<Link to={`/profile/${notif.user1.id}`} className="link-text">{notif.user1.username}</Link>
+				</Container>
+			);
+			} else {
+				return null; // or any other value that makes sense in your context
+			}
+		})}
+		</Container>
+	);
 }

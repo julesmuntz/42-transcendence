@@ -31,9 +31,9 @@ export const Header = ({
 				<div className="btn-group">
 					{/* Display the room name and connection status */}
 					<h3 className="panel-title">
-						{roomName}
+						{isChannel ? (roomName) : (`Direct message`)}
 						{/* {roomName} <span className="ml-1">{isConnected ? '🟢' : '🔴'}</span> */}
-					</h3>
+						</h3>
 					{/* Button to leave the room if it's a channel */}
 					{isChannel && (
 						<button className="btn btn-default" type="button" onClick={() => handleLeaveRoom()}>
@@ -92,7 +92,7 @@ export const Header = ({
 export const UserList = ({ user, hostId, user_a, handleBanUnBan, handelMuteUnMute, handleKick, handlePromote }: { user: UserRoom[], hostId: number, user_a: UserRoom, handleBanUnBan: (user: UserRoom) => void, handelMuteUnMute: (user: UserRoom) => void, handleKick: (user: UserRoom) => void, handlePromote: (user: UserRoom) => void }) => {
 	return (
 		<div className="flex h-4/6 w-full flex-col-reverse overflow-y-scroll">
-			{user.map((users, index) => (
+			{user.length > 0 && user.map((users, index) => (
 				<div key={index} className="mb-4 flex rounded px-4 py-2">
 					<p className="text-black">
 						{users.userName} {hostId === users.userId && <span className="ml-2">{'👑'}</span>}
