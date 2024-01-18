@@ -10,11 +10,15 @@ export class Game {
 	creationDate: Date;
 
 	@ManyToOne(() => User, { onDelete: 'CASCADE' })
-	@JoinColumn({ name: 'user1_id' })
+	@JoinColumn({
+		name: 'user1Id',
+	 })
 	user1: User;
 
 	@ManyToOne(() => User, { onDelete: 'CASCADE' })
-	@JoinColumn({ name: 'user2_id' })
+	@JoinColumn({
+		name: 'user2Id',
+	 })
 	user2: User;
 
 	@Column()

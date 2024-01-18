@@ -57,7 +57,8 @@ export class ChannelsGateway {
 			this.dataSources.manager.delete(Channel, { id: channel.id });
 			this.dataSources.manager.delete(Room, { name: channel.name });
 			this.logger.log(`Channel ${channel.name} deleted`);
-			this.server.emit('deleteChannel', channel);
+			this.server.emit('deleteChannel');
+			this.server.emit('updateType');
 			return channel;
 		}
 	}

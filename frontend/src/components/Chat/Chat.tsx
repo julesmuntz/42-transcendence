@@ -18,7 +18,7 @@ export default function Chat() {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [toggleUserList, setToggleUserList] = useState<boolean>(false);
 
-	const { data: room } = useRoomQuery(roomName as string, isConnected ?? false) || {};
+	const { data: room } = useRoomQuery(roomName as string, isConnected ?? false);
 	const [getUser, setUsers] = useState<UserRoom[]>([]);
 	const navigate = useNavigate();
 	const [user, setUser] = useState<UserRoom>({
@@ -51,11 +51,13 @@ export default function Chat() {
 		if (e.type === 'regular')
 			setToggleUserList(false);
 	});
+
 	useSocketEvent(socket, 'deleteChannel', () => {
-		// navigate('/');
+		navigate('/chat');
 	});
+
 	useSocketEvent(socket, 'banned', () => {
-		// navigate('/');
+		navigate('/chat');
 	});
 
 	useEmits(socket, 'friendsBlocked', null);
@@ -159,7 +161,7 @@ export default function Chat() {
 		}
 	}
 
-	if (!roomName) {
+	if (!roomName || !room) {
 		return (
 			<ChatLayout>
 				{[

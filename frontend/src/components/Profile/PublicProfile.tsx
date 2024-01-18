@@ -17,7 +17,6 @@ export default function PublicProfile() {
 		if (id &&userContext.user.info.id === parseInt(id)) {
 			nav('/profile');
 		}
-
 		let fetchUser = async () => {
 			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${id}`,
 				{
@@ -36,8 +35,6 @@ export default function PublicProfile() {
 			setDone(true);
 		}
 	}, [user, id, userContext, nav, done]);
-
-
 
 	return (
 		<Container className="d-flex">

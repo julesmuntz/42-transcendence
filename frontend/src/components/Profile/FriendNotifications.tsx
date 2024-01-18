@@ -8,16 +8,33 @@ import "./css/FriendNotifications.css";
 export default function FriendNotifications() {
 	const userContext = useContext(UserContext);
 	const socket = useContext(WebSocketContext);
-	const [notifs, setNotifs] = useState<IFriends[] | null>([]);
+	const [notifs, setNotifs] = useState<IFriends[] | null>(null);
 
 	useEffect(() => {
-		socket?.emit('notification_friendsInvited', { id: null});
+		const initializeNotifFriend = async () => {
+			await new Promise<void>(resolve => {
+				if (socket?.connected) {
+					resolve();
+				} else {
+					socket?.on('connect', () => resolve());
+				}
+			});
+			socket?.emit('notification_friendsInvited', { id: null});
+		};
+		initializeNotifFriend();
+
 		socket?.on('friendsInvited', (e: IFriends[] | null) => {
-			const notifArr = e;
-			if (notifArr !== null)
-				setNotifs(notifArr);
-			else
-				setNotifs([]);
+			setNotifs(null);
+			setNotifs(e);
+		});
+
+		socket?.on('friendsInviteRemoved', () => {
+			socket?.emit('notification_friendsInvited', { id: null});
+		});
+
+		return (() => {
+			socket?.off('friendsInvited');
+			socket?.off('friendsInviteRemoved');
 		});
 	}, [socket]);
 

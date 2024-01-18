@@ -17,7 +17,17 @@ export default function ViewFriends() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		socket?.emit('refresh_friends_all');
+		const initializeNotifFriend = async () => {
+			await new Promise<void>(resolve => {
+				if (socket?.connected) {
+					resolve();
+				} else {
+					socket?.on('connect', () => resolve());
+				}
+			});
+			socket?.emit('refresh_friends_all');
+		};
+		initializeNotifFriend();
 		socket?.on('Viewfriends', (e: IFriends[]) => {
 			setViewFriends(null);
 			setViewFriends(e);
@@ -26,13 +36,7 @@ export default function ViewFriends() {
 			socket?.off('Viewfriends');
 			setViewFriends(null);
 		};
-	}, [socket, viewFriends]);
-
-	// async function handleButtonDeleteFriends(userId: number) {
-	// 	if (userId !== userContext.user.info.id) {
-	// 		socket?.emit('delete_friends', { id: userId });
-	// 	}
-	// }
+	}, [socket]);
 
 	const joinnRoom = (roomId: string) => {
 		navigate(`/chat/${roomId}`);

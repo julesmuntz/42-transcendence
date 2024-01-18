@@ -15,11 +15,13 @@ export class ChatsController {
 
 	@Public()
 	@Get('rooms/:id')
-	async getRoomById(@Param('id') id: string): Promise<Room> {
+	async getRoomById(@Param('id') id: string): Promise<Room | undefined> {
+		if(id === 'undefined')
+			return undefined;
 		const roomNane = await this.chatsService.getRoomByName(id);
 		if (roomNane)
 			return roomNane;
 		else
-			throw new NotFoundException("Room does not exit !");
+			return undefined;
 	}
 }

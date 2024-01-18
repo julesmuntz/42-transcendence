@@ -2,11 +2,13 @@ import React, { useContext, useEffect } from 'react';
 import './App.css';
 import SideNav from "./components/SideNav/SideNav";
 import LoginPage from './components/LoginPage/LoginPage';
-import { UserContext } from "./contexts/UserContext";
+import { Info, UserContext } from "./contexts/UserContext";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import TwoFA from './components/LoginPage/TwoFA';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { WebSocketContext, useSocketEvent } from './contexts/WebSocketContext';
+import { Socket } from 'socket.io-client';
 
 interface JwtPayload {
 	users: {
@@ -29,28 +31,41 @@ function App() {
 	const token = Cookies.get('access_token');
 	const TFASecret = Cookies.get('TFASecret');
 	const id = Cookies.get("id");
+	const socket = useContext<Socket | undefined>(WebSocketContext);
+
+	useSocketEvent(socket, 'infoUser', (e: Info) => {
+		const getUser = async (e: Info) => {
+			userContext.connectUser(e);
+		}
+		if (userContext.user.auth) {
+			getUser(e);
+		}
+	});
 
 	useEffect(() => {
-		const getUser = async (id: number, token: string) => {
-			const result = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${id}`, {
-				method: "GET",
-				headers: {
-					"Authorization": `Bearer ${token}`
-				}
-			}).then((res) => {
-				return res.json();
-			}).then((ret) => {
-				userContext.login(ret, token);
-				return (ret);
-			});
+		// const getUser = async (id: number, token: string) => {
+		// 	const result = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${id}`, {
+		// 		method: "GET",
+		// 		headers: {
+		// 			"Authorization": `Bearer ${token}`
+		// 		}
+		// 	}).then((res) => {
+		// 		return res.json();
+		// 	}).then((ret) => {
+		// 		userContext.login(ret, token);
+		// 		return (ret);
+		// 	});
 
-			return (result);
-		};
-
+		// 	return (result);
+		// };
+		const getTocken = async (id:number, token: string) => {
+			userContext.setTocken(id, token);
+		}
 		if (!userContext.user.auth && token) {
 			const user = jwtDecode<JwtPayload>(token);
 			const info = user.users;
-			getUser(info.id, token);
+			// userContext.setTocken(info.id, token);
+			getTocken(info.id, token);
 		}
 
 	}, [token, userContext]);
@@ -71,7 +86,6 @@ function App() {
 	}
 
 	if (userContext.user.authToken)
-		console.log(userContext.user.info);
 		return (
 			<div className="App">
 					<QueryClientProvider client={queryClient}>

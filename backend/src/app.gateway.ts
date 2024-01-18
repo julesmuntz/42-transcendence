@@ -65,6 +65,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			connectedUser = await this.dataSource.manager.findOneBy(User, {
 				id: parseInt(userId),
 			});
+			this.server.to(socket.id).emit('infoUser', connectedUser);
 		}
 	}
 }
