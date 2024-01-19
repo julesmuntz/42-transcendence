@@ -8,6 +8,7 @@ import { WebSocketContext } from "../../contexts/WebSocketContext";
 import { Socket } from 'socket.io-client';
 import { Link } from "react-router-dom";
 import Image from 'react-bootstrap/Image'
+import Friends from "./Friends";
 
 export default function ViewFriends() {
     const userContext = useContext(UserContext);
@@ -84,6 +85,10 @@ export default function ViewFriends() {
                                                     </p>
                                                 </h5>
                                             </div>
+                                            <div className="col-md-3 col-sm-3">
+												<br />
+												{user.id !== userContext.user.info.id && <Friends IdUserTarget={user.id} />}
+											</div>
                                         </div>
                                     </div>
                                 ))

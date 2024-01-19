@@ -10,11 +10,11 @@ import Chat from "../Chat/Chat";
 import { useState } from "react";
 
 export default function SideBar() {
-	const [profileColor, setProfileColor] = useState("gray");
-	const [chatColor, setChatColor] = useState("gray");
-	const [gameColor, setGameColor] = useState("gray");
-	const [friendColor, setFriendColor] = useState("gray");
-	const [searchColor, setSearchColor] = useState("gray");
+	const [profileColor, setProfileColor] = useState("#535f71");
+	const [chatColor, setChatColor] = useState("#535f71");
+	const [gameColor, setGameColor] = useState("#535f71");
+	const [friendColor, setFriendColor] = useState("#535f71");
+	const [searchColor, setSearchColor] = useState("#535f71");
 
 
 	return (
@@ -23,7 +23,7 @@ export default function SideBar() {
 				<div className="sidebar-sticky">
 					<Nav.Item className="pb-1">
 						<NavLink className={({ isActive }) => {
-							setProfileColor(isActive ? "#ff7c14" : "gray");
+							setProfileColor(isActive ? "#ff7c14" : "#535f71");
 							return (isActive ? "active" : "")
 						}} to="/profile">
 							<PersonFill color={profileColor} size={25} />
@@ -32,7 +32,7 @@ export default function SideBar() {
 
 					<Nav.Item className="pb-1">
 						<NavLink className={({ isActive }) => {
-							setChatColor(isActive ? "#ff7c14" : "gray");
+							setChatColor(isActive ? "#ff7c14" : "#535f71");
 							return (isActive ? "active" : "")
 						}} to="/chat">
 							<Discord color={chatColor} size={25} />
@@ -41,7 +41,7 @@ export default function SideBar() {
 
 					<Nav.Item className="pb-1">
 						<NavLink className={({ isActive }) => {
-							setGameColor(isActive ? "#ff7c14" : "gray");
+							setGameColor(isActive ? "#ff7c14" : "#535f71");
 							return (isActive ? "active" : "")
 						}} to="/game">
 							<Joystick color={gameColor} size={25} />
@@ -50,7 +50,7 @@ export default function SideBar() {
 
 					<Nav.Item className="pb-1">
 						<NavLink className={({ isActive }) => {
-							setFriendColor(isActive ? "#ff7c14" : "gray");
+							setFriendColor(isActive ? "#ff7c14" : "#535f71");
 							return (isActive ? "active" : "")
 						}} to="/friend">
 							<PeopleFill color={friendColor} size={25} />

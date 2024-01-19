@@ -86,7 +86,7 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 		<>
 			<Dropdown>
 				<Dropdown.Toggle as={CustomToggle}>
-					<GearWideConnected color="gray" size={25} />
+					<GearWideConnected color="#535f71" size={25} />
 				</Dropdown.Toggle>
 				<Dropdown.Menu variant='dark'>
 					{!userContext.user.info.isTFAEnabled ? <Dropdown.Item eventKey="1" onClick={activate2FA}>Activate 2FA</Dropdown.Item> :

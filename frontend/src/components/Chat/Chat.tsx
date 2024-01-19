@@ -177,25 +177,7 @@ export default function Chat() {
 		return data[0].id;
 	}
 
-
-	async function getChannelIdByName(target: string): Promise<number | null> {
-		const response = await fetch(`http://localhost:3030/chats/rooms/${target}`, {
-			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${userContext.user.authToken}`,
-				'Content-Type': 'application/json',
-			},
-		});
-		const data = await response.json();
-		console.log('Response data:', data);
-		if (data.error || data.length === 0) {
-			return null;
-		}
-		console.log("Channel:" + data.id);
-		return data.id;
-	}
-
-	async function inviteToChannel(channelId: number) {
+	async function inviteToChannel(channelId: string) {
 		const userName = prompt('Enter username');
 		const userId = await getUserIdByUsername(userName || '');
 		console.log(userId);
@@ -213,7 +195,7 @@ export default function Chat() {
 			<ChatLayout>
 				{[
 					<div key="join-create-channel" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "calc(100vh - 220px)" }}>
-						<div style={{ color: "gray" }}>
+						<div style={{ color: "#535f71" }}>
 							Join or create a channel
 						</div>
 					</div>
@@ -237,15 +219,10 @@ export default function Chat() {
 						handleDestroyRoom={() => handleDestroyRoom(roomName)}
 						handleChangePasswordEvent={(password: string) => handleChangePasswordEvent(roomName, password)}
 						handleChangeTypeEvent={() => handleChangeTypeEvent(roomName)}
-						handleInvite={async () => {
-							const channelId = await getChannelIdByName(roomName);
-							console.log(channelId);
-							const otherId = await getChannelIdByName('a');
-							console.log('other Id = ' + otherId);
-							if (channelId) {
-								inviteToChannel(channelId);
+						handleInvite={() => {
+								inviteToChannel(roomName);
 							}
-						}}
+						}
 					/>
 
 					{toggleUserList && socket ? (

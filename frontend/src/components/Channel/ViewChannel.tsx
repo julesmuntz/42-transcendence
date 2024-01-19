@@ -40,7 +40,7 @@ export default function ViewChannel() {
 		}
 		getRooms();
 	}, [socket]);
-
+	console.log(socket);
 	useEffect(() => {
 		socket?.on('channelList', (data: Channel[]) => {
 			setChannel([]);

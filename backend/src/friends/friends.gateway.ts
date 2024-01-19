@@ -123,7 +123,7 @@ export class FriendsGateway {
 			if (friends_view) {
 				this.logger.log(`User ${user.username} deleting ${idUserTarget.username}`);
 				if (friends_view.roomName)
-					this.dataSource.manager.delete(Room, { name: friends_view.roomName });
+					await this.dataSource.manager.delete(Room, { name: friends_view.roomName });
 				this.dataSource.manager.delete(Friend, { id: friends_view.id });
 			}
 			this.server.to(client.id).emit('friends', null);
