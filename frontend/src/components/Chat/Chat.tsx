@@ -17,8 +17,7 @@ export default function Chat() {
 	const [isConnected, setIsConnected] = useState(socket?.connected);
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [toggleUserList, setToggleUserList] = useState<boolean>(false);
-
-	const { data: room } = useRoomQuery(roomName as string, isConnected ?? false);
+	let { data: room } = useRoomQuery(roomName as string, isConnected ?? false);
 	const [getUser, setUsers] = useState<UserRoom[]>([]);
 	const navigate = useNavigate();
 	const [user, setUser] = useState<UserRoom>({
@@ -29,6 +28,11 @@ export default function Chat() {
 	});
 
 	const [friendBlock, setFriendBlock] = useState<IFriends[] | null>(null);
+	const [isType, setType] = useState<boolean>(false);
+	useSocketEvent(socket, 'type', () => 
+	{
+		setType(false);
+	});
 
 	useSocketEvent(socket, 'chat', (e: Message) => {
 		setMessages((messages) => [e, ...messages]);
@@ -68,13 +72,6 @@ export default function Chat() {
 
 	useEffect(() => {
 		const initializeChat = async () => {
-			await new Promise<void>(resolve => {
-				if (socket?.connected) {
-					resolve();
-				} else {
-					socket?.on('connect', () => resolve());
-				}
-			});
 			socket?.emit('join_room', {
 				user: {
 					userId: userContext.user.info.id,
@@ -91,6 +88,12 @@ export default function Chat() {
 			setToggleUserList(false);
 		};
 	}, [socket, roomName, navigate, userContext]);
+
+	useEffect(() => {
+		if (room?.type === "protected")
+			setType(true);
+		console.log('ooo');
+	}, [room]);
 
 	const leaveRoom = () => {
 		socket?.emit('disconnectRoom', { roomName: roomName });
@@ -213,6 +216,7 @@ export default function Chat() {
 						users={user}
 						roomName={room.name}
 						roomType={room.type}
+						isProtected={isType}
 						isChannel={room.channel}
 						handleUsersClick={() => setToggleUserList((toggleUserList) => !toggleUserList)}
 						handleLeaveRoom={() => leaveRoom()}

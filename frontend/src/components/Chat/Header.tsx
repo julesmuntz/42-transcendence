@@ -12,7 +12,8 @@ export const Header = ({
 	handleChangeTypeEvent,
 	handleInvite,
 	roomName,
-	roomType
+	roomType,
+	isProtected
 }: {
 	isConnected: boolean
 	users: UserRoom
@@ -25,6 +26,7 @@ export const Header = ({
 	handleInvite(): void
 	roomName: string
 	roomType: ChannelType
+	isProtected: boolean
 }) => {
 
 	return (
@@ -72,7 +74,7 @@ export const Header = ({
 						</button>
 					)}
 
-					{isChannel && (users.type === 'Owner' && roomType === 'protected') && (
+					{isChannel && (users.type === 'Owner' && roomType === 'protected') && isProtected && (
 						<button type="button" className="btn btn-default" onClick={() => {
 							if (window.confirm('Remove the password?'))
 								handleChangeTypeEvent();

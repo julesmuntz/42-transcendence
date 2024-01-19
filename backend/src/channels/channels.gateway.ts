@@ -311,6 +311,7 @@ export class ChannelsGateway {
 			if (!room)
 				return;
 			this.logger.log(`Change type of room ${rooma.name}`);
+			this.server.to(payload.roomName).emit('type')
 			this.server.emit('updateListChannel');
 			return room;
 		}

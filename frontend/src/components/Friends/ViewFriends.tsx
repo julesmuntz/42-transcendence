@@ -93,7 +93,7 @@ export default function ViewFriends() {
                                     </div>
                                 ))
                             ) : (
-                                <p>No users available.</p>
+                                <p></p>
                             )}
                         </div>
 
