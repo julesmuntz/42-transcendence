@@ -52,9 +52,9 @@ export class ChannelsGateway {
 	async handleDeletingEvent(@MessageBody() payload: { roomName: string }) {
 		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
 		if (channel) {
-			this.dataSources.manager.delete(ChannelMember, { channel: channel });
-			this.dataSources.manager.delete(Channel, { id: channel.id });
-			this.dataSources.manager.delete(Room, { name: channel.name });
+			await this.dataSources.manager.delete(ChannelMember, { channel: channel });
+			await this.dataSources.manager.delete(Channel, { id: channel.id });
+			await this.dataSources.manager.delete(Room, { name: channel.name });
 			this.logger.log(`Channel ${channel.name} deleted`);
 			this.server.emit('deleteChannel');
 			this.server.emit('updateListChannel');
@@ -82,8 +82,8 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('inviteChannel')
-	async handleInviteChannel(@MessageBody() payload: { userId: number; channelId: number; }) {
-		const channel = await this.dataSources.manager.findOne(Channel, { where: { id: payload.channelId } });
+	async handleInviteChannel(@MessageBody() payload: { userId: number; channelId: string; }) {
+		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.channelId } });
 		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
 			const userExist = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: channel.id }, user: { id: user.id } } });
@@ -129,7 +129,7 @@ export class ChannelsGateway {
 					const channelMember = await this.dataSources.manager.save(ChannelMember, { user: user, channel: channel, pass: true });
 					if (channelMember) {
 						this.logger.log(`User "${user.username}" join to Channel "${channel.name}"`);
-						await this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
+						this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
 						return channel;
 					}
 				}
@@ -149,14 +149,14 @@ export class ChannelsGateway {
 		if (channel && user) {
 			const channelMember = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: channel.id }, user: { id: user.id } } });
 			if (channelMember && channelMember.role !== ChannelMemberRole.Owner) {
-				this.dataSources.manager.delete(ChannelMember, { id: channelMember.id });
+				await this.dataSources.manager.delete(ChannelMember, { id: channelMember.id });
 				this.logger.log(`Channel ${channel.name} kicked to ${user.username}`);
 				if (user.socketId !== '') {
-					await this.server.in(user.socketId).socketsLeave(channel.name);
+					this.server.in(user.socketId).socketsLeave(channel.name);
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
 					if (user.socketId !== '') {
-						await this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
-						await this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
+						this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
+						this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
 					}
 				}
 				return channel;
@@ -174,12 +174,12 @@ export class ChannelsGateway {
 				await this.dataSources.manager.save(ChannelMember, { id: channelMember.id, access: ChannelMemberAccess.Banned });
 				this.logger.log(`Channel ${channel.name} banned to ${user.username}`);
 				if (user.socketId !== '') {
-					await this.server.in(user.socketId).socketsLeave(channel.name);
+					this.server.in(user.socketId).socketsLeave(channel.name);
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
 					if (user.socketId !== '') {
-						await this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
-						await this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
-						await this.server.to(user.socketId).emit('updateListChannel', 'You are kick from this channel');
+						this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
+						this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
+						this.server.to(user.socketId).emit('updateListChannel', 'You are kick from this channel');
 					}
 				}
 				return channel;
@@ -196,9 +196,9 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.dataSources.manager.delete(ChannelMember, { id: channelMember.id });
 				this.logger.log(`Channel ${channel.name} unbanned to ${user.username}`);
-				await this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
+				this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
 				if (channel.type !== ChannelType.Private && user.socketId !== '')
-					await this.server.to(user.socketId).emit('updateChannelList', channel);
+					this.server.to(user.socketId).emit('updateChannelList', channel);
 				return channel;
 			}
 		}
@@ -214,7 +214,7 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.dataSources.manager.save(ChannelMember, { id: channelMember.id, permission: ChannelMemberPermission.Muted });
 				this.logger.log(`Channel ${channel.name} muted to ${user.username}`);
-				await this.server.to(channel.name).emit('update_chat_user', 'You are muted from this channel');
+				this.server.to(channel.name).emit('update_chat_user', 'You are muted from this channel');
 				return channel;
 			}
 		}
@@ -230,7 +230,7 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.dataSources.manager.save(ChannelMember, { id: channelMember.id, permission: ChannelMemberPermission.Regular });
 				this.logger.log(`Channel ${channel.name} unmuted to ${user.username}`);
-				await this.server.to(channel.name).emit('update_chat_user', 'You are muted from this channel');
+				this.server.to(channel.name).emit('update_chat_user', 'You are muted from this channel');
 				return channel;
 			}
 		}
@@ -245,7 +245,7 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.dataSources.manager.save(ChannelMember, { id: channelMember.id, role: ChannelMemberRole.Admin });
 				this.logger.log(`Channel ${channel.name} promoted to ${user.username}`);
-				await this.server.to(channel.name).emit('update_chat_user', 'You are promoted from this channel');
+				this.server.to(channel.name).emit('update_chat_user', 'You are promoted from this channel');
 				return channel;
 			}
 		}
@@ -260,7 +260,7 @@ export class ChannelsGateway {
 			if (channelMember) {
 				await this.dataSources.manager.save(ChannelMember, { id: channelMember.id, role: ChannelMemberRole.Regular });
 				this.logger.log(`Channel ${channel.name} demoted to ${user.username}`);
-				await this.server.to(channel.name).emit('update_chat_user', 'You are promoted from this channel');
+				this.server.to(channel.name).emit('update_chat_user', 'You are promoted from this channel');
 				return channel;
 			}
 		}
@@ -271,7 +271,7 @@ export class ChannelsGateway {
 		await this.chatService.removeUserFromRoom(client.id, payload.roomName);
 		const room = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
 		const channelMember = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: room.id }, user: { socketId: client.id } } });
-		this.dataSources.manager.save(ChannelMember, { id: channelMember.id, pass: false });
+		await this.dataSources.manager.save(ChannelMember, { id: channelMember.id, pass: false });
 		this.logger.log(`${client.id} is disconnect rooms`);
 	}
 
@@ -287,7 +287,7 @@ export class ChannelsGateway {
 				return;
 			const channelMember = await this.dataSources.manager.find(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: channel.id } } });
 			for (const element of channelMember) {
-				this.dataSources.manager.save(ChannelMember, { id: element.id, pass: false });
+				await this.dataSources.manager.save(ChannelMember, { id: element.id, pass: false });
 			}
 			this.logger.log(`Change password of room ${room.name}`);
 			return room;
@@ -296,15 +296,21 @@ export class ChannelsGateway {
 
 	@SubscribeMessage('changeType')
 	async handleChangeTypeEvent(client: Socket, payload: { roomName: string}) {
-		const room = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
-		if (room) {
-			const clientChannel = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: room.id }, user: { socketId: client.id }, role: ChannelMemberRole.Owner } });
+		const rooma = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
+		if (rooma) {
+			const clientChannel = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: rooma.id }, user: { socketId: client.id }, role: ChannelMemberRole.Owner } });
 			if (!clientChannel)
 				return;
-			const channel = await this.dataSources.manager.save(Channel, { id: room.id, type: ChannelType.Public , passwordHash: null});
+			const channel = await this.dataSources.manager.save(Channel, { id: rooma.id, type: ChannelType.Public , passwordHash: null});
 			if (!channel)
 				return;
-			this.logger.log(`Change type of room ${room.name}`);
+			const Roomid = await this.dataSources.manager.findOne(Room, { where: { name: payload.roomName } });
+			if (!Roomid)
+				return;
+			const room = await this.dataSources.manager.save(Room, { id: Roomid.id, type: ChannelType.Public });
+			if (!room)
+				return;
+			this.logger.log(`Change type of room ${rooma.name}`);
 			this.server.emit('updateListChannel');
 			return room;
 		}

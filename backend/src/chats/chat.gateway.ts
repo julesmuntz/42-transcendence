@@ -73,14 +73,14 @@ export class ChatGateway {
 			if (!user)
 				return;
 			this.logger.log(`${payload.user.socketId} is joining ${payload.roomName}`);
-			await this.server.in(payload.user.socketId).socketsJoin(payload.roomName);
+			this.server.in(payload.user.socketId).socketsJoin(payload.roomName);
 			await this.chatService.addUserToRoom(payload.user, payload.roomName);
 			const messages = await this.chatService.getMessagesByRoom(payload.roomName);
 			if (messages) {
 				for (let message of messages)
-					await this.server.to(payload.user.socketId).emit('chat', message);
+					this.server.to(payload.user.socketId).emit('chat', message);
 			}
-			await this.server.to(payload.user.socketId).emit('chat_user', user);
+			this.server.to(payload.user.socketId).emit('chat_user', user);
 			this.server.to(payload.user.socketId).emit('connect_chat');
 			this.handleUserListEvent(payload.roomName);
 		}
@@ -93,7 +93,7 @@ export class ChatGateway {
 			if (!user)
 				return;
 			this.logger.log(`${payload.user.socketId} is updating ${payload.roomName}`);
-			await this.server.to(payload.user.socketId).emit('chat_user', user);
+			this.server.to(payload.user.socketId).emit('chat_user', user);
 			this.handleUserListEvent(payload.roomName);
 		}
 	}

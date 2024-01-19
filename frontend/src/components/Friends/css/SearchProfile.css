@@ -34,6 +34,6 @@ input[type="search" i] {
 	writing-mode: horizontal-tb !important;
 	padding-block: 1px;
 	padding-inline: 2px;
-	background-color: rgb(88, 88, 88);
+	background-color: #535f71;
 	color: white;
 }
