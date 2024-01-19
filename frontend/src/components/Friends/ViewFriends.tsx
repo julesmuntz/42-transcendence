@@ -124,10 +124,6 @@ export default function ViewFriends() {
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div className="col-md-3 col-sm-3">
-												<br />
-												{user.id !== userContext.user.info.id && <Friends IdUserTarget={user.id} />}
-											</div>
                                         </div>
                                     </div>
                                 ))
