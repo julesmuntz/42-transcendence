@@ -18,27 +18,20 @@ export default function ViewChannel() {
 
 	useEffect(() => {
 		const initializeEmits = async () => {
-			await new Promise<void>(resolve => {
-				if (socket?.connected) {
-					resolve();
-				} else {
-					socket?.on('connect', () => resolve());
-				}
-			});
 			socket?.emit('getChannel');
 		};
 		initializeEmits();
-		const getRooms = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/chats/roomsForUser/${userContext.user.info.id}`).then(
-				(res) => {
-					return (res.json());
-				}
-			).then((ret) => {
-				setChannel([]);
-				setChannel(ret);
-			});
-		}
-		getRooms();
+		// const getRooms = async () => {
+		// 	await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/chats/roomsForUser/${userContext.user.info.id}`).then(
+		// 		(res) => {
+		// 			return (res.json());
+		// 		}
+		// 	).then((ret) => {
+		// 		setChannel([]);
+		// 		setChannel(ret);
+		// 	});
+		// }
+		// getRooms();
 	}, [socket]);
 	console.log(socket);
 	useEffect(() => {
