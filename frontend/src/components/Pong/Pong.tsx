@@ -21,7 +21,7 @@ import {
 import Board from './Board';
 import './Pong.css';
 
-const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(`http://${process.env.REACT_APP_HOSTNAME}:3030`);
+const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(`http://localhost:3030`);
 
 export default class Pong extends React.Component<{}, {
 	id: number,

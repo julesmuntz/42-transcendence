@@ -28,6 +28,17 @@ export default function ViewChannel() {
 			socket?.emit('getChannel');
 		};
 		initializeEmits();
+		const getRooms = async () => {
+			await fetch(`http://localhost:3030/chats/roomsForUser/${userContext.user.info.id}`).then(
+				(res) => {
+					return (res.json());
+				}
+			).then((ret) => {
+				setChannel([]);
+				setChannel(ret);
+			});
+		}
+		getRooms();
 	}, [socket]);
 
 	useEffect(() => {

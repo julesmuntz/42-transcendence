@@ -44,7 +44,7 @@ function App() {
 
 	useEffect(() => {
 		// const getUser = async (id: number, token: string) => {
-		// 	const result = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${id}`, {
+		// 	const result = await fetch(`http://localhost:3030/users/${id}`, {
 		// 		method: "GET",
 		// 		headers: {
 		// 			"Authorization": `Bearer ${token}`

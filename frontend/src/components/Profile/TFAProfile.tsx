@@ -82,7 +82,7 @@ export function TFAProfile({ qrset }: { qrset: { qrcode: string, setQrcode: any 
 	}
 
 	const sendCode = async (e: any) => {
-		await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/2fa/turn-on`, {
+		await fetch(`http://localhost:3030/2fa/turn-on`, {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`,
@@ -100,7 +100,7 @@ export function TFAProfile({ qrset }: { qrset: { qrcode: string, setQrcode: any 
 				const newUser = ret;
 				qrset.setQrcode("");
 				userContext.login(newUser, userContext.user.authToken);
-				window.location.href = `http://${process.env.REACT_APP_HOSTNAME}:3000`;
+				window.location.href = `http://localhost:3000`;
 			}
 			);
 	}

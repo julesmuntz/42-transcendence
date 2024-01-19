@@ -53,7 +53,7 @@ export class TFAController {
 		}
 		const expirationDate = new Date();
 		expirationDate.setDate(expirationDate.getDate() + 7);
-		res.setHeader('Access-Control-Allow-Origin', `http://${process.env.HOSTNAME}:3000`);
+		res.setHeader('Access-Control-Allow-Origin', `http://localhost:3000`);
 		const user = await this.usersService.findOne(body.id);
 		const access_token = await this.TFAService.generateJwt(user);
 		const u = await this.usersService.update(body.id, statusOnline);

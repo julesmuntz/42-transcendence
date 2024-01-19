@@ -9,7 +9,7 @@ export const useRoomQuery = (roomName: string, isConnected: boolean) => {
 		const query = useQuery({
 			queryKey: ['rooms', roomName],
 			queryFn: (): Promise<Room> =>
-				axios.get(`http://${process.env.REACT_APP_HOSTNAME}:3030/chats/rooms/${roomName}`).then((response) => response.data),
+				axios.get(`http://localhost:3030/chats/rooms/${roomName}`).then((response) => response.data),
 			refetchInterval: 60000,
 			enabled: isConnected,
 		});
