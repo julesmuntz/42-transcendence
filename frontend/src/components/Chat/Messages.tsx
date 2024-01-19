@@ -23,7 +23,7 @@ export default function Messages({
 			const anchor = document.getElementsByClassName('anchor')[0];
 			console.log(anchor.scrollHeight);
 			anchor.scrollIntoView({
-				// behavior: "smooth"
+				behavior: "smooth"
 			});
 			setDone(true);
 		}
@@ -46,7 +46,7 @@ export default function Messages({
 	setTimeout(() => {
 		const anchor = document.getElementsByClassName('anchor')[0];
 		anchor.scrollIntoView({
-			behavior: "smooth"
+			// behavior: "smooth"
 		});
 	}, 5);
 

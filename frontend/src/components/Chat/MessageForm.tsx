@@ -24,6 +24,15 @@ export default function MessageForm({ sendMessage }: { sendMessage: (message: st
 		}
 	}
 
+	const scrollToAnchor = () => {
+        setTimeout(() => {
+            const anchor = document.getElementsByClassName('anchor')[0];
+            anchor.scrollIntoView({
+                behavior: "smooth"
+            });
+        }, 5);
+    }
+
 	return (
 		<div className="answer-add">
 			<div className="row">
@@ -34,6 +43,7 @@ export default function MessageForm({ sendMessage }: { sendMessage: (message: st
 						className="form-control chat-input"
 						ref={textAreaRef}
 						onKeyDown={(e) => handleKeyDown(e)}
+						onClick={scrollToAnchor}
 					/>
 				</div>
 				<div className="col-xs-3" style={{ width: '20%' }}>
