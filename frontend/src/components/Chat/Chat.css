@@ -293,7 +293,7 @@
 }
 
 .chat-body .answer .name {
-    font-size: 14px;
+    font-size: 12px;
     line-height: 36px;
 }
 
@@ -306,21 +306,21 @@
 }
 
 .chat-body .answer.left .text {
-    background: #3e3e3e;
+    background: #404b5d;
     color: #ffffff;
     border-radius: 8px 8px 8px 0;
 }
 
 .chat-body .answer .text {
-    padding: 12px;
-    font-size: 16px;
+    padding: 10px;
+    font-size: 13px;
     line-height: 26px;
     position: relative;
 }
 
 .chat-body .answer.left .text:before {
     left: -25px;
-    border-right-color: #3e3e3e;
+    border-right-color: #404b5d;
     border-right-width: 12px;
 }
 
@@ -361,7 +361,7 @@
 }
 
 .chat-body .answer.right .text {
-    background: #3e3e3e;
+    background: #404b5d;
     color: #ffffff;
     border-radius: 8px 8px 0 8px;
     word-wrap: break-word;
@@ -369,7 +369,7 @@
 
 .chat-body .answer.right .text:before {
     right: -25px;
-    border-left-color: #3e3e3e;
+    border-left-color: #404b5d;
     border-left-width: 12px;
 }
 

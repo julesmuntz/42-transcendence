@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './App.css';
 import SideNav from "./components/SideNav/SideNav";
 import LoginPage from './components/LoginPage/LoginPage';
@@ -25,78 +25,62 @@ interface JwtPayload {
 
 const queryClient = new QueryClient();
 
-function App() {
+// ... (import statements)
 
+function App() {
 	const userContext = useContext(UserContext);
 	const token = Cookies.get('access_token');
 	const TFASecret = Cookies.get('TFASecret');
-	const id = Cookies.get("id");
+	const id = Cookies.get('id');
 	const socket = useContext<Socket | undefined>(WebSocketContext);
+	const [isSocketConnected, setIsSocketConnected] = useState(false);
 
 	useSocketEvent(socket, 'infoUser', (e: Info) => {
-		const getUser = async (e: Info) => {
-			userContext.connectUser(e);
-		}
-		if (userContext.user.auth) {
-			getUser(e);
-		}
+	  const getUser = async (e: Info) => {
+		userContext.connectUser(e);
+	  };
+	  if (userContext.user.auth) {
+		getUser(e);
+	  }
 	});
 
 	useEffect(() => {
-		// const getUser = async (id: number, token: string) => {
-		// 	const result = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${id}`, {
-		// 		method: "GET",
-		// 		headers: {
-		// 			"Authorization": `Bearer ${token}`
-		// 		}
-		// 	}).then((res) => {
-		// 		return res.json();
-		// 	}).then((ret) => {
-		// 		userContext.login(ret, token);
-		// 		return (ret);
-		// 	});
+	  const getTocken = async (id: number, token: string) => {
+		userContext.setTocken(id, token);
+	  };
 
-		// 	return (result);
-		// };
-		const getTocken = async (id:number, token: string) => {
-			userContext.setTocken(id, token);
-		}
-		if (!userContext.user.auth && token) {
-			const user = jwtDecode<JwtPayload>(token);
-			const info = user.users;
-			// userContext.setTocken(info.id, token);
-			getTocken(info.id, token);
-		}
-
+	  if (!userContext.user.auth && token) {
+		const user = jwtDecode<JwtPayload>(token);
+		const info = user.users;
+		getTocken(info.id, token);
+	  }
 	}, [token, userContext]);
 
-	if (!userContext.user.auth && !token) {
-		if (TFASecret && id) {
-			return (
-				<div className="App">
-					<TwoFA id={id} TFASecret={TFASecret} />
-				</div>
-			);
-		}
-		return (
-			<div className="App">
-				<LoginPage />
-			</div>
-		);
-	}
+	useEffect(() => {
+		socket?.on("isSocketConnected", () => {
+			setIsSocketConnected(true);
+		});
+	}, [socket]);
 
-	if (userContext.user.authToken)
-		return (
-			<div className="App">
-					<QueryClientProvider client={queryClient}>
-						<SideNav />
-					</QueryClientProvider>
-			</div>
-		);
 	return (
-		<></>
+	  <div className="App">
+		{(!userContext.user.auth && !token) && (TFASecret && id) ? (
+		  <TwoFA id={id} TFASecret={TFASecret} />
+		) : (
+		  (!userContext.user.auth && !token) ? (
+			<LoginPage />
+		  ) : (
+			<QueryClientProvider client={queryClient}>
+			  {(isSocketConnected && userContext.user.authToken) ? (
+				<SideNav />
+			  ) : (
+				<div></div>
+			  )}
+			</QueryClientProvider>
+		  )
+		)}
+	  </div>
 	);
+  }
 
-}
-
-export default App;
+  export default App;
