@@ -29,7 +29,7 @@ export default function ViewChannel() {
 		};
 		initializeEmits();
 		const getRooms = async () => {
-			await fetch(`http://localhost:3030/chats/roomsForUser/${userContext.user.info.id}`).then(
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/chats/roomsForUser/${userContext.user.info.id}`).then(
 				(res) => {
 					return (res.json());
 				}

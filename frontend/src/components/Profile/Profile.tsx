@@ -15,7 +15,7 @@ export default function Profile() {
 	const [is2FAActive, setIs2FAActive] = useState(false);
 
 	let getQrcode = async () => {
-		return fetch(`http://localhost:3030/2fa/generate`, {
+		return fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/2fa/generate`, {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`

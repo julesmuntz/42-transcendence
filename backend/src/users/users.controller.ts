@@ -26,10 +26,10 @@ export class UsersController {
 		})
 	}))
 	async handleUpload(@UploadedFile() file: any, @Param('id') id: number): Promise<any> {
-		await this.usersService.update(id, { avatarPath: `http://localhost:3030/users/imgs/` + file.filename });
+		await this.usersService.update(id, { avatarPath: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename });
 		return {
 			statusCode: 200,
-			data: `http://localhost:3030/users/imgs/` + file.filename,
+			data: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename,
 		}
 	}
 

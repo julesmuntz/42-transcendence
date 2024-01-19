@@ -23,13 +23,13 @@ export class AuthController {
 			expirationDate.setTime(expirationDate.getTime() + 30000); // 30 second en millisecondes
 			res.cookie(`id`, `${result.id}`, { expires: expirationDate });
 			res.cookie('TFASecret', `${result.TFASecret}`, { expires: expirationDate });
-			return res.redirect(`http://localhost:3000`);
+			return res.redirect(`http://${process.env.HOSTNAME}:3000`);
 		}
 
 		expirationDate.setDate(expirationDate.getDate() + 7);
 		res.cookie('access_token', `${result}`, { expires: expirationDate });
 	
-		return res.redirect(`http://localhost:3000`);
+		return res.redirect(`http://${process.env.HOSTNAME}:3000`);
 	}
 
 	@Get("logout")
