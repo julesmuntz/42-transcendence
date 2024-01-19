@@ -177,7 +177,6 @@ export default function Chat() {
 		return data[0].id;
 	}
 
-
 	async function inviteToChannel(channelId: string) {
 		const userName = prompt('Enter username');
 		const userId = await getUserIdByUsername(userName || '');
