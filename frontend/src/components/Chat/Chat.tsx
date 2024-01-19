@@ -92,7 +92,6 @@ export default function Chat() {
 	useEffect(() => {
 		if (room?.type === "protected")
 			setType(true);
-		console.log('ooo');
 	}, [room]);
 
 	const leaveRoom = () => {
