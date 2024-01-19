@@ -3,6 +3,8 @@ import './Chat.css';
 import Image from 'react-bootstrap/Image';
 import { Link } from 'react-router-dom';
 import { IFriends } from '../../contexts/UserContext';
+import { useEffect, useState } from 'react';
+
 
 export default function Messages({
 	user,
@@ -14,6 +16,21 @@ export default function Messages({
 	friends: IFriends[] | null;
 })
 {
+	const [done, setDone] = useState(false);
+
+	useEffect(() => {
+		if (done === false)
+		{
+			console.log("not done");
+			const anchor = document.getElementsByClassName('anchor')[0];
+			console.log(anchor.scrollHeight);
+			anchor.scrollIntoView({
+				// behavior: "smooth"
+			});
+			setDone(true);
+		}
+	}, [done]);
+
 	// const messagesRef = useRef<HTMLDivElement>(null);
 	// const [isUserAtBottom, setIsUserAtBottom] = useState(true);
 
@@ -56,6 +73,7 @@ export default function Messages({
 				  </div>
 				);
 			  })}
+			  <div className="anchor answer right"></div>
 			</div>
 		  );
 
@@ -84,9 +102,8 @@ export default function Messages({
 					<div className="time">{message.timeSent}</div>
 				  </div>
 			  })}
+			  <div className="anchor"></div>
 			</div>
 		  );
-
 	}
-
 };

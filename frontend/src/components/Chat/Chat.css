@@ -211,10 +211,6 @@
     object-fit: cover;
 }
 
-.scrollable::-webkit-scrollbar {
-    display: none;
-}
-
 .chat-body {
     display: flex;
     position: relative;
@@ -223,10 +219,23 @@
     align-items: center;
 }
 
+.scrollable::-webkit-scrollbar {
+    display: none;
+}
+
 .scrollable {
     width: 95%;
     height: calc(100vh - 300px);
     overflow-y: scroll;
+}
+
+.scrollable * {
+    overflow-anchor: none;
+}
+
+.anchor {
+    overflow-anchor: auto;
+    height: 1px;
 }
 
 .chat-users .user .name {
