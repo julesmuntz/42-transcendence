@@ -29,7 +29,7 @@ export default function ViewChannel() {
 		};
 		initializeEmits();
 	}, [socket]);
-
+	console.log(socket);
 	useEffect(() => {
 		socket?.on('channelList', (data: Channel[]) => {
 			setChannel([]);

@@ -1,14 +1,14 @@
 import Container from "react-bootstrap/Container";
 import { WebSocketContext } from "../../contexts/WebSocketContext";
 import { useContext, useEffect, useState } from "react";
-import { IFriends, UserContext } from "../../contexts/UserContext";
+import { IFriends, Info, UserContext } from "../../contexts/UserContext";
 import { Link } from "react-router-dom";
 import "./css/FriendNotifications.css";
 
 export default function FriendNotifications() {
 	const userContext = useContext(UserContext);
 	const socket = useContext(WebSocketContext);
-	const [notifs, setNotifs] = useState<IFriends[] | null>(null);
+	const [notifs, setNotifs] = useState<Info[] | null>(null);
 
 	useEffect(() => {
 		const initializeNotifFriend = async () => {
@@ -24,8 +24,14 @@ export default function FriendNotifications() {
 		initializeNotifFriend();
 
 		socket?.on('friendsInvited', (e: IFriends[] | null) => {
-			setNotifs(null);
-			setNotifs(e);
+			if (e)
+			{
+				for (const friend of e) {
+					if (friend.user2.id === userContext.user.info.id) {
+						setNotifs((notifs) => [friend.user1, ...(notifs || [])]);
+					}
+				}
+			}
 		});
 
 		socket?.on('friendsInviteRemoved', () => {
@@ -44,11 +50,11 @@ export default function FriendNotifications() {
 	return (
 		<Container className="d-flex friend-invites">
 			<p>Friend Requests</p>
-			{notifs?.map((notif, index) => {
-			if (notif?.user1.id !== userContext.user.info.id) {
+			{notifs.map((notif, index) => {
+			if (notif.id !== userContext.user.info.id) {
 			return (
 				<Container key={index} className="link-to-friend">
-					<Link to={`/profile/${notif.user1.id}`} className="link-text">{notif.user1.username}</Link>
+					<Link to={`/profile/${notif.id}`} className="link-text">{notif.username}</Link>
 				</Container>
 			);
 			} else {
