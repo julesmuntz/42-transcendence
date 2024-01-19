@@ -77,7 +77,7 @@ export default function ViewChannel() {
 			<div>
 				{channel.find((channel) => channel.type === 'public') &&
 					<>
-						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#26292e' }}>Public</p>
+						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#252c38' }}>Public</p>
 						<Category>
 							<div>
 								{channel.map((channel) => (channel.type === 'public') && (
@@ -100,7 +100,7 @@ export default function ViewChannel() {
 				}
 				{channel.find((channel) => channel.type === 'protected') &&
 					<>
-						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#26292e' }}>Protected</p>
+						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#252c38' }}>Protected</p>
 						<Category>
 							<div>
 								{channel.map((channel) => (channel.type === 'protected') && (
@@ -123,7 +123,7 @@ export default function ViewChannel() {
 				}
 				{channel.find((channel) => channel.type === 'private') &&
 					<>
-						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#26292e' }}>Private</p>
+						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#252c38' }}>Private</p>
 						<Category>
 							<div>
 								{channel.map((channel) => (channel.type === 'private') && (

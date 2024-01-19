@@ -5,7 +5,6 @@ import Profile from "../Profile/Profile";
 import "./SideNav.css";
 import Pong from "../Pong/Pong";
 import ViewFriends from "../Friends/ViewFriends";
-import SearchProfile from "../Search/SearchProfile";
 import PublicProfile from "../Profile/PublicProfile";
 import Chat from "../Chat/Chat";
 import { useState } from "react";
@@ -57,15 +56,6 @@ export default function SideBar() {
 							<PeopleFill color={friendColor} size={25} />
 						</NavLink>
 					</Nav.Item>
-
-					<Nav.Item className="pb-1">
-						<NavLink className={({ isActive }) => {
-							setSearchColor(isActive ? "#ff7c14" : "gray");
-							return (isActive ? "active" : "")
-						}} to="/search">
-							<Search color={searchColor} size={22} />
-						</NavLink>
-					</Nav.Item>
 				</div>
 			</Nav>
 			<Routes>
@@ -73,7 +63,6 @@ export default function SideBar() {
 				<Route path="/profile/:id" element={<PublicProfile />}></Route>
 				<Route path="/" element={<Profile />}></Route>
 				<Route path="/friend" element={<ViewFriends />}></Route>
-				<Route path="/search" element={<SearchProfile />}></Route>
 				{/* <Route path="/game" element={<Pong />}></Route> */}
 				<Route path="/chat/:id" element={<Chat />}></Route>
 				<Route path="/chat" element={<Chat />}></Route>

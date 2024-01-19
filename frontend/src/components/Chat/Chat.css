@@ -3,14 +3,14 @@
     border-radius: 0;
     border: 0;
     margin-bottom: 24px;
-    background-color: #26292e;
+    background-color: #252c38;
 }
 
 .panel .panel-heading,
 .panel>:first-child {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    background-color: #26292e;
+    background-color: #252c38;
 }
 
 .big-chat-div {
@@ -29,7 +29,7 @@
 }
 
 .panel-footer {
-    background-color: #26292e;
+    background-color: #252c38;
     border-top: none;
     position: sticky;
     bottom: 0;
@@ -373,7 +373,7 @@
     bottom: 0px;
     clear: both;
     padding: 10px;
-    background-color: #26292e;
+    background-color: #252c38;
 }
 
 .chat input {
