@@ -1,4 +1,4 @@
-import { SubscribeMessage, WebSocketGateway, WebSocketServer, MessageBody } from '@nestjs/websockets';
+import { ConnectedSocket, SubscribeMessage, WebSocketGateway, WebSocketServer, MessageBody } from '@nestjs/websockets';
 import { ChatsService } from 'chats/chats.service';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io'
@@ -21,7 +21,13 @@ export class ChannelsGateway {
 
 	// create channel
 	@SubscribeMessage('createChannel')
-	async handleCreatingEvent(@MessageBody() payload: { createChannelDto: { name: string; type: ChannelType; passwordHash: string | undefined; }; userId: string }) {
+	async handleCreatingEvent(
+		@MessageBody() payload: {
+			createChannelDto: { name: string; type: ChannelType; passwordHash: string | undefined; };
+			userId: string
+		},
+		@ConnectedSocket() socket: Socket
+	) {
 		const channelExist = await this.dataSources.manager.findOne(Channel, { where: { name: payload.createChannelDto.name } });
 		if (!channelExist) {
 			if (payload.createChannelDto.passwordHash)
@@ -36,7 +42,7 @@ export class ChannelsGateway {
 						if (room) {
 							this.logger.log(`Channel ${channel.name} created`);
 							if (channel.type === ChannelType.Private)
-								this.server.to(user.socketId).emit('updateChannelList', channel);
+								socket.emit('updateChannelList', channel);
 							else
 								this.server.emit('updateChannelList', channel);
 							return channel;
@@ -75,14 +81,17 @@ export class ChannelsGateway {
 				else if (element.type !== ChannelType.Private && !channelMember)
 					validChannels.push(element);
 			}
-			this.server.to(socket.id).emit('channelList', validChannels);
+			socket.emit('channelList', validChannels);
 			this.logger.log(`emit server getChannel ${socket.id}`);
 			return channel;
 		}
 	}
 
 	@SubscribeMessage('inviteChannel')
-	async handleInviteChannel(@MessageBody() payload: { userId: number; channelId: string; }) {
+	async handleInviteChannel(
+		@MessageBody() payload: { userId: number; channelId: string; },
+		@ConnectedSocket() socket: Socket
+	) {
 		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.channelId } });
 		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
@@ -91,7 +100,7 @@ export class ChannelsGateway {
 				const channelMember = await this.dataSources.manager.save(ChannelMember, { user: user, channel: channel });
 				if (channelMember) {
 					this.logger.log(`User "${user.username}" invited to Channel "${channel.name}"`);
-					this.server.to(user.socketId).emit('updateChannelListPrivate', channel);
+					socket.emit('updateChannelListPrivate', channel);
 					return channel;
 				}
 			}
@@ -99,7 +108,10 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('joinChannel')
-	async handleJoinChannel(@MessageBody() payload: { userId: number; channelId: string; }) {
+	async handleJoinChannel(
+		@MessageBody() payload: { userId: number; channelId: string; },
+		@ConnectedSocket() socket: Socket
+	) {
 		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.channelId } });
 		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
@@ -108,17 +120,20 @@ export class ChannelsGateway {
 				const channelMember = await this.dataSources.manager.save(ChannelMember, { user: user, channel: channel });
 				if (channelMember) {
 					this.logger.log(`User "${user.username}" join to Channel "${channel.name}"`);
-					this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
+					socket.emit('passwordChannel', payload.channelId);
 					return channel;
 				}
 			}
 			else
-				this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
+				socket.emit('passwordChannel', payload.channelId);
 		}
 	}
 
 	@SubscribeMessage('passwordChannel')
-	async handlePasswordChannel(@MessageBody() payload: { channelId: string, password: string, userId: number }) {
+	async handlePasswordChannel(
+		@MessageBody() payload: { channelId: string, password: string, userId: number },
+		@ConnectedSocket() socket: Socket
+	) {
 		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.channelId } });
 		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
@@ -129,13 +144,13 @@ export class ChannelsGateway {
 					const channelMember = await this.dataSources.manager.save(ChannelMember, { user: user, channel: channel, pass: true });
 					if (channelMember) {
 						this.logger.log(`User "${user.username}" join to Channel "${channel.name}"`);
-						this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
+						socket.emit('passwordChannel', payload.channelId);
 						return channel;
 					}
 				}
 				else {
 					await this.dataSources.manager.save(ChannelMember, { id: userExist.id, pass: true });
-					this.server.to(user.socketId).emit('passwordChannel', payload.channelId);
+					socket.emit('passwordChannel', payload.channelId);
 				}
 
 			}
@@ -143,7 +158,10 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('kickChannel')
-	async handleKickChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
+	async handleKickChannel(
+		@MessageBody() payload: { userId: number; roomName: string; },
+		@ConnectedSocket() socket: Socket
+	) {
 		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
 		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
@@ -156,7 +174,7 @@ export class ChannelsGateway {
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
 					if (user.socketId !== '') {
 						this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
-						this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
+						socket.emit('banned', 'You are kick from this channel');
 					}
 				}
 				return channel;
@@ -165,7 +183,10 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('banChannel')
-	async handleBanChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
+	async handleBanChannel(
+		@MessageBody() payload: { userId: number; roomName: string; },
+		@ConnectedSocket() socket: Socket
+	) {
 		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
 		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
@@ -178,8 +199,8 @@ export class ChannelsGateway {
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
 					if (user.socketId !== '') {
 						this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
-						this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
-						this.server.to(user.socketId).emit('updateListChannel', 'You are kick from this channel');
+						socket.emit('banned', 'You are kick from this channel');
+						socket.emit('updateListChannel', 'You are kick from this channel');
 					}
 				}
 				return channel;
@@ -188,7 +209,10 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('unbanChannel')
-	async handleUnbanChannel(@MessageBody() payload: { userId: number; roomName: string; }) {
+	async handleUnbanChannel(
+		@MessageBody() payload: { userId: number; roomName: string; },
+		@ConnectedSocket() socket: Socket
+	) {
 		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName } });
 		const user = await this.dataSources.manager.findOne(User, { where: { id: payload.userId } });
 		if (channel && user) {
@@ -198,7 +222,7 @@ export class ChannelsGateway {
 				this.logger.log(`Channel ${channel.name} unbanned to ${user.username}`);
 				this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
 				if (channel.type !== ChannelType.Private && user.socketId !== '')
-					this.server.to(user.socketId).emit('updateChannelList', channel);
+					socket.emit('updateChannelList', channel);
 				return channel;
 			}
 		}
@@ -316,5 +340,4 @@ export class ChannelsGateway {
 			return room;
 		}
 	}
-
 }
