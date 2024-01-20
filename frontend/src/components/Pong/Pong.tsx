@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import {
 	ServerToClientEvents,
@@ -18,150 +18,119 @@ import {
 	playerRightReset,
 	ballReset
 } from '../../shared/config/pong.config';
+import { WebSocketContext, useSocketEvent } from '../../contexts/WebSocketContext';
 import Board from './Board';
 import './Pong.css';
 
-const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(`http://${process.env.REACT_APP_HOSTNAME}:3030`);
+export default function Pong() {
+	const socket = useContext<Socket | undefined>(WebSocketContext);
 
-export default class Pong extends React.Component<{}, {
-	id: number,
-	connected: boolean,
-	t: DataTime,
-	ping: DataPing,
-	player1: DataPlayer,
-	player2: DataPlayer,
-	ball: DataBall,
-	ratio: number,
-	upIsPressed: boolean,
-	downIsPressed: boolean}> {
-	constructor(props: any) {
-		super(props);
-		this.state = {
-			id: 0,
-			connected: true,
-			t: {
-				update: new Date(),
-				kickoff: new Date()
-			},
-			ping: { ...pingReset },
-			player1: { ...playerLeftReset },
-			player2: { ...playerRightReset },
-			ball: { ...ballReset },
-			ratio: Math.min(
+	const [id, setId] = useState(0);
+	const [connected, setConnected] = useState(true);
+	const [t, setT] = useState<DataTime>({ update: new Date(), kickoff: new Date() });
+	const [ping, setPing] = useState<DataPing>({ ...pingReset });
+	const [player1, setPlayer1] = useState<DataPlayer>({ ...playerLeftReset });
+	const [player2, setPlayer2] = useState<DataPlayer>({ ...playerRightReset });
+	const [ball, setBall] = useState<DataBall>({ ...ballReset });
+	const [ratio, setRatio] = useState(Math.min(
 				(window.innerWidth - 45) / board.w,
-				window.innerHeight / board.h),
-			upIsPressed: false,
-			downIsPressed: false,
-		}
-		window.addEventListener('keydown', (e: KeyboardEvent) => this.manageKeydown(e));
-		window.addEventListener('keyup', (e: KeyboardEvent) => this.manageKeyup(e));
-		window.addEventListener('resize', () => this.manageResize());
-	}
+				window.innerHeight / board.h));
+	const [upIsPressed, setUpIsPressed] = useState(false);
+	const [downIsPressed, setDownIsPressed] = useState(false);
 
-	setSocketListeners() {
-		socket.on('connect', () => { this.setState({ connected: true }); });
-		socket.on('disconnect', () => { this.setState({ connected: false }); });
-		socket.on('ping', (n: number) => {
-			if (n < this.state.ping.nMostRecentPingReceived)
-				return ;
-			var newPing = this.state.ping;
+	useSocketEvent(socket, 'ping', (n: number) => {
+		if (n < ping.nMostRecentPingReceived)
+			return ;
+		var newPing = ping;
 
-			newPing.nMostRecentPingReceived = n;
-			newPing.latency = new Date().getTime() - newPing.timePingSent[n].getTime();
-			this.setState({ ping: newPing });
+		newPing.nMostRecentPingReceived = n;
+		newPing.latency = new Date().getTime() - newPing.timePingSent[n].getTime();
+		setPing(newPing);
+	});
+	useSocketEvent(socket, 'pong_accept', (id: number) => {
+		console.log(`Accepted ${id}`);
+		setId(id);
+	});
+	useSocketEvent(socket, 'pong_update', (data: DataUpdate) => {
+		setT({
+			update: new Date(data.t.update),
+			kickoff: new Date(data.t.kickoff)
 		});
-		socket.on('pong_accept', (id: number) => { console.log(`Accepted ${id}`); this.setState({ id: id }); });
-		socket.on('pong_update', (data: DataUpdate) => {
-			this.setState({
-				t: { update: new Date(data.t.update),
-					kickoff: new Date(data.t.kickoff) },
-				player1: data.player1,
-				player2: data.player2,
-				ball: data.ball,
-			});
-		});
-	}
+		setPlayer1(data.player1);
+		setPlayer2(data.player2);
+		setBall(data.ball);
+	});
 
-	setPeriodicFunctions() {
-		setInterval(() => {
-			var newPing = this.state.ping;
+	useEffect(() => {
+		const intervalID: any = setInterval(() => {
+			var newPing = ping;
 
-			socket.emit('ping', newPing.nMostRecentPingSent);
+			socket?.emit('ping', newPing.nMostRecentPingSent);
 			newPing.timePingSent[newPing.nMostRecentPingSent] = new Date();
 			newPing.nMostRecentPingSent += 1;
-			this.setState({ ping: newPing });
+			setPing(newPing);
 		}, 1000);
-	}
+		window.addEventListener('keydown', manageKeydown);
+		window.addEventListener('keyup', manageKeyup);
+		window.addEventListener('resize', manageResize);
+		socket?.emit('pong_join');
+		return (() => {
+			clearInterval(intervalID);
+		});
+	}, []);
 
-	componentDidMount() {
-		this.manageResize();
-		this.setSocketListeners();
-		this.setPeriodicFunctions();
-		socket.emit('pong_join');
-	}
-
-	componentWillUnmount() {
-		socket.off('connect');
-		socket.off('disconnect');
-		socket.off('ping');
-		socket.off('pong_accept');
-		socket.off('pong_update');
-	}
-
-	manageKeydown(e: KeyboardEvent) {
+	function manageKeydown(e: KeyboardEvent): void {
 		if (e.repeat)
 			return ;
 		if (e.key === "s" || e.key === "ArrowDown") {
-			this.setState({ downIsPressed: true });
-			socket.emit('pong_move', 1);
+			setDownIsPressed(true);
+			socket?.emit('pong_move', 1);
 		}
 		if (e.key === "w" || e.key === "ArrowUp") {
-			this.setState({ upIsPressed: true });
-			socket.emit('pong_move', -1);
+			setUpIsPressed(true);
+			socket?.emit('pong_move', -1);
 		}
 		if (e.key === "p") {
-			var newPing = this.state.ping;
-			newPing.hide = !this.state.ping.hide;
-			this.setState({ ping: newPing });
+			var newPing = ping;
+			newPing.hide = !ping.hide;
+			setPing(newPing);
 		}
 	}
 
-	manageKeyup(e: KeyboardEvent) {
+	function manageKeyup(e: KeyboardEvent): void {
 		if (e.key === "s" || e.key === "ArrowDown")
-			this.setState({ downIsPressed: false });
+			setDownIsPressed(false);
 		if (e.key === "w" || e.key === "ArrowUp")
-			this.setState({ upIsPressed: false });
-		if ((!this.state.downIsPressed || e.key === "s" || e.key === "ArrowDown")
-			&& (!this.state.upIsPressed || e.key === "w" || e.key === "ArrowUp"))
-			socket.emit('pong_move', 0);
+			setUpIsPressed(false);
+		if ((!downIsPressed || e.key === "s" || e.key === "ArrowDown")
+			&& (!upIsPressed || e.key === "w" || e.key === "ArrowUp"))
+			socket?.emit('pong_move', 0);
 	}
 
-	manageResize() {
-		this.setState({ ratio: Math.min(
+	function manageResize(): void {
+		setRatio(Math.min(
 			(window.innerWidth - 45) / board.w,
 			window.innerHeight / board.h)
-		});
-	}
-
-	refresh() {
-		socket.emit('pong_refresh');
-	}
-
-	render() {
-		return (
-			<div className="Pong">
-				<Board
-					ball={this.state.ball}
-					connected={this.state.connected}
-					ping={this.state.ping}
-					player1={this.state.player1}
-					player2={this.state.player2}
-					refresh={this.refresh}
-					t={this.state.t}
-					ratio={this.state.ratio}
-					id={this.state.id}
-				/>
-			</div>
 		);
 	}
+
+	function refresh(): void {
+		socket?.emit('pong_refresh');
+	}
+
+	return (
+		<div className="Pong">
+			<Board
+				ball={ball}
+				connected={connected}
+				ping={ping}
+				player1={player1}
+				player2={player2}
+				refresh={refresh}
+				t={t}
+				ratio={ratio}
+				id={id}
+			/>
+		</div>
+	);
 }
