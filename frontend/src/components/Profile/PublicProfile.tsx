@@ -9,15 +9,13 @@ import Friends from "../Friends/Friends";
 export default function PublicProfile() {
 	const { id } = useParams();
 	const userContext = useContext(UserContext);
-	let [user, setUser] = useState(undefined);
+	let [user, setUser] = useState<any | undefined>(undefined);
 	let [done, setDone] = useState(false);
 	const nav = useNavigate();
 	useEffect(() => {
-
-		if (id &&userContext.user.info.id === parseInt(id)) {
+		if (id && userContext.user.info.id === parseInt(id)) {
 			nav('/profile');
 		}
-
 		let fetchUser = async () => {
 			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${id}`,
 				{
@@ -37,7 +35,14 @@ export default function PublicProfile() {
 		}
 	}, [user, id, userContext, nav, done]);
 
+	if (id && userContext.user.info.id === parseInt(id)) {
+		return (<></>);
+	}
 
+	console.log(user);
+
+	if (!user)
+		return (<></>);
 
 	return (
 		<Container className="d-flex">

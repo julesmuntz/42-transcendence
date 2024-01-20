@@ -28,6 +28,8 @@ interface ContextProps {
 	user: Iuser;
 	login: (info: Info, authToken: string) => void;
 	logout: () => void;
+	connectUser: (info: Info) => void;
+	setTocken: (id: number, token: string) => void;
 }
 
 export function useEmits(socket: any, event: string, data: any) {
@@ -46,7 +48,7 @@ export function useEmits(socket: any, event: string, data: any) {
 	}, [socket, event, data]);
 }
 
-export const UserContext = createContext<ContextProps>({ user: { info: {} as Info, auth: false, authToken: '' }, login: () => null, logout: () => null });
+export const UserContext = createContext<ContextProps>({ user: { info: {} as Info, auth: false, authToken: '' }, login: () => null, logout: () => null, connectUser: () => null, setTocken: () => null });
 
 export default function UserProvider({ children }: any) {
 	const [user, setUser] = useState<Iuser>({ info: {} as Info, auth: false, authToken: '' });
@@ -59,6 +61,23 @@ export default function UserProvider({ children }: any) {
 		}));
 	};
 
+	const setTocken = (id: number ,token: string) => {
+		setUser((user: Iuser) => ({
+			info: { ...user.info, id: id },
+			auth: true,
+			authToken: token
+		}));
+	}
+
+
+	const connectUser = (info: Info) => {
+		setUser((user: Iuser) => ({
+			info: info,
+			auth: true,
+			authToken: user.authToken
+		}));
+	}
+
 	const logout = () => {
 		setUser((user: Iuser) => ({
 			info: {} as Info,
@@ -68,7 +87,7 @@ export default function UserProvider({ children }: any) {
 	};
 
 	return (
-		<UserContext.Provider value={{ user, login, logout }}>
+		<UserContext.Provider value={{ user, login, logout, connectUser, setTocken }}>
 			{children}
 		</UserContext.Provider>
 	);

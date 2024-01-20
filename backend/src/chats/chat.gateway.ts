@@ -62,26 +62,25 @@ export class ChatGateway {
 				this.server.to(user.socketId).emit('banned', 'You are banned from this channel');
 				return undefined;
 			}
-
 		}
 		return user;
 	}
 	//renvoie la liste des user de la room
 	@SubscribeMessage('join_room')
 	async handleSetClientDataEvent(@MessageBody() payload: { user: UserRoom; roomName: string; }) {
-		if (payload.user.socketId) {
+		if (payload.user.socketId && payload.roomName) {
 			const user = await this.createUserRoom(payload.user, payload.roomName);
 			if (!user)
 				return;
 			this.logger.log(`${payload.user.socketId} is joining ${payload.roomName}`);
-			await this.server.in(payload.user.socketId).socketsJoin(payload.roomName);
+			this.server.in(payload.user.socketId).socketsJoin(payload.roomName);
 			await this.chatService.addUserToRoom(payload.user, payload.roomName);
 			const messages = await this.chatService.getMessagesByRoom(payload.roomName);
 			if (messages) {
 				for (let message of messages)
-					await this.server.to(payload.user.socketId).emit('chat', message);
+					this.server.to(payload.user.socketId).emit('chat', message);
 			}
-			await this.server.to(payload.user.socketId).emit('chat_user', user);
+			this.server.to(payload.user.socketId).emit('chat_user', user);
 			this.server.to(payload.user.socketId).emit('connect_chat');
 			this.handleUserListEvent(payload.roomName);
 		}
@@ -94,33 +93,32 @@ export class ChatGateway {
 			if (!user)
 				return;
 			this.logger.log(`${payload.user.socketId} is updating ${payload.roomName}`);
-			await this.server.to(payload.user.socketId).emit('chat_user', user);
+			this.server.to(payload.user.socketId).emit('chat_user', user);
 			this.handleUserListEvent(payload.roomName);
 		}
 	}
 	//renvoie la liste des user de la room
 	// Corrected handleUserListEvent function
 	async handleUserListEvent(roomName: string) {
+
+		if (!roomName)
+			return;
 		this.logger.log(`Get user list of ${roomName}`);
-		try {
-			const users =  await this.dataSource.manager.find(ChannelMember, {relations: ['channel', 'user'], where: { channel: {name: roomName} }})
-			if (users && users.length > 0) {
-				const roomUsers: UserRoom[] = [];
-				for (const user of users) {
-					roomUsers.push({
-						userId: user.user.id,
-						userName: user.user.username,
-						socketId: user.user.socketId,
-						muted: user.permission === ChannelMemberPermission.Muted ?? false,
-						type: user.role === ChannelMemberRole.Owner ? 'Owner' : user.role === ChannelMemberRole.Admin ? 'Admin' : 'regular',
-						ban: user.access === ChannelMemberAccess.Banned ?? false,
-						avatarPath: user.user.avatarPath,
-					});
-				}
-				this.server.to(roomName).emit('user_list', roomUsers);
+		const users =  await this.dataSource.manager.find(ChannelMember, {relations: ['channel', 'user'], where: { channel: {name: roomName} }})
+		if (users && users.length > 0) {
+			const roomUsers: UserRoom[] = [];
+			for (const user of users) {
+				roomUsers.push({
+					userId: user.user.id,
+					userName: user.user.username,
+					socketId: user.user.socketId,
+					muted: user.permission === ChannelMemberPermission.Muted ?? false,
+					type: user.role === ChannelMemberRole.Owner ? 'Owner' : user.role === ChannelMemberRole.Admin ? 'Admin' : 'regular',
+					ban: user.access === ChannelMemberAccess.Banned ?? false,
+					avatarPath: user.user.avatarPath,
+				});
 			}
-		} catch (error) {
-			this.logger.error(`Error getting user list for ${roomName}: ${error.message}`);
+			this.server.to(roomName).emit('user_list', roomUsers);
 		}
 	}
 }

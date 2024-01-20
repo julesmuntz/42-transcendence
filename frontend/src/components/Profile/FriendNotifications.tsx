@@ -1,44 +1,66 @@
 import Container from "react-bootstrap/Container";
 import { WebSocketContext } from "../../contexts/WebSocketContext";
 import { useContext, useEffect, useState } from "react";
-import { IFriends, UserContext } from "../../contexts/UserContext";
+import { IFriends, Info, UserContext } from "../../contexts/UserContext";
 import { Link } from "react-router-dom";
 import "./css/FriendNotifications.css";
 
 export default function FriendNotifications() {
 	const userContext = useContext(UserContext);
 	const socket = useContext(WebSocketContext);
-	const [notifs, setNotifs] = useState<IFriends[] | null>([]);
+	const [notifs, setNotifs] = useState<Info[] | null>(null);
 
 	useEffect(() => {
-		socket?.emit('notification_friendsInvited', { id: null});
+		const initializeNotifFriend = async () => {
+			await new Promise<void>(resolve => {
+				if (socket?.connected) {
+					resolve();
+				} else {
+					socket?.on('connect', () => resolve());
+				}
+			});
+			socket?.emit('notification_friendsInvited', { id: null});
+		};
+		initializeNotifFriend();
+
 		socket?.on('friendsInvited', (e: IFriends[] | null) => {
-			const notifArr = e;
-			if (notifArr !== null)
-				setNotifs(notifArr);
-			else
-				setNotifs([]);
+			if (e)
+			{
+				for (const friend of e) {
+					if (friend.user2.id === userContext.user.info.id) {
+						setNotifs((notifs) => [friend.user1, ...(notifs || [])]);
+					}
+				}
+			}
+		});
+
+		socket?.on('friendsInviteRemoved', () => {
+			socket?.emit('notification_friendsInvited', { id: null});
+		});
+
+		return (() => {
+			socket?.off('friendsInvited');
+			socket?.off('friendsInviteRemoved');
 		});
 	}, [socket]);
 
-	if (notifs)
-	{
-		return (
-			<Container className="d-flex friend-invites">
-				<h3>Friend Invites</h3>
-				{notifs?.map((notif, index) => {
-				if (notif.user1.id !== userContext.user.info.id) {
-				return (
-					<Container key={index} className="link-to-friend">
-						<Link to={`/profile/${notif.user1.id}`} className="link-text">{notif.user1.username}</Link>
-					</Container>
-				);
-				} else {
-					return null; // or any other value that makes sense in your context
-				}
-			})}
-			</Container>
-		);
-	}
-	return (<></>);
+	if (!notifs)
+		return null;
+
+	return (
+		<Container className="d-flex friend-invites">
+			<p>Friend Requests</p>
+			{notifs.map((notif, index) => {
+			if (notif.id !== userContext.user.info.id) {
+			return (
+				<Container key={index} className="link-to-friend">
+					<Link to={`/profile/${notif.id}`} className="link-text">{notif.username}</Link>
+				</Container>
+			);
+			} else {
+				return null;
+			}
+		})}
+		</Container>
+	);
 }

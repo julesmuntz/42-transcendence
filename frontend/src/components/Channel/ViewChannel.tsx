@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext, useEmits } from "../../contexts/UserContext";
+import { UserContext } from "../../contexts/UserContext";
 import { WebSocketContext } from "../../contexts/WebSocketContext";
 import { useNavigate } from 'react-router-dom'
 
@@ -16,30 +16,29 @@ export default function ViewChannel() {
 	const userContext = useContext(UserContext);
 	const navigate = useNavigate();
 
-	useEmits(socket, 'getChannel', null);
-
+	useEffect(() => {
+		const initializeEmits = async () => {
+			socket?.emit('getChannel');
+		};
+		initializeEmits();
+	}, [socket]);
 	useEffect(() => {
 		socket?.on('channelList', (data: Channel[]) => {
 			setChannel([]);
 			setChannel(data);
 		});
-		socket?.on('updateType', () => {
-			console.log('updateType');
+		socket?.on('updateListChannel', () => {
 			socket?.emit('getChannel');
 		});
 		socket?.on('updateChannelList', (data: Channel) => {
 			setChannel((channel) => [...channel, data]);
 		});
-		socket?.on('deleteChannel', (data: Channel) => {
-			setChannel((channel) => channel.filter((channel) => channel.id !== data.id));
-		});
-		socket?.on('passwordChannel', (roomId: string) => {navigate(`/chat/${roomId}`);	});
-
+		socket?.on('passwordChannel', (roomId: string) => { navigate(`/chat/${roomId}`); });
 		return () => {
 			socket?.off('channelList');
 			socket?.off('updateChannelList');
-			socket?.off('deleteChannel');
 			socket?.off('passwordChannel');
+			socket?.off('updateListChannel');
 		};
 
 	}, [channel, socket, navigate]);
@@ -52,36 +51,10 @@ export default function ViewChannel() {
 				alert('Please fill in all fields');
 				return;
 			}
-			socket?.emit('passwordChannel', {channelId: roomId, password: password, userId: userContext.user.info.id})
-		}else
+			socket?.emit('passwordChannel', { channelId: roomId, password: password, userId: userContext.user.info.id })
+		} else
 			socket?.emit('joinChannel', { userId: userContext.user.info.id, channelId: roomId });
 	};
-
-	// async function getUserIdByUsername(target: string): Promise<number | null> {
-	// 	const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/search/${target}`, {
-	// 		method: 'GET',
-	// 		headers: {
-	// 			Authorization: `Bearer ${userContext.user.authToken}`,
-	// 			'Content-Type': 'application/json',
-	// 		},
-	// 	});
-	// 	const data = await response.json();
-	// 	if (data.error || data.length === 0) {
-	// 		return null;
-	// 	}
-	// 	return data[0].id;
-	// }
-
-	// async function inviteToChannel(channelId: number) {
-	// 	const userName = prompt('Enter username');
-	// 	const userId = await getUserIdByUsername(userName || '');
-	// 	if (userId) {
-	// 		socket?.emit('inviteChannels', { userId, channelId });
-	// 	}
-	// 	else {
-	// 		alert('User not found');
-	// 	}
-	// }
 
 	function Category({ children }: { children: React.ReactNode }) {
 		return (
@@ -96,7 +69,7 @@ export default function ViewChannel() {
 			<div>
 				{channel.find((channel) => channel.type === 'public') &&
 					<>
-						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#26292e' }}>Public</p>
+						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#252c38' }}>Public</p>
 						<Category>
 							<div>
 								{channel.map((channel) => (channel.type === 'public') && (
@@ -106,7 +79,7 @@ export default function ViewChannel() {
 										onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
 									>
 										<div className="color_text d-flex align-items-start">
-											<div style={{wordBreak: "break-all"}} className="flex-grow-1 ml-3">
+											<div style={{ wordBreak: "break-all" }} className="flex-grow-1 ml-3">
 												{channel.name}
 											</div>
 										</div>
@@ -119,7 +92,7 @@ export default function ViewChannel() {
 				}
 				{channel.find((channel) => channel.type === 'protected') &&
 					<>
-						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#26292e' }}>Protected</p>
+						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#252c38' }}>Protected</p>
 						<Category>
 							<div>
 								{channel.map((channel) => (channel.type === 'protected') && (
@@ -129,7 +102,7 @@ export default function ViewChannel() {
 										onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
 									>
 										<div className="color_text d-flex align-items-start">
-											<div style={{wordBreak: "break-all"}} className="flex-grow-1 ml-3">
+											<div style={{ wordBreak: "break-all" }} className="flex-grow-1 ml-3">
 												{channel.name}
 											</div>
 										</div>
@@ -142,7 +115,7 @@ export default function ViewChannel() {
 				}
 				{channel.find((channel) => channel.type === 'private') &&
 					<>
-						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#26292e' }}>Private</p>
+						<p style={{ fontSize: '12px', textAlign: 'left', backgroundColor: '#252c38' }}>Private</p>
 						<Category>
 							<div>
 								{channel.map((channel) => (channel.type === 'private') && (
@@ -152,7 +125,7 @@ export default function ViewChannel() {
 										onClick={() => joinRoom(channel.name.toString(), channel.type.toString())}
 									>
 										<div className="color_text d-flex align-items-start">
-											<div style={{wordBreak: "break-all"}} className="flex-grow-1 ml-3">
+											<div style={{ wordBreak: "break-all" }} className="flex-grow-1 ml-3">
 												{channel.name}
 											</div>
 										</div>

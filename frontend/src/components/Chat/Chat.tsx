@@ -17,8 +17,7 @@ export default function Chat() {
 	const [isConnected, setIsConnected] = useState(socket?.connected);
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [toggleUserList, setToggleUserList] = useState<boolean>(false);
-
-	const { data: room } = useRoomQuery(roomName as string, isConnected ?? false) || {};
+	let { data: room } = useRoomQuery(roomName as string, isConnected ?? false);
 	const [getUser, setUsers] = useState<UserRoom[]>([]);
 	const navigate = useNavigate();
 	const [user, setUser] = useState<UserRoom>({
@@ -29,6 +28,11 @@ export default function Chat() {
 	});
 
 	const [friendBlock, setFriendBlock] = useState<IFriends[] | null>(null);
+	const [isType, setType] = useState<boolean>(false);
+	useSocketEvent(socket, 'type', () => 
+	{
+		setType(false);
+	});
 
 	useSocketEvent(socket, 'chat', (e: Message) => {
 		setMessages((messages) => [e, ...messages]);
@@ -51,11 +55,13 @@ export default function Chat() {
 		if (e.type === 'regular')
 			setToggleUserList(false);
 	});
+
 	useSocketEvent(socket, 'deleteChannel', () => {
-		// navigate('/');
+		navigate('/chat');
 	});
+
 	useSocketEvent(socket, 'banned', () => {
-		// navigate('/');
+		navigate('/chat');
 	});
 
 	useEmits(socket, 'friendsBlocked', null);
@@ -66,13 +72,6 @@ export default function Chat() {
 
 	useEffect(() => {
 		const initializeChat = async () => {
-			await new Promise<void>(resolve => {
-				if (socket?.connected) {
-					resolve();
-				} else {
-					socket?.on('connect', () => resolve());
-				}
-			});
 			socket?.emit('join_room', {
 				user: {
 					userId: userContext.user.info.id,
@@ -90,9 +89,14 @@ export default function Chat() {
 		};
 	}, [socket, roomName, navigate, userContext]);
 
+	useEffect(() => {
+		if (room?.type === "protected")
+			setType(true);
+	}, [room]);
+
 	const leaveRoom = () => {
 		socket?.emit('disconnectRoom', { roomName: roomName });
-		navigate('/');
+		navigate('/chat');
 	};
 
 	const sendMessage = (message: string) => {
@@ -159,12 +163,41 @@ export default function Chat() {
 		}
 	}
 
-	if (!roomName) {
+	async function getUserIdByUsername(target: string): Promise<number | null> {
+		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/search/${target}`, {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${userContext.user.authToken}`,
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = await response.json();
+		console.log('Response data:', data);
+		if (data.error || data.length === 0) {
+			return null;
+		}
+		return data[0].id;
+	}
+
+	async function inviteToChannel(channelId: string) {
+		const userName = prompt('Enter username');
+		const userId = await getUserIdByUsername(userName || '');
+		console.log(userId);
+		console.log(userName);
+		if (userId) {
+			socket?.emit('inviteChannel', { userId, channelId });
+		}
+		else {
+			alert('User not found');
+		}
+	}
+
+	if (!roomName || !room) {
 		return (
 			<ChatLayout>
 				{[
-					<div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "calc(100vh - 220px)" }}>
-						<div style={{ color: "gray"}}>
+					<div key="join-create-channel" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "calc(100vh - 220px)" }}>
+						<div style={{ color: "#535f71" }}>
 							Join or create a channel
 						</div>
 					</div>
@@ -182,12 +215,17 @@ export default function Chat() {
 						users={user}
 						roomName={room.name}
 						roomType={room.type}
+						isProtected={isType}
 						isChannel={room.channel}
 						handleUsersClick={() => setToggleUserList((toggleUserList) => !toggleUserList)}
 						handleLeaveRoom={() => leaveRoom()}
 						handleDestroyRoom={() => handleDestroyRoom(roomName)}
 						handleChangePasswordEvent={(password: string) => handleChangePasswordEvent(roomName, password)}
 						handleChangeTypeEvent={() => handleChangeTypeEvent(roomName)}
+						handleInvite={() => {
+								inviteToChannel(roomName);
+							}
+						}
 					/>
 
 					{toggleUserList && socket ? (

@@ -55,12 +55,12 @@ export default function Profile() {
 		}
 	}, [qrcode]);
 
-
 	if (is2FAActive)
 		return (<TFAProfile qrset={{ qrcode, setQrcode }} />);
 
-	console.log(userContext.user);
-
+	if (!userContext.user.info.email)
+		return (<></>);
+		
 	return (
 		<Container className="d-flex">
 			<Container></Container>

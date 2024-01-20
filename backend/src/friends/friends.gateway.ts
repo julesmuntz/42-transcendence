@@ -75,7 +75,7 @@ export class FriendsGateway {
 				const roomName = await this.dataSource.manager.save(Room, { name: string, host: { userId: friends_view.user1.id, userName: friends_view.user1.username, socketId: "" }, users: [], message: [], channel: false })
 				const friends = await this.dataSource.manager.save(Friend, { id: friends_view.id, type: RelationType.Friend, roomName: roomName.name });
 				if (friends) {
-					this.logger.log`User ${user.username} accepting ${idUserTarget.username}`;
+					this.logger.log(`User ${user.username} accepting ${idUserTarget.username}`);
 					this.server.to(client.id).emit('friends', friends);
 					this.handleRefreshFriendsAllsocketId(client.id, RelationType.Friend);
 					if (idUserTarget.socketId)
@@ -95,7 +95,10 @@ export class FriendsGateway {
 		if (user && idUserTarget && user.id != idUserTarget.id) {
 			const friends_view = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id:  payload.id }, user2: { id: user.id } },	{ user1: { id: user.id }, user2: { id:  payload.id } },],});
 			if (friends_view)
-				this.dataSource.manager.delete(Friend, { id: friends_view.id });
+			{
+				await this.dataSource.manager.delete(Friend, { id: friends_view.id });
+				await this.dataSource.manager.delete(Room, { name: friends_view.roomName });
+			}
 			const friends = await this.dataSource.manager.save(Friend, { user1: user, user2: idUserTarget, type: RelationType.Blocked });
 			if (friends) {
 				this.server.to(client.id).emit('friends', friends);
@@ -118,9 +121,10 @@ export class FriendsGateway {
 		if (user && idUserTarget && user.id != idUserTarget.id) {
 			const friends_view = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id:  payload.id }, user2: { id: user.id } },	{ user1: { id: user.id }, user2: { id:  payload.id } },],});
 			if (friends_view) {
-				this.logger.log`User ${user.username} deleting ${idUserTarget.username}`;
-				this.dataSource.manager.delete(Room, { name: friends_view.roomName });
-				this.dataSource.manager.delete(Friend, { id: friends_view.id });
+				this.logger.log(`User ${user.username} deleting ${idUserTarget.username}`);
+				if (friends_view.roomName)
+					await this.dataSource.manager.delete(Room, { name: friends_view.roomName });
+				await this.dataSource.manager.delete(Friend, { id: friends_view.id });
 			}
 			this.server.to(client.id).emit('friends', null);
 			this.handleRefreshFriendsAllsocketId(client.id, RelationType.Friend);
@@ -128,6 +132,7 @@ export class FriendsGateway {
 			{
 				this.server.to(idUserTarget.socketId).emit('friends', null);
 				this.handleRefreshFriendsAllsocketId(idUserTarget.socketId, RelationType.Friend);
+				this.server.to(idUserTarget.socketId).emit('friendsInviteRemoved');
 			}
 		}
 	}

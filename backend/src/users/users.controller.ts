@@ -51,7 +51,8 @@ export class UsersController {
 
 	@Get('search/:name')
 	async search(@Param('name') name: string): Promise<User[]> {
-		return this.usersService.search(name);
+		const user = await this.usersService.search(name);
+		return user;
 	}
 
 	@Public()

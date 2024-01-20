@@ -89,7 +89,8 @@ export default function ProfileModifier() {
 								name="profile-pic"
 								accept="image/gif, image/png, image/svg+xml, image/jpeg, image/png"
 								onChange={changeImage}
-							/>
+								style={{ color: '#ffffff' }}
+								/>
 							<Image
 								src={srcImg}
 								alt={`${userContext.user.info.username}'s profile picture`}
@@ -101,7 +102,12 @@ export default function ProfileModifier() {
 							<Form.Label className='py-3 pe-3'>
 								Username
 							</Form.Label>
-							<input type="text" className='username' placeholder={userContext.user.info.username} />
+							<input
+								type="text"
+								className="username"
+								placeholder={userContext.user.info.username}
+								style={{ backgroundColor: '#535f71' }}
+							/>
 						</Form.Group>
 						<Button type='submit'>Save changes</Button>
 					</Form>

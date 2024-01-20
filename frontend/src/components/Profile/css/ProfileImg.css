@@ -7,18 +7,18 @@
 
 .relative-profile-pic {
 	position: relative;
-	width: 300px;
-	height: 300px;
+	width: 200px;
+	height: 200px;
 	min-width: 150px;
 	min-height: 150px;
 }
 
 .absolute-profile-pic {
 	position: absolute;
-	border: solid #26292e 6px;
+	border: solid #252c38 6px;
 	border-radius: 50%;
-	bottom: 20px;
-	right: 40px;
-	width: 50px;
-	height: 50px;
+	bottom: 10px;
+	right: 20px;
+	width: 40px;
+	height: 40px;
 }

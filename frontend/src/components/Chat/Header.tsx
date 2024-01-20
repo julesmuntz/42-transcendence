@@ -10,8 +10,10 @@ export const Header = ({
 	handleDestroyRoom,
 	handleChangePasswordEvent,
 	handleChangeTypeEvent,
+	handleInvite,
 	roomName,
-	roomType
+	roomType,
+	isProtected
 }: {
 	isConnected: boolean
 	users: UserRoom
@@ -21,8 +23,10 @@ export const Header = ({
 	handleDestroyRoom: () => void
 	handleChangePasswordEvent: (password: string) => void
 	handleChangeTypeEvent: () => void
+	handleInvite(): void
 	roomName: string
 	roomType: ChannelType
+	isProtected: boolean
 }) => {
 
 	return (
@@ -31,7 +35,7 @@ export const Header = ({
 				<div className="btn-group">
 					{/* Display the room name and connection status */}
 					<h3 className="panel-title">
-						{roomName}
+						{isChannel ? (roomName) : (`Direct message`)}
 						{/* {roomName} <span className="ml-1">{isConnected ? '🟢' : '🔴'}</span> */}
 					</h3>
 					{/* Button to leave the room if it's a channel */}
@@ -70,13 +74,22 @@ export const Header = ({
 						</button>
 					)}
 
-					{isChannel && (users.type === 'Owner' && roomType === 'protected') && (
+					{isChannel && (users.type === 'Owner' && roomType === 'protected') && isProtected && (
 						<button type="button" className="btn btn-default" onClick={() => {
 							if (window.confirm('Remove the password?'))
 								handleChangeTypeEvent();
 						}
 						}>
 							<span className="mr-1 text-lg text-white">{'🔑'}</span>
+						</button>
+					)}
+
+					{isChannel && (users.type === 'Owner' && roomType === 'private') && (
+						<button type="button" className="btn btn-default" onClick={() => {
+							handleInvite();
+						}
+						}>
+							<span className="mr-1 text-lg text-white">{'📩'}</span>
 						</button>
 					)}
 				</div>
@@ -92,7 +105,7 @@ export const Header = ({
 export const UserList = ({ user, hostId, user_a, handleBanUnBan, handelMuteUnMute, handleKick, handlePromote }: { user: UserRoom[], hostId: number, user_a: UserRoom, handleBanUnBan: (user: UserRoom) => void, handelMuteUnMute: (user: UserRoom) => void, handleKick: (user: UserRoom) => void, handlePromote: (user: UserRoom) => void }) => {
 	return (
 		<div className="flex h-4/6 w-full flex-col-reverse overflow-y-scroll">
-			{user.map((users, index) => (
+			{user.length > 0 && user.map((users, index) => (
 				<div key={index} className="mb-4 flex rounded px-4 py-2">
 					<p className="text-black">
 						{users.userName} {hostId === users.userId && <span className="ml-2">{'👑'}</span>}

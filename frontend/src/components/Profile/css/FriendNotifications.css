@@ -7,7 +7,7 @@ div.friend-invites {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	border: 1px solid #ff8000;
+	border: 1px solid #515256;
 	border-radius: 10px;
 	padding: 0px;
 	padding-bottom: 10px;
@@ -19,11 +19,14 @@ div.friend-invites {
 	padding: 5px;
 }
 
-h3 {
+.friend-invites p {
 	font-weight: bold;
 	padding: 10px;
 	margin: 0px;
 	width: 100%;
-	border: 1px solid #ff8000;
-	background-color: #ff8000;
+	background-color: #ff7c14;
+}
+
+.link-to-friend .link-text {
+	font-weight: normal;
 }

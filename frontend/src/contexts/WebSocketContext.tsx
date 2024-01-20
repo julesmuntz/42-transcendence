@@ -43,7 +43,7 @@ function WebSocketProvider({
 				}
 			});
 			setSocket(socketIOClient);
-			socketIOClient.on("connect", () => { socketIOClient.emit("saveusersocket", user?.info.id);});
+			socketIOClient.on("connect", () => { socketIOClient.emit("saveusersocket", user?.info.id);}); //a true ici
 			socketIOClient.on("notification", (notification: Notification) => {
 				const notificationFunctions = {
 					[NotificationType.Info]: toast.info,
@@ -54,16 +54,15 @@ function WebSocketProvider({
 				notificationFunctions[notification.type](notification.message);
 			});
 			return () => {
+				socketIOClient.off("connect");
 				socketIOClient.disconnect();
 			};
 		}
 	}, [user?.info.id, user.authToken]);
 	const value = useMemo(() => socket, [socket]);
-
 	return (
 		<WebSocketContext.Provider value={value}>
 			{children}
-			{/* <ToastContainer /> */}
 		</WebSocketContext.Provider>
 	);
 }
