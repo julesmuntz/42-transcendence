@@ -1,4 +1,4 @@
-import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets'
+import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets'
 import { Logger } from '@nestjs/common'
 import { Message, UserRoom } from "../shared/chats.interface";
 import { Server, Socket } from 'socket.io'
@@ -31,7 +31,7 @@ export class ChatGateway {
 	}
 
 
-	async createUserRoom(user: UserRoom, roomName: string): Promise<UserRoom | undefined> {
+	async createUserRoom(user: UserRoom, roomName: string, socket: Socket): Promise<UserRoom | undefined> {
 		const room = await this.dataSource.manager.findOne(Channel, { where: { name: roomName }})
 		if (room) {
 			const channel_user = await this.dataSource.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {id: room.id}, user: {id: user.userId} }})
@@ -41,7 +41,7 @@ export class ChatGateway {
 				else
 					user.muted = false;
 				if (channel_user.access === ChannelMemberAccess.Banned) {
-					this.server.to(user.socketId).emit('banned', 'You are banned from this channel');
+					socket.emit('banned', 'You are banned from this channel');
 					return undefined;
 				}
 				if (channel_user.role === ChannelMemberRole.Owner)
@@ -53,13 +53,13 @@ export class ChatGateway {
 				user.avatarPath = channel_user.user.avatarPath;
 				if (room.type === 'protected' && channel_user.pass === false)
 				{
-					this.server.to(user.socketId).emit('banned', 'You are banned from this channel');
+					socket.emit('banned', 'You are banned from this channel');
 					return undefined;
 				}
 			}
 			else
 			{
-				this.server.to(user.socketId).emit('banned', 'You are banned from this channel');
+				socket.emit('banned', 'You are banned from this channel');
 				return undefined;
 			}
 		}
@@ -67,9 +67,12 @@ export class ChatGateway {
 	}
 	//renvoie la liste des user de la room
 	@SubscribeMessage('join_room')
-	async handleSetClientDataEvent(@MessageBody() payload: { user: UserRoom; roomName: string; }) {
+	async handleSetClientDataEvent(
+		@MessageBody() payload: { user: UserRoom; roomName: string; },
+		@ConnectedSocket socket: Socket
+	) {
 		if (payload.user.socketId && payload.roomName) {
-			const user = await this.createUserRoom(payload.user, payload.roomName);
+			const user = await this.createUserRoom(payload.user, payload.roomName, socket);
 			if (!user)
 				return;
 			this.logger.log(`${payload.user.socketId} is joining ${payload.roomName}`);
@@ -78,22 +81,25 @@ export class ChatGateway {
 			const messages = await this.chatService.getMessagesByRoom(payload.roomName);
 			if (messages) {
 				for (let message of messages)
-					this.server.to(payload.user.socketId).emit('chat', message);
+					socket.emit('chat', message);
 			}
-			this.server.to(payload.user.socketId).emit('chat_user', user);
-			this.server.to(payload.user.socketId).emit('connect_chat');
+			socket.emit('chat_user', user);
+			socket.emit('connect_chat');
 			this.handleUserListEvent(payload.roomName);
 		}
 	}
 
 	@SubscribeMessage('update_chat_user')
-	async handleUpdateChatUserEvent(@MessageBody() payload: { user: UserRoom; roomName: string; }) {
+	async handleUpdateChatUserEvent(
+		@MessageBody() payload: { user: UserRoom; roomName: string; },
+		@ConnectedSocket socket: Socket
+	) {
 		if (payload.user.socketId) {
-			const user = await this.createUserRoom(payload.user, payload.roomName);
+			const user = await this.createUserRoom(payload.user, payload.roomName, socket);
 			if (!user)
 				return;
 			this.logger.log(`${payload.user.socketId} is updating ${payload.roomName}`);
-			this.server.to(payload.user.socketId).emit('chat_user', user);
+			socket.emit('chat_user', user);
 			this.handleUserListEvent(payload.roomName);
 		}
 	}

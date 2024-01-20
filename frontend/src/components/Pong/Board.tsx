@@ -25,9 +25,10 @@ export default class Board extends React.Component<{
 	ratio: number,
 	id: number}, {}> {
 	drawServerUnreachable(ctx: CanvasRenderingContext2D) {
-		const fontsize = board.h * this.props.ratio / 10;
+		const	fontsize = board.h * this.props.ratio / 10;
+		const	font_family = 'Uni, sans';
 
-		ctx.font = `${fontsize}px serif`;
+		ctx.font = `${fontsize}px ${font_family}`;
 		ctx.fillStyle = "white";
 		ctx.fillText(
 			"Server connection lost",
@@ -40,7 +41,8 @@ export default class Board extends React.Component<{
 	}
 
 	drawWinningScreen(ctx: CanvasRenderingContext2D) {
-		const fontsize = board.h * this.props.ratio / 10;
+		const	fontsize = board.h * this.props.ratio / 10;
+		const	font_family = 'Uni, sans';
 		const	time_fade_begin = 500;
 		const	time_fade_end = 3000;
 		const	time_fade2_begin = 3500;
@@ -64,7 +66,7 @@ export default class Board extends React.Component<{
 			alpha2 = 0.7 * (duration - time_fade2_begin) / (time_fade2_end - time_fade2_begin);
 		else
 			alpha2 = 0.7;
-		ctx.font = `${fontsize}px serif`;
+		ctx.font = `${fontsize}px ${font_family}`;
 		ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`
 		ctx.fillText(
 			"The end",
@@ -74,25 +76,26 @@ export default class Board extends React.Component<{
 			`${this.props.player1.score} - ${this.props.player2.score}`,
 			board.w * this.props.ratio / 2 + 4 * fontsize / 2,
 			board.h * this.props.ratio / 2 + fontsize / 4);
-		ctx.font = `${fontsize/2}px serif`;
+		ctx.font = `${fontsize}px ${font_family}`;
 		ctx.fillStyle = `rgba(255, 255, 255, ${alpha2})`
 		if ((this.props.id === 1 && this.props.player1.score >= this.props.player2.score)
 			|| (this.props.id === 2 && this.props.player2.score >= this.props.player1.score))
 			ctx.fillText(
 				"You won",
-				board.w * this.props.ratio / 2 - 4 * fontsize / 4,
+				board.w * this.props.ratio / 2 - 7 * fontsize / 4,
 				board.h * this.props.ratio - 3 * fontsize / 2);
 		else
 			ctx.fillText(
 				"You lost",
-				board.w * this.props.ratio / 2 - 4 * fontsize / 4,
+				board.w * this.props.ratio / 2 - 7 * fontsize / 4,
 				board.h * this.props.ratio - 3 * fontsize / 2);
 	}
 
 	drawWaitingScreen(ctx: CanvasRenderingContext2D) {
-		const fontsize = board.h * this.props.ratio / 10;
+		const	fontsize = board.h * this.props.ratio / 10;
+		const	font_family = 'Uni, sans';
 
-		ctx.font = `${fontsize}px serif`;
+		ctx.font = `${fontsize}px ${font_family}`;
 		ctx.fillStyle = "white";
 		ctx.fillText(
 			"Looking for an opponent",
@@ -105,11 +108,12 @@ export default class Board extends React.Component<{
 	}
 
 	drawPing(ping: DataPing, ctx: CanvasRenderingContext2D) {
-		const fontsize = board.h * this.props.ratio / 28;
+		const	fontsize = board.h * this.props.ratio / 28;
+		const	font_family = 'Uni, sans';
 
 		if (ping.hide)
 			return ;
-		ctx.font = `${fontsize}px serif`;
+		ctx.font = `${fontsize}px ${font_family}`;
 		ctx.fillStyle = "grey";
 		ctx.fillText(
 			`${ping.latency}ms`.padStart(5, ' '),
@@ -119,6 +123,7 @@ export default class Board extends React.Component<{
 
 	drawScore(player: DataPlayer, ctx: CanvasRenderingContext2D) {
 		const	fontsize = board.h * this.props.ratio / 7;
+		const	font_family = 'Uni, sans';
 		const	x = (player.position === 0)
 			? board.w * this.props.ratio / 4 - fontsize / 2
 			: board.w * this.props.ratio * 3 / 4 - fontsize / 2;
@@ -137,7 +142,7 @@ export default class Board extends React.Component<{
 			alpha = 1;
 		else
 			alpha = duration / time_spawn;
-		ctx.font = `${fontsize}px serif`;
+		ctx.font = `${fontsize}px ${font_family}`;
 		ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`
 		ctx.fillText(`${player.score}`, x, board.h * this.props.ratio / 2 + fontsize / 3);
 	}

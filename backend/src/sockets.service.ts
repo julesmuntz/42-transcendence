@@ -2,47 +2,38 @@ import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 
 export enum NotificationType {
-  Info,
-  Success,
-  Warning,
-  Error,
+	Info,
+	Success,
+	Warning,
+	Error,
 }
 
 type Connection = {
-  socket: Socket;
-  date: Date;
+	userId: string;
+	date: Date;
 };
 
 @Injectable()
 export class SocketsService {
-  public socketUsers = new Map<string, Connection>();
+	public socketUsers = new Map<Socket, Connection>();
 
-  addSocket(userId: string, socket: Socket) {
-    this.socketUsers.set(userId, { socket, date: new Date() });
-  }
+	addSocket(userId: string, socket: Socket) {
+		this.socketUsers.set(socket, { userId, date: new Date() });
+	}
 
-  removeSocket(
-    socket: Socket,
-  ): { userId: string; minutesSpent: number } | undefined {
-    for (const [userId, connection] of this.socketUsers.entries()) {
-      if (connection.socket === socket)
-        return {
-          userId,
-          minutesSpent:
-            (new Date().getTime() - connection.date.getTime()) / 60000,
-        };
-    }
-    return undefined;
-  }
+	removeSocket(socket: Socket): { userId: string; minutesSpent: number } | undefined {
+		if (!this.socketUsers.has(socket))
+			return undefined;
+		const connection: Connection = this.socketUsers.get(socket);
+		this.socketUsers.delete(socket);
+		return ({
+			userId: connection.userId,
+			minutesSpent:
+				(new Date().getTime() - connection.date.getTime()) / 60000,
+		});
+	}
 
-  getSocket(userId: string): Socket | undefined {
-    return this.socketUsers.get(userId)?.socket;
-  }
-
-  getUserId(to_search: Socket): string | undefined {
-    for (const [key, value] of this.socketUsers.entries()) {
-      if (value.socket === to_search) return key;
-    }
-    return undefined;
-  }
+	getUserId(socket: Socket): string | undefined {
+		return this.socketUsers?.get(socket).userId;
+	}
 }
