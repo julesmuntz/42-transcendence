@@ -45,33 +45,10 @@ export default function Messages({
 	console.log(anchor);
 	setTimeout(() => {
 		const anchor = document.getElementsByClassName('anchor')[0];
-		anchor.scrollIntoView({
+		anchor?.scrollIntoView({
 			// behavior: "smooth"
 		});
 	}, 5);
-
-	// const messagesRef = useRef<HTMLDivElement>(null);
-	// const [isUserAtBottom, setIsUserAtBottom] = useState(true);
-
-	// useEffect(() => {
-	// 	const messagesContainer = messagesRef.current;
-	// 	if (messagesContainer && isUserAtBottom) {
-	// 		messagesContainer.scrollTop = messagesContainer.scrollHeight;
-	// 	}
-	// }, [messages, isUserAtBottom]);
-
-	// const handleScroll = () => {
-	// 	const messagesContainer = messagesRef.current;
-	// 	if (
-	// 		messagesContainer &&
-	// 		messagesContainer.scrollHeight - messagesContainer.scrollTop ===
-	// 		messagesContainer.clientHeight
-	// 	) {
-	// 		setIsUserAtBottom(true);
-	// 	} else {
-	// 		setIsUserAtBottom(false);
-	// 	}
-	// };
 
 	const reversedMessages = messages.slice().reverse();
 	if (!friends) {

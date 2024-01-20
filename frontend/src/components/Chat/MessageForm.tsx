@@ -25,13 +25,13 @@ export default function MessageForm({ sendMessage }: { sendMessage: (message: st
 	}
 
 	const scrollToAnchor = () => {
-        setTimeout(() => {
-            const anchor = document.getElementsByClassName('anchor')[0];
-            anchor.scrollIntoView({
-                behavior: "smooth"
-            });
-        }, 5);
-    }
+		setTimeout(() => {
+			const anchor = document.getElementsByClassName('anchor')[0];
+			anchor?.scrollIntoView({
+				behavior: "smooth"
+			});
+		}, 5);
+	}
 
 	return (
 		<div className="answer-add">
