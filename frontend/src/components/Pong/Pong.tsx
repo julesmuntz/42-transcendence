@@ -48,7 +48,7 @@ export default class Pong extends React.Component<{}, {
 			player2: { ...playerRightReset },
 			ball: { ...ballReset },
 			ratio: Math.min(
-				window.innerWidth / board.w,
+				(window.innerWidth - 45) / board.w,
 				window.innerHeight / board.h),
 			upIsPressed: false,
 			downIsPressed: false,
@@ -131,14 +131,14 @@ export default class Pong extends React.Component<{}, {
 			this.setState({ downIsPressed: false });
 		if (e.key === "w" || e.key === "ArrowUp")
 			this.setState({ upIsPressed: false });
-		if ((this.state.downIsPressed || this.state.upIsPressed)
-			&& !(this.state.downIsPressed && this.state.upIsPressed))
+		if ((!this.state.downIsPressed || e.key === "s" || e.key === "ArrowDown")
+			&& (!this.state.upIsPressed || e.key === "w" || e.key === "ArrowUp"))
 			socket.emit('pong_move', 0);
 	}
 
 	manageResize() {
 		this.setState({ ratio: Math.min(
-			window.innerWidth / board.w,
+			(window.innerWidth - 45) / board.w,
 			window.innerHeight / board.h)
 		});
 	}

@@ -8,6 +8,7 @@ export function launchBall(ball: DataBall, player: DataPlayer, t: DataTime) {
 	ball.vy = ballReset.vy;
 	ball.r = ballReset.r;
 	ball.kickoff = ballReset.kickoff;
+	t.update = new Date();
 	t.kickoff = new Date();
 }
 
