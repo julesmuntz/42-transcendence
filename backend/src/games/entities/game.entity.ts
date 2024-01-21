@@ -9,17 +9,13 @@ export class Game {
 	@CreateDateColumn({ type: 'timestamptz' })
 	creationDate: Date;
 
-	@Column()
-	user1Id: number;
+	@ManyToOne(() => User)
+	@JoinColumn()
+	user1: User;
 
-	@Column()
-	user2Id: number;
-
-	@Column()
-	user1Name: string;
-
-	@Column()
-	user2Name: string;
+	@ManyToOne(() => User)
+	@JoinColumn()
+	user2: User;
 
 	@Column()
 	score1: number;
