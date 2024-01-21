@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsInt, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsInt, IsNumber, IsString } from 'class-validator';
 
 export class GameDto {
 	@IsNotEmpty()
@@ -8,6 +8,14 @@ export class GameDto {
 	@IsNotEmpty()
 	@IsInt()
 	user2Id: number;
+
+	@IsNotEmpty()
+	@IsString()
+	user1Name: string;
+
+	@IsNotEmpty()
+	@IsString()
+	user2Name: string;
 
 	@IsNotEmpty()
 	@IsNumber()

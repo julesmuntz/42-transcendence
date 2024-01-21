@@ -96,11 +96,13 @@ export class PongGateway {
 			return ;
 		const playerId = this.pongService.joinGame(client, id);
 		client.emit('pong_accept', playerId);
-		if (this.pongService.gameStart()) {
+		if (this.pongService.gameStart(client)) {
 			var data = this.pongService.getData(client);
 			launchBall(data.ball, data.player1, data.t);
 			this.pongService.setData(client, data);
 			this.server.to(this.pongService.getRoom(client)).emit('pong_update', data);
 		}
+		else
+			client.emit('pong_update', this.pongService.getData(client));
 	}
 }
