@@ -29,7 +29,7 @@ export default function Chat() {
 
 	const [friendBlock, setFriendBlock] = useState<IFriends[] | null>(null);
 	const [isType, setType] = useState<boolean>(false);
-	useSocketEvent(socket, 'type', () => 
+	useSocketEvent(socket, 'type', () =>
 	{
 		setType(false);
 	});
@@ -172,8 +172,8 @@ export default function Chat() {
 			},
 		});
 		const data = await response.json();
-		console.log('Response data:', data);
-		if (data.error || data.length === 0) {
+		console.log(data);
+		if (data.error || data.length === 0 || !data[0]) {
 			return null;
 		}
 		return data[0].id;

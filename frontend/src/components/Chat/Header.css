@@ -1,0 +1,10 @@
+div.panel-heading div.panel-control div.btn-group .super-tooltip {
+	background-color: rgb(0, 255, 30);
+	z-index: 2;
+	color: #222;
+	font-size: smaller;
+}
+
+.user-list::-webkit-scrollbar {
+    display: none;
+}
