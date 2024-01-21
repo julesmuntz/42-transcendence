@@ -52,6 +52,7 @@ export default function PublicProfile() {
 				<ProfileInfos userPublic={user} />
 				{id && <Friends IdUserTarget={parseInt(id)} />}
 			</Container>
+			<Container></Container>
 		</Container>
 	);
 }

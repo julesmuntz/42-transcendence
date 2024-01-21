@@ -5,9 +5,10 @@ import { UserContext } from "../../contexts/UserContext";
 import { TFAProfile } from "./TFAProfile";
 import ProfileSecurity from "./ProfileSettings/ProfileSecurity";
 import ProfileInfos from "./ProfileInfos";
+import FriendNotifications from "./FriendNotifications";
+import GameHistory from "./GameHistory";
 
 import "./css/Profile.css";
-import FriendNotifications from "./FriendNotifications";
 
 export default function Profile() {
 	const userContext = useContext(UserContext);
@@ -60,14 +61,15 @@ export default function Profile() {
 
 	if (!userContext.user.info.email)
 		return (<></>);
-		
+
 	return (
 		<Container className="d-flex">
 			<Container></Container>
 			<Container className="d-flex flex-column justify-content-center align-items-center">
 				<ProfileImg userPublic={undefined} />
 				<ProfileInfos userPublic={undefined} />
-				<FriendNotifications/>
+				<FriendNotifications />
+				<GameHistory />
 			</Container>
 			<Container>
 				<ProfileSecurity qrset={{ qrcode, setQrcode }} />
