@@ -224,6 +224,7 @@
 }
 
 .scrollable {
+    display: block;
     width: 95%;
     height: calc(100vh - 300px);
     overflow-y: scroll;
@@ -236,6 +237,7 @@
 .anchor {
     overflow-anchor: auto;
     height: 1px;
+    -ms-flex-item-align: end;
 }
 
 .chat-users .user .name {
@@ -402,7 +404,6 @@
     height: 36px;
     top: 50%;
     margin-top: -18px;
-
 }
 
 .chat-body .answer-add .answer-btn-2 {

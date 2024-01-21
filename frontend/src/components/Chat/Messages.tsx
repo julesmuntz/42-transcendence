@@ -69,7 +69,7 @@ export default function Messages({
 						</div>
 					);
 				})}
-				<div className="anchor answer right"></div>
+				<div className="anchor answer right">coucou</div>
 			</div>
 		);
 
@@ -98,7 +98,7 @@ export default function Messages({
 							<div className="time">{message.timeSent}</div>
 						</div>
 				})}
-				<div className="anchor"></div>
+				<div className="anchor answer right">coucou</div>
 			</div>
 		);
 	}
