@@ -13,6 +13,7 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { Room } from 'chats/entities/chat.entity';
 import { JwtAuthGuard } from 'auth/guard/jwt.Guards';
 import { PongService } from 'pong/pong.service';
+import jwt from 'jsonwebtoken';
 
 
 @WebSocketGateway({ cors: true })
@@ -53,7 +54,22 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('saveusersocket')
 	async saveUserSocket(socket: Socket, userId: string) {
-		if (userId) {
+		let imposter = false;
+		let decodedToken;
+		const token = socket.handshake.headers.authorization.slice(7);
+		await jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+			if (err)
+			{
+				imposter = true;
+			}
+			else
+			{
+				decodedToken = decoded;
+				console.log(decodedToken.users.id);
+			}
+		});
+		//decide if we keep userId to detect user or do it using authToken
+		if (userId && !imposter && decodedToken && userId === decodedToken.users.id) {
 			this.socketService.addSocket(userId, socket);
 			let connectedUser = await this.dataSource.manager.findOneBy(User, {
 				id: parseInt(userId),

@@ -19,13 +19,14 @@ export class ChatGateway {
 	@SubscribeMessage('chat')
 	async handleChat(@MessageBody() payload: Message) {
 		const room = await this.chatService.getRoomByName(payload.roomName);
+		console.log(payload);
 		if (room.channel) {
 			if (payload.user.muted) {
 				this.logger.log(`User ${payload.user.userId} is muted`);
 				return;
 			}
 		}
-		this.logger.log(`Received message: ${payload}`);
+		this.logger.log(`Received message: ${payload.message}`);
 		await this.chatService.addMessageToRoom(payload);
 		this.server.to(payload.roomName).emit('chat', payload);
 	}
@@ -69,7 +70,7 @@ export class ChatGateway {
 	@SubscribeMessage('join_room')
 	async handleSetClientDataEvent(
 		@MessageBody() payload: { user: UserRoom; roomName: string; },
-		@ConnectedSocket socket: Socket
+		@ConnectedSocket() socket: Socket
 	) {
 		if (payload.user.socketId && payload.roomName) {
 			const user = await this.createUserRoom(payload.user, payload.roomName, socket);
@@ -92,7 +93,7 @@ export class ChatGateway {
 	@SubscribeMessage('update_chat_user')
 	async handleUpdateChatUserEvent(
 		@MessageBody() payload: { user: UserRoom; roomName: string; },
-		@ConnectedSocket socket: Socket
+		@ConnectedSocket() socket: Socket
 	) {
 		if (payload.user.socketId) {
 			const user = await this.createUserRoom(payload.user, payload.roomName, socket);

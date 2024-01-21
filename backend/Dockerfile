@@ -17,7 +17,8 @@ RUN npm install && npm install --save @nestjs/typeorm typeorm@latest pg\
 	&& npm install --save-dev @types/qrcode @types/express && npm i --save @nestjs/jwt\
 	&& npm install passport-jwt \
 	&& npm i --save @nestjs/websockets @nestjs/platform-socket.io \
-	&& npm install bcrypt
+	&& npm install bcrypt \
+	&& npm install jsonwebtoken --save
 
 RUN npm i -D @types/multer
 
