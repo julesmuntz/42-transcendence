@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import {
 	ballReset,
 	pingReset,
@@ -9,6 +10,7 @@ import { DataUpdate } from '../shared/interfaces/data.interface';
 import { Socket } from 'socket.io';
 import { GamesService } from '../games/games.service';
 import { GameDto } from '../games/dto/game.dto';
+import { User } from '../users/entities/user.entity';
 
 interface DataIds {
 	id1: number;
@@ -22,7 +24,10 @@ interface Presence {
 
 @Injectable()
 export class PongService {
-	constructor(private gamesService: GamesService) {}
+	constructor(
+		private gamesService: GamesService,
+		private dataSource:DataSource
+	) {}
 	private isGameStarting: Map<string, boolean> = new Map<string, boolean>;
 	private room: Map<string, string> = new Map<string, string>();
 	private room_from_player: Map<number, string> = new Map<number, string>();
@@ -144,13 +149,17 @@ export class PongService {
 		}
 	}
 
-	registerResults(client: Socket): void {
+	async registerResults(client: Socket): Promise<void> {
 		const data: DataUpdate = this.getData(client);
 		const roomName: string = this.room.get(client.id);
 		const room_properties = this.room_properties.get(roomName);
+		const user1 = await this.dataSource.manager.findOne(User, { where: { id: room_properties.id1 }});
+		const user2 = await this.dataSource.manager.findOne(User, { where: { id: room_properties.id2 }});
 		const game = new GameDto();
 		game.user1Id = room_properties.id1;
 		game.user2Id = room_properties.id2;
+		game.user1Name = user1.username;
+		game.user2Name = user2.username;
 		game.score1 = data.player1.score;
 		game.score2 = data.player2.score;
 		this.gamesService.create(game);

@@ -16,6 +16,12 @@ export class Game {
 	user2Id: number;
 
 	@Column()
+	user1Name: string;
+
+	@Column()
+	user2Name: string;
+
+	@Column()
 	score1: number;
 
 	@Column()
