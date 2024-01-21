@@ -45,8 +45,3 @@ export interface DataCanvas {
 	h: number;
 	margin: number;
 }
-
-export interface DataIds {
-	id1: string;
-	id2: string;
-}

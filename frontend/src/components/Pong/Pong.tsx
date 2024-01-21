@@ -1,9 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-import {
-	ServerToClientEvents,
-	ClientToServerEvents,
-} from '../../shared/interfaces/events.interface';
+import { Socket } from 'socket.io-client';
 import {
 	DataBall,
 	DataPing,
@@ -19,6 +15,7 @@ import {
 	ballReset
 } from '../../shared/config/pong.config';
 import { WebSocketContext, useSocketEvent } from '../../contexts/WebSocketContext';
+import { UserContext } from '../../contexts/UserContext';
 import Board from './Board';
 import './Pong.css';
 
@@ -26,7 +23,6 @@ export default function Pong() {
 	const socket = useContext<Socket | undefined>(WebSocketContext);
 
 	const [id, setId] = useState(0);
-	const [connected, setConnected] = useState(true);
 	const [t, setT] = useState<DataTime>({ update: new Date(), kickoff: new Date() });
 	const [ping, setPing] = useState<DataPing>({ ...pingReset });
 	const [player1, setPlayer1] = useState<DataPlayer>({ ...playerLeftReset });
@@ -61,6 +57,8 @@ export default function Pong() {
 		setBall(data.ball);
 	});
 
+	const userContext = useContext(UserContext);
+
 	useEffect(() => {
 		const intervalID: any = setInterval(() => {
 			var newPing = ping;
@@ -73,11 +71,11 @@ export default function Pong() {
 		window.addEventListener('keydown', manageKeydown);
 		window.addEventListener('keyup', manageKeyup);
 		window.addEventListener('resize', manageResize);
-		socket?.emit('pong_join');
+		socket?.emit('pong_join', userContext.user.info.id);
 		return (() => {
 			clearInterval(intervalID);
 		});
-	}, []);
+	});
 
 	function manageKeydown(e: KeyboardEvent): void {
 		if (e.repeat)
@@ -122,7 +120,7 @@ export default function Pong() {
 		<div className="Pong">
 			<Board
 				ball={ball}
-				connected={connected}
+				connected={true}
 				ping={ping}
 				player1={player1}
 				player2={player2}

@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsInt, IsNumber } from 'class-validator';
 
-export class CreateGameDto {
+export class GameDto {
 	@IsNotEmpty()
 	@IsInt()
 	user1Id: number;

@@ -69,7 +69,7 @@ export class ChatGateway {
 	@SubscribeMessage('join_room')
 	async handleSetClientDataEvent(
 		@MessageBody() payload: { user: UserRoom; roomName: string; },
-		@ConnectedSocket socket: Socket
+		@ConnectedSocket() socket: Socket
 	) {
 		if (payload.user.socketId && payload.roomName) {
 			const user = await this.createUserRoom(payload.user, payload.roomName, socket);
@@ -92,7 +92,7 @@ export class ChatGateway {
 	@SubscribeMessage('update_chat_user')
 	async handleUpdateChatUserEvent(
 		@MessageBody() payload: { user: UserRoom; roomName: string; },
-		@ConnectedSocket socket: Socket
+		@ConnectedSocket() socket: Socket
 	) {
 		if (payload.user.socketId) {
 			const user = await this.createUserRoom(payload.user, payload.roomName, socket);

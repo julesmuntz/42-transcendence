@@ -15,6 +15,8 @@ import { AppGateway } from 'app.gateway';
 import { ChannelsGateway } from 'channels/channels.gateway';
 import { PongModule } from 'pong/pong.module';
 import { PongService } from 'pong/pong.service';
+import { GamesService } from 'games/games.service';
+import { Game } from 'games/entities/game.entity';
 
 @Module({
 	imports: [ConfigModule.forRoot(),
@@ -30,6 +32,7 @@ import { PongService } from 'pong/pong.service';
 	}),
 		AuthModule,
 		FriendsModule,
+		TypeOrmModule.forFeature([Game]),
 		GamesModule,
 		ChannelsModule,
 		ChatsModule,
@@ -44,6 +47,7 @@ import { PongService } from 'pong/pong.service';
 		},
 		AppGateway,
 		SocketsService,
+		GamesService,
 		PongService,
 	],
 })

@@ -10,7 +10,7 @@ import {
 	ClientToServerEvents,
 } from '../shared/interfaces/events.interface';
 import { PongService } from './pong.service';
-import { DataIds, DataMove, DataUpdate } from '../shared/interfaces/data.interface';
+import { DataMove, DataUpdate } from '../shared/interfaces/data.interface';
 import { Server, Socket } from 'socket.io'
 import {
 	playerSpeed,
@@ -61,6 +61,8 @@ export class PongGateway {
 		if (!this.pongService.isInGame(client))
 			return ;
 		var data = this.pongService.getData(client);
+		if (data.player1.score >= 5 || data.player2.score >= 5)
+			return ;
 
 		updateData(data);
 		switch (ballInteraction(data)) {
@@ -80,20 +82,20 @@ export class PongGateway {
 				break;
 		}
 		this.pongService.setData(client, data);
+		if (data.player1.score >= 5 || data.player2.score >= 5)
+			this.pongService.registerResults(client);
 		this.server.to(this.pongService.getRoom(client)).emit('pong_update', data);
-		if (data.player1.score < 5 && data.player2.score < 5)
-			return ;
 	}
 
 	@SubscribeMessage('pong_join')
 	handleEventJoin(
+		@MessageBody() id: number,
 		@ConnectedSocket() client: Socket
 	): void {
 		if (this.pongService.isInGame(client))
 			return ;
-		const id = this.pongService.joinGame(client);
-		client.emit('pong_accept', id);
-		console.log(`Is game starting: ${this.pongService.gameStart()}`);
+		const playerId = this.pongService.joinGame(client, id);
+		client.emit('pong_accept', playerId);
 		if (this.pongService.gameStart()) {
 			var data = this.pongService.getData(client);
 			launchBall(data.ball, data.player1, data.t);
