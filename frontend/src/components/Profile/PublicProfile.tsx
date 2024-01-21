@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { useParams, useNavigate } from "react-router-dom";
 import Friends from "../Friends/Friends";
+import GameHistory from "./GameHistory";
 
 export default function PublicProfile() {
 	const { id } = useParams();
@@ -26,7 +27,8 @@ export default function PublicProfile() {
 				}).then((res) => {
 					return (res.json());
 				}).then((ret): void => {
-					setUser(ret);
+					if (!ret.error && !ret.message)
+						setUser(ret);
 				});
 		}
 		if (!done) {
@@ -42,17 +44,24 @@ export default function PublicProfile() {
 	console.log(user);
 
 	if (!user)
-		return (<></>);
+		return (<>
+			<div>
+				User not found
+			</div>
+		</>);
 
 	return (
 		<Container className="d-flex">
-			<Container></Container>
+			<Container>
+			</Container>
 			<Container className="d-flex flex-column justify-content-center align-items-center">
 				<ProfileImg userPublic={user} />
 				<ProfileInfos userPublic={user} />
+				<GameHistory />
+			</Container>
+			<Container>
 				{id && <Friends IdUserTarget={parseInt(id)} />}
 			</Container>
-			<Container></Container>
 		</Container>
 	);
 }

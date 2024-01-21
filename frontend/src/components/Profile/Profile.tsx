@@ -64,11 +64,12 @@ export default function Profile() {
 
 	return (
 		<Container className="d-flex">
-			<Container></Container>
+			<Container>
+				<FriendNotifications />
+			</Container>
 			<Container className="d-flex flex-column justify-content-center align-items-center">
 				<ProfileImg userPublic={undefined} />
 				<ProfileInfos userPublic={undefined} />
-				<FriendNotifications />
 				<GameHistory />
 			</Container>
 			<Container>

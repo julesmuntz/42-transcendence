@@ -2,8 +2,8 @@
 	display: none;
 }
 
-.game-history {
-	margin-top: 30px;
+div.game-history {
+	margin-top: 10px;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
@@ -18,8 +18,8 @@
 
 .game-history p {
 	font-weight: bold;
+	background-color: #515256;
 	padding: 10px;
 	margin: 0px;
 	width: 100%;
-	background-color: #ff7c14;
 }

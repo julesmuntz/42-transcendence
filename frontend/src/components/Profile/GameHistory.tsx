@@ -22,6 +22,7 @@ export default function GameHistory() {
 			}).then((ret) => {
 					return (ret.json());
 				}).then((res) => {
+					console.log(res);
 					setGames(res);
 					setDone(true);
 				});
@@ -37,7 +38,9 @@ export default function GameHistory() {
 			<p>Game History</p>
 			{games.map((game: any, index: number) => {
 				return (
-							<div key={index}>{game.score1} {game.score2}</div>
+					<div key={index}>
+						{game.user1Name} {game.score1} {game.score2} {game.user2Name}
+					</div>
 				);
 			}
 			)}

@@ -10,6 +10,9 @@ export default function CreateChannel() {
 	const [channelType, setChannelType] = useState("public");
 	const socket = useContext(WebSocketContext);
 
+	function preventDefault(e : any) {
+		e.preventDefault();
+	}
 
 	async function createChannel() {
 		const name = document.querySelector<HTMLInputElement>('#name')?.value;
@@ -32,7 +35,7 @@ export default function CreateChannel() {
 
 	return (
 		<div>
-			<Form>
+			<Form onSubmit={preventDefault}>
 				<Form.Group controlId="name">
 					<Form.Label>Name</Form.Label>
 					<Form.Control type="text" placeholder="Enter name"/>
