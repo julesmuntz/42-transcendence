@@ -153,13 +153,9 @@ export class PongService {
 		const data: DataUpdate = this.getData(client);
 		const roomName: string = this.room.get(client.id);
 		const room_properties = this.room_properties.get(roomName);
-		const user1 = await this.dataSource.manager.findOne(User, { where: { id: room_properties.id1 }});
-		const user2 = await this.dataSource.manager.findOne(User, { where: { id: room_properties.id2 }});
 		const game = new GameDto();
 		game.user1Id = room_properties.id1;
 		game.user2Id = room_properties.id2;
-		game.user1Name = user1.username;
-		game.user2Name = user2.username;
 		game.score1 = data.player1.score;
 		game.score2 = data.player2.score;
 		this.gamesService.create(game);
