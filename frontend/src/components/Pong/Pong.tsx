@@ -44,7 +44,6 @@ export default function Pong() {
 		setPing(newPing);
 	});
 	useSocketEvent(socket, 'pong_accept', (id: number) => {
-		console.log(`Accepted ${id}`);
 		setId(id);
 	});
 	useSocketEvent(socket, 'pong_update', (data: DataUpdate) => {
