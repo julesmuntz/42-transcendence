@@ -23,3 +23,26 @@ div.game-history {
 	margin: 0px;
 	width: 100%;
 }
+
+div.game-score {
+	justify-content: center;
+	align-items: center;
+}
+
+div.game-score * {
+	padding: 2px;
+}
+
+div.game-score .score {
+	font-size: 20px;
+}
+
+a.limited-size {
+	width: fit-content;
+	width: 30%;
+	max-width: 30%;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	color: #ff7c14;
+}

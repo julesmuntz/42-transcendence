@@ -38,8 +38,11 @@ export default function GameHistory() {
 			<p>Game History</p>
 			{games.map((game: any, index: number) => {
 				return (
-					<div key={index}>
-						{game.user1Name} {game.score1} {game.score2} {game.user2Name}
+					<div key={index} className="d-flex game-score">
+						<Link to={`/profile/${game.user1.id}`} className="limited-size">{game.user1.username}</Link>
+						<div className="score">{game.score1} - {game.score2}</div>
+						<Link to={`/profile/${game.user2.id}`} className="limited-size">{game.user2.username}</Link>
+						{/* <div className="limited-size">{game.user2.username}</div> */}
 					</div>
 				);
 			}
