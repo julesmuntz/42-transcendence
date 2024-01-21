@@ -3,7 +3,7 @@ import { PersonFill, Discord, Joystick, PeopleFill, Search } from "react-bootstr
 import { BrowserRouter, Route, Routes, NavLink } from "react-router-dom";
 import Profile from "../Profile/Profile";
 import "./SideNav.css";
-import Pong from "../Pong/Pong";
+import Game from "../Game/Game";
 import ViewFriends from "../Friends/ViewFriends";
 import PublicProfile from "../Profile/PublicProfile";
 import Chat from "../Chat/Chat";
@@ -63,7 +63,7 @@ export default function SideBar() {
 				<Route path="/profile/:id" element={<PublicProfile />}></Route>
 				<Route path="/" element={<Profile />}></Route>
 				<Route path="/friend" element={<ViewFriends />}></Route>
-				<Route path="/game" element={<Pong />}></Route>
+				<Route path="/game" element={<Game />}></Route>
 				<Route path="/chat/:id" element={<Chat />}></Route>
 				<Route path="/chat" element={<Chat />}></Route>
 			</Routes>
