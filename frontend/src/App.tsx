@@ -66,6 +66,8 @@ function App() {
 		}
 	}, [socket]);
 
+	// console.log(token);
+
 	return (
 	  <div className="App">
 		{(!userContext.user.auth && !token) && (TFASecret && id) ? (

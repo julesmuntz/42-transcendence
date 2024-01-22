@@ -71,16 +71,16 @@ export default function Friends({ IdUserTarget }: { IdUserTarget: number }) {
 			<>
 				{UserBlock.user2.id === userContext.user.info.id ? (
 					<>
-						<Button className="btn btn-primary pull-right" onClick={() => handleButtonAddFriends(IdUserTarget)}>
+						<Button className="btn btn-primary pull-right m-3" onClick={() => handleButtonAddFriends(IdUserTarget)}>
 							Accept
 						</Button>
-						<Button className="btn btn-primary pull-right" onClick={() => handleButtonBlockFriends(IdUserTarget)}>
+						<Button className="btn btn-primary pull-right m-3" onClick={() => handleButtonBlockFriends(IdUserTarget)}>
 							Block
 						</Button>
 					</>
 				) : (
 					<>
-						<Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(IdUserTarget)}>
+						<Button className="btn btn-primary pull-right m-3" onClick={() => handleButtonDeleteFriends(IdUserTarget)}>
 							Cancel request
 						</Button>
 					</>
@@ -92,10 +92,10 @@ export default function Friends({ IdUserTarget }: { IdUserTarget: number }) {
 	if (UserBlock && UserBlock.type === "friend") {
 		return (
 			<>
-				<Button className="btn btn-primary pull-right" onClick={() => handleButtonDeleteFriends(IdUserTarget)}>
+				<Button className="btn btn-primary pull-right m-3" onClick={() => handleButtonDeleteFriends(IdUserTarget)}>
 					Remove
 				</Button>
-				<Button className="btn btn-primary pull-right" onClick={() => handleButtonBlockFriends(IdUserTarget)}>
+				<Button className="btn btn-primary pull-right m-3" onClick={() => handleButtonBlockFriends(IdUserTarget)}>
 					Block
 				</Button>
 			</>
@@ -104,10 +104,10 @@ export default function Friends({ IdUserTarget }: { IdUserTarget: number }) {
 
 	return (
 		<>
-			<Button className="btn btn-primary pull-right" onClick={() => handleButtonInviteFriends(IdUserTarget)}>
+			<Button className="btn btn-primary pull-right block m-3" onClick={() => handleButtonInviteFriends(IdUserTarget)}>
 				Invite
 			</Button>
-			<Button className="btn btn-primary pull-right" onClick={() => handleButtonBlockFriends(IdUserTarget)}>
+			<Button className="btn btn-primary pull-right m-3" onClick={() => handleButtonBlockFriends(IdUserTarget)}>
 				Block
 			</Button>
 		</>

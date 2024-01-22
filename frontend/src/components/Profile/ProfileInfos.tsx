@@ -2,6 +2,8 @@ import Container from "react-bootstrap/Container";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 
+import "./css/ProfileInfo.css"
+
 export default function ProfileInfos({ userPublic }: { userPublic: any | undefined }) {
 	let user: any;
 	const userContext = useContext(UserContext);
@@ -44,14 +46,32 @@ export default function ProfileInfos({ userPublic }: { userPublic: any | undefin
 	return (
 		<Container>
 			{/* USERNAME */}
-			<div>{user.username}</div>
+			{/* <div className="d-flex"> */}
+				{/* <div className="info-title">Username</div> */}
+				<div className="username">{user.username}</div>
+			{/* </div> */}
 			{/* STATUS */}
-			<div>{user.status}</div>
+			<div className="d-flex justify-content-center align-items-center">
+				<div className="info-title fire">Status</div>
+				<div className="info">{user.status}</div>
+			</div>
 			{/* EMAIL ADDRESS */}
-			<div>{user.email}</div>
+			<div className="d-flex justify-content-center align-items-center">
+				<div className="info-title fire">Email</div>
+				<div className="info">{user.email}</div>
+			</div>
+			<hr/>
 			{/* GAME STATS (nb of wins and losses)*/}
-			<div>{nbWins === 1 ? `${nbWins} win` : `${nbWins} wins`}</div>
-			<div>{nbLosses === 1 ? `${nbLosses} loss` : `${nbLosses} losses`}</div>
+			<div className="d-flex justify-content-center align-items-center">
+				<div className="info-title fire">Wins</div>
+				<div className="info">{nbWins}</div>
+			</div>
+			<div className="d-flex justify-content-center align-items-center">
+				<div className="info-title fire">Losses</div>
+				<div className="info">{nbLosses}</div>
+			</div>
+			{/* <div>{nbWins === 1 ? `${nbWins} win` : `${nbWins} wins`}</div>
+			<div>{nbLosses === 1 ? `${nbLosses} loss` : `${nbLosses} losses`}</div> */}
 		</Container>
 	);
 }
