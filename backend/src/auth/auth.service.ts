@@ -18,12 +18,25 @@ export class AuthService {
 		private dataSources : DataSource,
 	) { }
 
+	async randomString(): Promise<string> {
+		let string = "";
+		const possible = "0123456789";
+		for (let i = 0; i < 8; i++)
+			string += possible.charAt(Math.floor(Math.random() * possible.length));
+		const users = await this.dataSources.manager.findOne(User, { where: {username: string} })
+			if (users)
+				return this.randomString();
+		return "user" + string;
+	}
+
 	async login(userDetails: UserDetails): Promise<string | User> {
 		const user = await this.usersService.findemail(userDetails.email);
 		if (!user) {
 			userDetails.avatarPath = userDetails.avatarDefault;
-			const userExist = await this.dataSources.manager.findOne(User, where : { username: userDetails.username });
-
+			const userExist = await this.dataSources.manager.findOne(User, { where: { username: userDetails.username } });
+			if (userExist) {
+				userDetails.username = await this.randomString();
+			}
 			const usercreate = await this.usersService.create(userDetails as CreateUserDto);
 			if (usercreate) {
 				return this.generateJwt(usercreate);
