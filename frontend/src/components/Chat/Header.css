@@ -1,7 +1,7 @@
 div.panel-heading div.panel-control div.btn-group .super-tooltip {
-	background-color: rgb(0, 255, 30);
+	background-color: #ff7c14;
 	z-index: 2;
-	color: #222;
+	color: #252c38;
 	font-size: smaller;
 }
 

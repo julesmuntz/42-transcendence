@@ -9,12 +9,9 @@ import { Socket, Server } from 'socket.io';
 import { SocketsService } from './sockets.service';
 import { User, UserStatus } from 'users/entities/user.entity';
 import { DataSource } from 'typeorm';
-import { Logger, UseGuards } from '@nestjs/common';
-import { Room } from 'chats/entities/chat.entity';
-import { JwtAuthGuard } from 'auth/guard/jwt.Guards';
+import { Logger } from '@nestjs/common';
 import { PongService } from 'pong/pong.service';
 import jwt from 'jsonwebtoken';
-
 
 @WebSocketGateway({ cors: true })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -27,10 +24,33 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer() server: Server;
 	private logger = new Logger('AppGateway');
 
-	@UseGuards(JwtAuthGuard)
+
 	handleConnection(socket: Socket) {
-		this.logger.log("Server: connection established");
-		socket.emit('message', 'Server: connection established');
+
+		const request = socket.handshake;
+		const token = request.query.token as string;
+		const userId = request.query.userId as string;
+		if (token && userId) {
+			jwt.verify(token, process.env.JWT_SECRET, (err) => {
+				if (err)
+				{
+					this.logger.error('Unauthorized connection');
+					socket.disconnect();
+				}
+				else
+				{
+					this.saveUserSocket(socket, userId);
+					this.logger.log("Server: connection established");
+					socket.emit('message', 'Server: connection established');
+				}
+			});
+
+		}
+		else
+		{
+			this.logger.error('Unauthorized connection');
+			socket.disconnect();
+		}
 	}
 
 	//le deconnecter du chat
@@ -52,24 +72,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.logger.log(`User ${connectedUser.username} is now offline`);
 	}
 
-	@SubscribeMessage('saveusersocket')
+	// @SubscribeMessage('saveusersocket')
 	async saveUserSocket(socket: Socket, userId: string) {
-		let imposter = false;
-		let decodedToken;
-		const token = socket.handshake.headers.authorization.slice(7);
-		await jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-			if (err)
-			{
-				imposter = true;
-			}
-			else
-			{
-				decodedToken = decoded;
-				console.log(decodedToken.users.id);
-			}
-		});
-		//decide if we keep userId to detect user or do it using authToken
-		if (userId && !imposter && decodedToken && userId === decodedToken.users.id) {
+		if (userId && userId !== 'undefined') {
 			this.socketService.addSocket(userId, socket);
 			let connectedUser = await this.dataSource.manager.findOneBy(User, {
 				id: parseInt(userId),

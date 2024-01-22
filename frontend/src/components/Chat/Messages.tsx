@@ -19,9 +19,7 @@ export default function Messages({
 
 	useEffect(() => {
 		if (done === false) {
-			console.log("not done");
 			const anchor = document.getElementsByClassName('anchor')[0];
-			console.log(anchor.scrollHeight);
 			anchor.scrollIntoView({
 				behavior: "smooth"
 			});
@@ -42,7 +40,6 @@ export default function Messages({
 	}, [done]);
 
 	const anchor = document.getElementsByClassName('anchor')[0];
-	console.log(anchor);
 	setTimeout(() => {
 		const anchor = document.getElementsByClassName('anchor')[0];
 		anchor?.scrollIntoView({

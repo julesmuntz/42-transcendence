@@ -51,9 +51,9 @@ export default function ViewChannel() {
 				alert('Please fill in all fields');
 				return;
 			}
-			socket?.emit('passwordChannel', { channelId: roomId, password: password, userId: userContext.user.info.id })
+			socket?.emit('passwordChannel', { channelId: roomId, password: password })
 		} else
-			socket?.emit('joinChannel', { userId: userContext.user.info.id, channelId: roomId });
+			socket?.emit('joinChannel', { channelId: roomId });
 	};
 
 	function Category({ children }: { children: React.ReactNode }) {

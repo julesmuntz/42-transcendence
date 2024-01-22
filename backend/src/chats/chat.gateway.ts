@@ -6,6 +6,7 @@ import { ChatsService } from "./chats.service";
 import { ChannelMember, ChannelMemberAccess, ChannelMemberPermission, ChannelMemberRole } from 'channels/entities/channel-member.entity';
 import { DataSource } from 'typeorm';
 import { Channel } from 'channels/entities/channel.entity';
+import { Friend } from 'friends/entities/friend.entity';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {
@@ -16,26 +17,55 @@ export class ChatGateway {
 	@WebSocketServer() server: Server;
 	private logger = new Logger('ChatGateway');
 
-	@SubscribeMessage('chat')
-	async handleChat(@MessageBody() payload: Message) {
-		const room = await this.chatService.getRoomByName(payload.roomName);
-		console.log(payload);
-		if (room.channel) {
-			if (payload.user.muted) {
-				this.logger.log(`User ${payload.user.userId} is muted`);
-				return;
-			}
+	async userisInRoom(roomName: string, socket: Socket): Promise<boolean> {
+		const room = await this.dataSource.manager.findOne(Channel, { where: { name: roomName }})
+		const friendsRoom = await this.dataSource.manager.findOne(Friend, {
+			relations: ['user1', 'user2'],
+			where: [
+				{ user1: { socketId: socket.id }, roomName: roomName },
+				{ user2: { socketId: socket.id }, roomName: roomName }
+			]
+		});
+		if (room) {
+			const channel_user = await this.dataSource.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {id: room.id}, user: {socketId: socket.id} }})
+			if (channel_user)
+				return true;
 		}
-		this.logger.log(`Received message: ${payload.message}`);
-		await this.chatService.addMessageToRoom(payload);
-		this.server.to(payload.roomName).emit('chat', payload);
+		else if (friendsRoom)
+			return true;
+		return false;
+	}
+
+	@SubscribeMessage('chat')
+	async handleChat(@MessageBody() payload: Message,
+		@ConnectedSocket() socket: Socket) {
+		const room = await this.chatService.getRoomByName(payload.roomName);
+		if (this.userisInRoom(payload.roomName, socket))
+		{
+			if (room.channel) {
+				if (payload.user.muted) {
+					this.logger.log(`User ${payload.user.userId} is muted`);
+					return;
+				}
+			}
+			this.logger.log(`Received message: ${payload.message}`);
+			await this.chatService.addMessageToRoom(payload);
+			this.server.to(payload.roomName).emit('chat', payload);
+		}
 	}
 
 
 	async createUserRoom(user: UserRoom, roomName: string, socket: Socket): Promise<UserRoom | undefined> {
 		const room = await this.dataSource.manager.findOne(Channel, { where: { name: roomName }})
+		const friendsRoom = await this.dataSource.manager.findOne(Friend, {
+			relations: ['user1', 'user2'],
+			where: [
+				{ user1: { socketId: socket.id }, roomName: roomName },
+				{ user2: { socketId: socket.id }, roomName: roomName }
+			]
+		});
 		if (room) {
-			const channel_user = await this.dataSource.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {id: room.id}, user: {id: user.userId} }})
+			const channel_user = await this.dataSource.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {id: room.id}, user: {socketId: socket.id} }})
 			if (channel_user) {
 				if (channel_user.permission === ChannelMemberPermission.Muted)
 					user.muted = true;
@@ -63,8 +93,12 @@ export class ChatGateway {
 				socket.emit('banned', 'You are banned from this channel');
 				return undefined;
 			}
+			return user;
 		}
-		return user;
+		else if (friendsRoom) {
+			return user;
+		}
+		return undefined;
 	}
 	//renvoie la liste des user de la room
 	@SubscribeMessage('join_room')
