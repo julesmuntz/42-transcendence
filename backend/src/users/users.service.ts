@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Like } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
+import { statusInGame, statusOnline, UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 
 @Injectable()
@@ -35,13 +35,15 @@ export class UsersService {
 	}
 
 	async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-
-		const userExist = await this.userRepository.findOne({ where: { username: updateUserDto.username} });
-		if (userExist) {
-			return null;
-		}
 		await this.userRepository.update(id, updateUserDto);
 		return this.userRepository.findOne({ where: { id } });
+	}
+
+	async endGame(id: number): Promise<void> {
+		const user = await this.userRepository.findOne({ where: { id } });
+		if (user.status != statusInGame.status)
+			return ;
+		await this.userRepository.update(id, statusOnline);
 	}
 
 	async delete(id: number): Promise<void> {

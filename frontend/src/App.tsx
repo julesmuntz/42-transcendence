@@ -57,7 +57,6 @@ function App() {
 	useEffect(() => {
 		socket?.on("isSocketConnected", (e) => {
 			setIsSocketConnected(e);
-			console.log(e);
 			if (!e)
 				socket?.disconnect();
 		});

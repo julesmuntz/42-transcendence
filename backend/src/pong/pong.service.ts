@@ -12,7 +12,7 @@ import { GamesService } from '../games/games.service';
 import { GameDto } from '../games/dto/game.dto';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from "../users/users.service";
-import { statusInGame, statusOnline } from "../users/dto/update-user.dto";
+import { statusInGame } from "../users/dto/update-user.dto";
 
 interface DataIds {
 	id1: number;
@@ -149,7 +149,7 @@ export class PongService {
 		if ((playerId === 1 && pres.present1 === 0)
 			|| (playerId === 2 && pres.present2 === 0)) {
 			this.room_from_player.delete(playerId);
-			this.usersService.update(playerId, statusOnline);
+			this.usersService.endGame(playerId);
 			if (this.current_room === roomName)
 				this.current_room = '';
 		}
@@ -167,7 +167,7 @@ export class PongService {
 		this.gamesService.create(game);
 		this.room_from_player.delete(room_properties.id1);
 		this.room_from_player.delete(room_properties.id2);
-		this.usersService.update(room_properties.id1, statusOnline);
-		this.usersService.update(room_properties.id2, statusOnline);
+		this.usersService.endGame(room_properties.id1);
+		this.usersService.endGame(room_properties.id2);
 	}
 }
