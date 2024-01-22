@@ -15,6 +15,8 @@ import { PongModule } from 'pong/pong.module';
 import { PongService } from 'pong/pong.service';
 import { GamesService } from 'games/games.service';
 import { Game } from 'games/entities/game.entity';
+import { UsersService } from "users/users.service";
+import { User } from "users/entities/user.entity";
 
 @Module({
 	imports: [ConfigModule.forRoot(),
@@ -30,12 +32,13 @@ import { Game } from 'games/entities/game.entity';
 	}),
 		AuthModule,
 		FriendsModule,
-		TypeOrmModule.forFeature([Game]),
 		GamesModule,
 		ChannelsModule,
 		ChatsModule,
 		PongModule,
 		UsersModule,
+		TypeOrmModule.forFeature([Game]),
+		TypeOrmModule.forFeature([User]),
 	],
 	controllers: [],
 	providers: [
@@ -47,6 +50,7 @@ import { Game } from 'games/entities/game.entity';
 		SocketsService,
 		GamesService,
 		PongService,
+		UsersService,
 	],
 })
 

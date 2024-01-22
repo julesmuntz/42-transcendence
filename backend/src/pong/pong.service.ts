@@ -11,6 +11,8 @@ import { Socket } from 'socket.io';
 import { GamesService } from '../games/games.service';
 import { GameDto } from '../games/dto/game.dto';
 import { User } from '../users/entities/user.entity';
+import { UsersService } from "../users/users.service";
+import { statusInGame, statusOnline } from "../users/dto/update-user.dto";
 
 interface DataIds {
 	id1: number;
@@ -26,6 +28,7 @@ interface Presence {
 export class PongService {
 	constructor(
 		private gamesService: GamesService,
+		private readonly usersService: UsersService,
 		private dataSource:DataSource
 	) {}
 	private isGameStarting: Map<string, boolean> = new Map<string, boolean>;
@@ -101,6 +104,7 @@ export class PongService {
 			});
 			this.room_properties.set(this.current_room, { id1: id, id2: -1 });
 			this.room_from_player.set(id, this.current_room);
+			this.usersService.update(id, statusInGame);
 			this.room.set(client.id, this.current_room);
 			client.join(this.current_room);
 			var pres = this.presence.get(this.current_room);
@@ -113,6 +117,7 @@ export class PongService {
 			const id1 = this.room_properties.get(this.current_room).id1;
 			this.room_properties.set(this.current_room, { id1: id1, id2: id});
 			this.room_from_player.set(id, this.current_room);
+			this.usersService.update(id, statusInGame);
 			this.room.set(client.id, this.current_room);
 			client.join(this.current_room);
 			var pres = this.presence.get(this.current_room);
@@ -144,6 +149,7 @@ export class PongService {
 		if ((playerId === 1 && pres.present1 === 0)
 			|| (playerId === 2 && pres.present2 === 0)) {
 			this.room_from_player.delete(playerId);
+			this.usersService.update(playerId, statusOnline);
 			if (this.current_room === roomName)
 				this.current_room = '';
 		}
@@ -161,5 +167,7 @@ export class PongService {
 		this.gamesService.create(game);
 		this.room_from_player.delete(room_properties.id1);
 		this.room_from_player.delete(room_properties.id2);
+		this.usersService.update(room_properties.id1, statusOnline);
+		this.usersService.update(room_properties.id2, statusOnline);
 	}
 }

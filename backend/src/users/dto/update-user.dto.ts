@@ -6,6 +6,10 @@ export const statusOnline: UpdateUserDto = {
 	status: UserStatus.Online,
 };
 
+export const statusInGame: UpdateUserDto = {
+	status: UserStatus.InGame,
+};
+
 export const statusOffline: UpdateUserDto = {
 	status: UserStatus.Offline,
 };
