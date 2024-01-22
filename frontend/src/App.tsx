@@ -25,8 +25,6 @@ interface JwtPayload {
 
 const queryClient = new QueryClient();
 
-// ... (import statements)
-
 function App() {
 	const userContext = useContext(UserContext);
 	const token = Cookies.get('access_token');
@@ -57,9 +55,15 @@ function App() {
 	}, [token, userContext]);
 
 	useEffect(() => {
-		socket?.on("isSocketConnected", () => {
-			setIsSocketConnected(true);
+		socket?.on("isSocketConnected", (e) => {
+			setIsSocketConnected(e);
+			console.log(e);
+			if (!e)
+				socket?.disconnect();
 		});
+		return () => {
+			socket?.off("isSocketConnected");
+		}
 	}, [socket]);
 
 	return (

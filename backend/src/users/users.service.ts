@@ -35,6 +35,11 @@ export class UsersService {
 	}
 
 	async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+
+		const userExist = await this.userRepository.findOne({ where: { username: updateUserDto.username} });
+		if (userExist) {
+			return null;
+		}
 		await this.userRepository.update(id, updateUserDto);
 		return this.userRepository.findOne({ where: { id } });
 	}

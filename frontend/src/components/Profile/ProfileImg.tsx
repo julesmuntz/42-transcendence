@@ -24,7 +24,7 @@ export default function ProfileImg({ userPublic }: { userPublic: any | undefined
 				style={{ backgroundColor: `${statusColor}` }}
 			/>
 			<Image
-				src={user.avatarPath ?? user.avatarDefault}
+				src={user.avatarPath}
 				alt={`${user.username}'s profile picture`}
 				className="image"
 				roundedCircle

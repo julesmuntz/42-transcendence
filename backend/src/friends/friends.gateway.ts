@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { User } from 'users/entities/user.entity';
 import { Room } from 'chats/entities/chat.entity';
 import { Friend, RelationType } from './entities/friend.entity';
+import { NotificationType } from 'sockets.service';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class FriendsGateway {
@@ -47,7 +48,14 @@ export class FriendsGateway {
 				this.logger.log`User ${user.username} inviting ${idUserTarget.username}`;
 				this.server.to(client.id).emit('friends', friends);
 				if (idUserTarget.socketId)
+				{
+					this.server.to(idUserTarget.socketId).emit('notification', {
+						type: NotificationType.Info,
+						message: user.username + 'sent you a friend request',
+					});
 					this.server.to(idUserTarget.socketId).emit('friends', friends);
+				}
+
 			}
 
 		}
@@ -106,6 +114,10 @@ export class FriendsGateway {
 				this.handleRefreshFriendsAllsocketId(client.id, RelationType.Blocked);
 				if (idUserTarget.socketId)
 				{
+					this.server.to(idUserTarget.socketId).emit('notification', {
+						type: NotificationType.Error,
+						message: user.username + ' blocked you',
+					});
 					this.server.to(idUserTarget.socketId).emit('friends', friends);
 					this.handleRefreshFriendsAllsocketId(idUserTarget.socketId, RelationType.Friend);
 					this.handleRefreshFriendsAllsocketId(idUserTarget.socketId, RelationType.Blocked);

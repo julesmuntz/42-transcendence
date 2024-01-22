@@ -8,6 +8,7 @@ import { DataSource, In } from 'typeorm';
 import { User } from 'users/entities/user.entity';
 import { Room } from 'chats/entities/chat.entity';
 import * as bcrypt from 'bcrypt';
+import { NotificationType } from 'sockets.service';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChannelsGateway {
@@ -52,6 +53,10 @@ export class ChannelsGateway {
 				}
 			}
 		}
+		socket.emit('notification', {
+			type: NotificationType.Error,
+			message: 'Channel already exist',
+		});
 	}
 
 	// suprimer channel
@@ -67,6 +72,10 @@ export class ChannelsGateway {
 			this.logger.log(`Channel ${channel.name} deleted`);
 			this.server.emit('deleteChannel');
 			this.server.emit('updateListChannel');
+			socket.emit('notification', {
+				type: NotificationType.Success,
+				message: 'Channel deleted',
+			});
 			return channel;
 		}
 	}
@@ -105,7 +114,17 @@ export class ChannelsGateway {
 				if (channelMember) {
 					this.logger.log(`User "${user.username}" invited to Channel "${channel.name}"`);
 					if (user.socketId !== '')
-						this.server.to(user.socketId).emit('updateChannelListPrivate', channel);
+					{
+						this.server.to(user.socketId).emit('updateListChannel', 'You are kick from this channel');
+						this.server.to(user.socketId).emit('notification', {
+							type: NotificationType.Info,
+							message: 'You are invited to channel: ' + channel.name,
+						});
+					}
+					socket.emit('notification', {
+						type: NotificationType.Success,
+						message: 'User invited',
+					});
 					return channel;
 				}
 			}
@@ -185,24 +204,33 @@ export class ChannelsGateway {
 				if (user.socketId !== '') {
 					this.server.in(user.socketId).socketsLeave(channel.name);
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
+					this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
 					if (user.socketId !== '') {
-						this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
 						this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
+						this.server.to(user.socketId).emit('updateListChannel', 'You are kick from this channel');
+						this.server.to(user.socketId).emit('notification', {
+							type: NotificationType.Warning,
+							message: 'You are kick from channel: ' + channel.name,
+							});
 					}
 				}
-				return channel;
 			} else if (channelMember && memberOwner.role === ChannelMemberRole.Admin && channelMember.role === ChannelMemberRole.Regular) {
 				await this.dataSources.manager.delete(ChannelMember, { id: channelMember.id });
 				this.logger.log(`Channel ${channel.name} kicked to ${user.username}`);
 				if (user.socketId !== '') {
 					this.server.in(user.socketId).socketsLeave(channel.name);
 					await this.chatService.removeUserFromRoom(user.socketId, channel.name);
+					this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
 					if (user.socketId !== '') {
-						this.server.to(payload.roomName).emit('update_chat_user', 'You are kick from this channel');
+
 						this.server.to(user.socketId).emit('banned', 'You are kick from this channel');
+						this.server.to(user.socketId).emit('updateListChannel', 'You are kick from this channel');
+						this.server.to(user.socketId).emit('notification', {
+							type: NotificationType.Warning,
+							message: 'You are kick from channel: ' + channel.name,
+							});
 					}
 				}
-				return channel;
 			}
 		}
 	}
@@ -398,7 +426,7 @@ export class ChannelsGateway {
 
 	@SubscribeMessage('changePassword')
 	async handleChangePasswordEvent(client: Socket, payload: { roomName: string, password: string },) {
-		const room = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName, type: ChannelType.Protected} });
+		const room = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName, type: ChannelType.Protected } });
 		if (room && payload.password) {
 			const clientChannel = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: room.id }, user: { socketId: client.id }, role: ChannelMemberRole.Owner } });
 			if (!clientChannel)
@@ -416,7 +444,7 @@ export class ChannelsGateway {
 	}
 
 	@SubscribeMessage('changeType')
-	async handleChangeTypeEvent(client: Socket, payload: { roomName: string }, ) {
+	async handleChangeTypeEvent(client: Socket, payload: { roomName: string },) {
 		const rooma = await this.dataSources.manager.findOne(Channel, { where: { name: payload.roomName, type: ChannelType.Protected } });
 		if (rooma) {
 			const clientChannel = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: rooma.id }, user: { socketId: client.id }, role: ChannelMemberRole.Owner } });

@@ -64,7 +64,7 @@ export const Header = ({
 							</button>
 					}
 
-					{isChannel && (users.type === 'Owner' && roomType === 'protected') && (
+					{isChannel && (users.type === 'Owner' && roomType === 'protected') && isProtected && (
 						<button data-tooltip-id="my-tooltip" data-tooltip-place="bottom"
 							data-tooltip-content="Choose new password"
 							type="button" className="btn btn-default"

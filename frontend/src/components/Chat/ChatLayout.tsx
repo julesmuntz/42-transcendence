@@ -4,13 +4,16 @@ import axios from 'axios';
 import { Room } from '../../shared/chats.interface';
 import CreateChannel from '../Channel/CreateChannel';
 
-export const useRoomQuery = (roomName: string, isConnected: boolean) => {
+export const useRoomQuery = (roomName: string, isConnected: boolean, token: string) => {
 	// if (roomName) {
 		const query = useQuery({
 			queryKey: ['rooms', roomName],
 			queryFn: (): Promise<Room> =>
-				axios.get(`http://${process.env.REACT_APP_HOSTNAME}:3030/chats/rooms/${roomName}`).then((response) => response.data),
-			refetchInterval: 60000,
+			axios.get(`http://${process.env.REACT_APP_HOSTNAME}:3030/chats/rooms/${roomName}`, {
+			  headers: {
+				Authorization: `Bearer ${token}`,
+			  },
+			}).then((response) => response.data),
 			enabled: isConnected,
 		});
 		return query;

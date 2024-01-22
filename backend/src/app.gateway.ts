@@ -6,7 +6,7 @@ import {
 	SubscribeMessage,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { SocketsService } from './sockets.service';
+import { SocketsService, NotificationType } from './sockets.service';
 import { User, UserStatus } from 'users/entities/user.entity';
 import { DataSource } from 'typeorm';
 import { Logger } from '@nestjs/common';
@@ -26,7 +26,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 
 	handleConnection(socket: Socket) {
-
 		const request = socket.handshake;
 		const token = request.query.token as string;
 		const userId = request.query.userId as string;
@@ -34,14 +33,20 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			jwt.verify(token, process.env.JWT_SECRET, (err) => {
 				if (err)
 				{
+					socket.emit('notification', {
+						type: NotificationType.Error,
+						message: 'Access denied',
+					});
 					this.logger.error('Unauthorized connection');
 					socket.disconnect();
 				}
 				else
 				{
-					this.saveUserSocket(socket, userId);
-					this.logger.log("Server: connection established");
-					socket.emit('message', 'Server: connection established');
+					if (this.saveUserSocket(socket, userId))
+					{
+						this.logger.log("Server: connection established");
+						socket.emit('message', 'Server: connection established');
+					}
 				}
 			});
 
@@ -59,7 +64,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.pongService.kick(socket);
 		this.logger.log("Server: connection stopped");
 		const user = this.socketService.removeSocket(socket);
-
 		if (!user)
 			return undefined;
 		const connectedUser = await this.dataSource.manager.findOneBy(User, {
@@ -67,8 +71,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		});
 		if (!connectedUser)
 			return undefined;
-		await this.dataSource.manager.update(User, connectedUser.id, { status: UserStatus.Offline, socketId: '' });
-
+		await this.dataSource.manager.update(User, connectedUser.id, { status: UserStatus.Offline });
 		this.logger.log(`User ${connectedUser.username} is now offline`);
 	}
 
@@ -80,14 +83,17 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				id: parseInt(userId),
 			});
 			if (!connectedUser)
-				return undefined;
+				return false;
+			if (connectedUser.socketId !== '')
+				this.server.to(connectedUser.socketId).emit('isSocketConnected', false);
 			await this.dataSource.manager.update(User, connectedUser.id, { status: UserStatus.Online, socketId: socket.id });
 			this.logger.log(`User ${connectedUser.username} is now online`);
 			connectedUser = await this.dataSource.manager.findOneBy(User, {
 				id: parseInt(userId),
 			});
 			this.server.to(socket.id).emit('infoUser', connectedUser);
-			this.server.to(socket.id).emit('isSocketConnected', 'true');
+			this.server.to(socket.id).emit('isSocketConnected', true);
+			return true;
 		}
 	}
 }

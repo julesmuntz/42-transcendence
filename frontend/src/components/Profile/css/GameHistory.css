@@ -27,6 +27,7 @@ div.game-history {
 div.game-score {
 	justify-content: center;
 	align-items: center;
+	width: 100%;
 }
 
 div.game-score * {
@@ -40,7 +41,7 @@ div.game-score .score {
 a.limited-size {
 	width: fit-content;
 	width: 30%;
-	max-width: 30%;
+	max-width: 40%;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow-x: hidden;

@@ -33,7 +33,6 @@ export class UsersController {
 		}
 	}
 
-	@Public()
 	@Get()
 	async findAll(): Promise<User[]> {
 		return this.usersService.findAll();
@@ -63,10 +62,15 @@ export class UsersController {
 
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto): Promise<any> {
-		await this.usersService.update(id, updateUserDto);
-		return {
-			statusCode: 200,
-		}
+		const user = await this.usersService.update(id, updateUserDto);
+		if (user)
+			return {
+				statusCode: 200,
+			}
+		else
+			return {
+				statusCode: 400,
+			}
 	}
 
 	@Delete(':id')

@@ -43,7 +43,8 @@ export class ChatGateway {
 		if (this.userisInRoom(payload.roomName, socket))
 		{
 			if (room.channel) {
-				if (payload.user.muted) {
+				const user_mute = await this.dataSource.manager.findOne(ChannelMember, {relations: ['channel', 'user'], where: { channel: {name: room.name}, user: {socketId: socket.id} }})
+				if (payload.user.muted || user_mute?.permission === ChannelMemberPermission.Muted) {
 					this.logger.log(`User ${payload.user.userId} is muted`);
 					return;
 				}
@@ -141,7 +142,6 @@ export class ChatGateway {
 	//renvoie la liste des user de la room
 	// Corrected handleUserListEvent function
 	async handleUserListEvent(roomName: string) {
-
 		if (!roomName)
 			return;
 		this.logger.log(`Get user list of ${roomName}`);

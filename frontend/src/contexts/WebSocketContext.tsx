@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, useMemo, ReactNode, useContext } from "react";
 import { io, Socket } from "socket.io-client";
 import { UserContext } from "./UserContext";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 export const WebSocketContext = createContext<Socket | undefined>(undefined);
@@ -61,6 +61,7 @@ function WebSocketProvider({
 	return (
 		<WebSocketContext.Provider value={value}>
 			{children}
+			<ToastContainer toastStyle={{ backgroundColor: "#252c38", color: "white" }} />
 		</WebSocketContext.Provider>
 	);
 }

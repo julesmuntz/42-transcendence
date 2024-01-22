@@ -42,7 +42,6 @@ export default function GameHistory() {
 						<Link to={`/profile/${game.user1.id}`} className="limited-size">{game.user1.username}</Link>
 						<div className="score">{game.score1} - {game.score2}</div>
 						<Link to={`/profile/${game.user2.id}`} className="limited-size">{game.user2.username}</Link>
-						{/* <div className="limited-size">{game.user2.username}</div> */}
 					</div>
 				);
 			}
