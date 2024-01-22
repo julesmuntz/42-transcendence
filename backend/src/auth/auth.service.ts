@@ -8,18 +8,22 @@ import { Response } from "express";
 import { authenticator } from "otplib";
 import { toFileStream } from "qrcode";
 import { statusOnline } from "users/dto/update-user.dto";
+import { DataSource } from "typeorm";
 
 @Injectable()
 export class AuthService {
 	constructor(
 		private readonly usersService: UsersService,
-		private readonly jwtService: JwtService
+		private readonly jwtService: JwtService,
+		private dataSources : DataSource,
 	) { }
 
 	async login(userDetails: UserDetails): Promise<string | User> {
 		const user = await this.usersService.findemail(userDetails.email);
 		if (!user) {
 			userDetails.avatarPath = userDetails.avatarDefault;
+			const userExist = await this.dataSources.manager.findOne(User, where : { username: userDetails.username });
+
 			const usercreate = await this.usersService.create(userDetails as CreateUserDto);
 			if (usercreate) {
 				return this.generateJwt(usercreate);
