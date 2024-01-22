@@ -73,6 +73,9 @@ export default function Pong() {
 		socket?.emit('pong_join', userContext.user.info.id);
 		return (() => {
 			clearInterval(intervalID);
+			window.removeEventListener('keydown', manageKeydown);
+			window.removeEventListener('keyup', manageKeyup);
+			window.removeEventListener('resize', manageResize);
 		});
 	});
 
