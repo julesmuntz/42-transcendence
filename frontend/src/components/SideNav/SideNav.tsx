@@ -25,7 +25,6 @@ export default function SideBar() {
 	const [logoutColor, setLogoutColor] = useState("#535f71");
 
 	const socket = useContext<Socket | undefined>(WebSocketContext);
-	const getColor = (isActive) => isActive ? "#ff7c14" : "#535f71";
 
 	return (
 		<BrowserRouter>

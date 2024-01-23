@@ -232,7 +232,7 @@ export default function Chat() {
 						<UserList user={getUser ?? []} hostId={room.host.userId} user_a={user} handleBanUnBan={handleBanUnBan} handelMuteUnMute={handleMuteUnMute} handleKick={handleKick} handlePromote={handlePromote}></UserList>
 					) : (
 						<>
-							<Messages user={user} messages={messages} friends={friendBlock}></Messages>
+							<Messages user={user} messages={messages} friends={null}></Messages>
 							<MessageForm sendMessage={sendMessage}></MessageForm>
 						</>
 					)}
