@@ -1,7 +1,6 @@
 import { useState, createContext, useEffect } from 'react';
 
 export interface Info {
-	TFASecret: string;
 	avatarDefault: string;
 	avatarPath: string;
 	email: string;

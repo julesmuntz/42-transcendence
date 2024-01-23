@@ -5,13 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Room } from './entities/chat.entity';
 import { ChatGateway } from './chat.gateway';
 
-import { ChannelMember } from 'channels/entities/channel-member.entity';
-import { Channel } from 'channels/entities/channel.entity';
-
 @Module({
-	imports: [TypeOrmModule.forFeature([Room]),
-	TypeOrmModule.forFeature([ChannelMember]),
-	TypeOrmModule.forFeature([Channel])],
+	imports: [TypeOrmModule.forFeature([Room])],
 	controllers: [ChatsController],
 	providers: [ChatsService, ChatGateway],
 })

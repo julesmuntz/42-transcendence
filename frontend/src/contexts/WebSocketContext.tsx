@@ -41,7 +41,6 @@ function WebSocketProvider({
 				query: { userId: user?.info.id, token: user.authToken },
 			});
 			setSocket(socketIOClient);
-			// socketIOClient.on("connect", () => { socketIOClient.emit("saveusersocket", user?.info.id);}); //a true ici
 			socketIOClient.on("notification", (notification: Notification) => {
 				const notificationFunctions = {
 					[NotificationType.Info]: toast.info,

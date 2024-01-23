@@ -25,6 +25,7 @@ export default function SideBar() {
 	const [logoutColor, setLogoutColor] = useState("#535f71");
 
 	const socket = useContext<Socket | undefined>(WebSocketContext);
+	const getColor = (isActive) => isActive ? "#ff7c14" : "#535f71";
 
 	return (
 		<BrowserRouter>
@@ -84,7 +85,7 @@ export default function SideBar() {
 				<Route path="/game" element={<Game />}></Route>
 				<Route path="/chat/:id" element={<Chat />}></Route>
 				<Route path="/chat" element={<Chat />}></Route>
-				<Route path="/logout" element={<Logout/>}></Route>
+				<Route path="/logout" element={<Logout />}></Route>
 			</Routes>
 		</BrowserRouter>
 	);

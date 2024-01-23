@@ -28,7 +28,7 @@ export class FriendsGateway {
 				friends = await this.dataSource.manager.findOne(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id:  payload.id }, user2: { id: user.id }, type: RelationType.Friend },	{ user1: { id: user.id }, user2: { id:  payload.id }, type: RelationType.Friend },],});
 			if (friends) {
 				this.logger.log`User ${user.username} refreshing friends ${payload.id}`;
-				this.server.to(client.id).emit('friends', friends);
+				client.emit('friends', friends);
 			}
 		}
 	}
@@ -45,8 +45,8 @@ export class FriendsGateway {
 		if (user && idUserTarget && user.id != idUserTarget.id) {
 			const friends = await this.dataSource.manager.save(Friend, { user1: user, user2: idUserTarget, type: RelationType.Invited });
 			if (friends) {
-				this.logger.log`User ${user.username} inviting ${idUserTarget.username}`;
-				this.server.to(client.id).emit('friends', friends);
+				this.logger.log(`User ${user.username} inviting ${idUserTarget.username}`);
+				client.emit('friends', friends);
 				if (idUserTarget.socketId)
 				{
 					this.server.to(idUserTarget.socketId).emit('notification', {
@@ -84,7 +84,7 @@ export class FriendsGateway {
 				const friends = await this.dataSource.manager.save(Friend, { id: friends_view.id, type: RelationType.Friend, roomName: roomName.name });
 				if (friends) {
 					this.logger.log(`User ${user.username} accepting ${idUserTarget.username}`);
-					this.server.to(client.id).emit('friends', friends);
+					client.emit('friends', friends);
 					this.handleRefreshFriendsAllsocketId(client.id, RelationType.Friend);
 					if (idUserTarget.socketId)
 					{
@@ -109,7 +109,7 @@ export class FriendsGateway {
 			}
 			const friends = await this.dataSource.manager.save(Friend, { user1: user, user2: idUserTarget, type: RelationType.Blocked });
 			if (friends) {
-				this.server.to(client.id).emit('friends', friends);
+				client.emit('friends', friends);
 				this.handleRefreshFriendsAllsocketId(client.id, RelationType.Friend);
 				this.handleRefreshFriendsAllsocketId(client.id, RelationType.Blocked);
 				if (idUserTarget.socketId)
@@ -138,7 +138,7 @@ export class FriendsGateway {
 					await this.dataSource.manager.delete(Room, { name: friends_view.roomName });
 				await this.dataSource.manager.delete(Friend, { id: friends_view.id });
 			}
-			this.server.to(client.id).emit('friends', null);
+			client.emit('friends', null);
 			this.handleRefreshFriendsAllsocketId(client.id, RelationType.Friend);
 			if (idUserTarget.socketId)
 			{
@@ -159,7 +159,7 @@ export class FriendsGateway {
 			const friends = await this.dataSource.manager.find(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id: user.id }, type: RelationType.Invited },	{ user2: { id: user.id }, type: RelationType.Invited },],});
 			if (friends.length > 0) {
 				this.logger.log(`User ${user.username} refreshing friends invited`);
-				this.server.to(client.id).emit('friendsInvited', friends);
+				client.emit('friendsInvited', friends);
 				if (idUserTarget && idUserTarget.socketId)
 				{
 					this.logger.log(`User ${idUserTarget.username} refreshing friends invited`);
@@ -168,7 +168,7 @@ export class FriendsGateway {
 			}
 			else {
 				this.logger.log(`User ${user.username} refreshing friends invited`);
-				this.server.to(client.id).emit('friendsInvited', null);
+				client.emit('friendsInvited', null);
 				if (idUserTarget && idUserTarget.socketId)
 				{
 					this.logger.log(`User ${idUserTarget.username} refreshing friends invited`);
@@ -185,11 +185,11 @@ export class FriendsGateway {
 			const friends = await this.dataSource.manager.find(Friend, { relations: ["user1", "user2"],where: [	{ user1: { id: user.id }, type: RelationType.Blocked },	{ user2: { id: user.id }, type: RelationType.Blocked },],});
 			if (friends.length > 0) {
 				this.logger.log(`User ${user.username} refreshing friends blocked`);
-				this.server.to(client.id).emit('friendsBlocked', friends);
+				client.emit('friendsBlocked', friends);
 			}
 			else {
 				this.logger.log(`User ${user.username} refreshing friends blocked`);
-				this.server.to(client.id).emit('friendsBlocked', null);
+				client.emit('friendsBlocked', null);
 			}
 		}
 	}

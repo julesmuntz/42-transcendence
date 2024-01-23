@@ -98,6 +98,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 			}),
 		})
 			.then(() => {
+				console.log("SUCCESS fetch");
 				window.location.href = `http://${process.env.REACT_APP_HOSTNAME}:3000`;
 			})
 			.catch(() => {

@@ -3,7 +3,6 @@ import {
 	OnGatewayConnection,
 	WebSocketServer,
 	OnGatewayDisconnect,
-	SubscribeMessage,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { SocketsService, NotificationType } from './sockets.service';
@@ -75,7 +74,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.logger.log(`User ${connectedUser.username} is now offline`);
 	}
 
-	// @SubscribeMessage('saveusersocket')
 	async saveUserSocket(socket: Socket, userId: string) {
 		if (userId && userId !== 'undefined') {
 			this.socketService.addSocket(userId, socket);
@@ -91,8 +89,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			connectedUser = await this.dataSource.manager.findOneBy(User, {
 				id: parseInt(userId),
 			});
-			this.server.to(socket.id).emit('infoUser', connectedUser);
-			this.server.to(socket.id).emit('isSocketConnected', true);
+			socket.emit('infoUser', connectedUser);
+			socket.emit('isSocketConnected', true);
 			return true;
 		}
 	}
