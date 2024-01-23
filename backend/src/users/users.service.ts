@@ -30,8 +30,10 @@ export class UsersService {
 
 	}
 
-	async search(name: string): Promise<User[]> {
-		return this.userRepository.find({ where: { username: Like(`${name}%`) } });
+	async search(name: string): Promise<User[] | undefined> {
+		if (name.match(/^[a-zA-Z0-9]+$/))
+			return await this.userRepository.find({ where: { username: Like(`${name}%`) } });
+		return undefined;
 	}
 
 	async update(id: number, updateUserDto: UpdateUserDto): Promise<User | undefined> {

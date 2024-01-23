@@ -2,6 +2,7 @@ import Form from 'react-bootstrap/Form';
 import styled from "styled-components";
 import { UserContext } from '../../contexts/UserContext';
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import "../LoginPage/css/TwoFA.css";
 import "./css/Profile.css";
 
@@ -13,10 +14,11 @@ const TwofaBody = styled.div`
 	color: white;
 `;
 
-export function TFAProfile({ qrset }: { qrset: { qrcode: string, setQrcode: any } }) {
+export function TFAProfile({ qrset, isActive }: { qrset: { qrcode: string, setQrcode: any }, isActive: () => void }) {
 
 	const userContext = useContext(UserContext);
 	let code = "";
+	const navigate = useNavigate();
 	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		const inputValue = e.target.value;
@@ -94,15 +96,25 @@ export function TFAProfile({ qrset }: { qrset: { qrcode: string, setQrcode: any 
 		})
 			.then(
 				(res) => {
-					return res.json();
+					console.log(res)
+					if (res.status === 201) {
+						return res.json();
+					} else {
+						throw new Error("Wrong authentication code");
+					}
 				})
 			.then((ret) => {
 				const newUser = ret;
 				qrset.setQrcode("");
+				console.log(newUser);
 				userContext.login(newUser, userContext.user.authToken);
-				window.location.href = `http://${process.env.REACT_APP_HOSTNAME}:3000`;
+				isActive();
 			}
-			);
+			).catch((err) => {
+				console.log(err);
+				isActive();
+
+			});
 	}
 
 	return (

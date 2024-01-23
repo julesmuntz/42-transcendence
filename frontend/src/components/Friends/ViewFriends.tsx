@@ -18,7 +18,7 @@ export default function ViewFriends() {
     const navigate = useNavigate();
 
     async function handelsearch(e: any) {
-        if (e.target.value) {
+        if (e.target.value.match(/^[a-zA-Z0-9]+$/)) {
             return (fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/search/${e.target.value}`, {
                 method: "GET",
                 headers: {

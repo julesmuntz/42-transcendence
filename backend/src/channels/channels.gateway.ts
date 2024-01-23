@@ -31,7 +31,7 @@ export class ChannelsGateway {
 	) {
 		const channelExist = await this.dataSources.manager.findOne(Channel, { where: { name: payload.createChannelDto.name } });
 		const RoomExist = await this.dataSources.manager.findOne(Room, { where: { name: payload.createChannelDto.name } });
-		if (!channelExist && !RoomExist) {
+		if (!channelExist && !RoomExist && payload.createChannelDto.name.match(/^[a-zA-Z0-9]{0,20}$/)) {
 			if (payload.createChannelDto.passwordHash)
 				payload.createChannelDto.passwordHash = await bcrypt.hash(payload.createChannelDto.passwordHash, 10);
 			const channel = await this.dataSources.manager.save(Channel, payload.createChannelDto);
@@ -55,7 +55,7 @@ export class ChannelsGateway {
 		}
 		socket.emit('notification', {
 			type: NotificationType.Error,
-			message: 'Channel already exist',
+			message: 'Invalid channel',
 		});
 	}
 

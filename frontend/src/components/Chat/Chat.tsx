@@ -164,19 +164,22 @@ export default function Chat() {
 	}
 
 	async function getUserIdByUsername(target: string): Promise<number | null> {
-		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/search/${target}`, {
-			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${userContext.user.authToken}`,
-				'Content-Type': 'application/json',
-			},
-		});
-		const data = await response.json();
-		console.log(data);
-		if (data.error || data.length === 0 || !data[0]) {
-			return null;
+		if (target.match(/^[a-zA-Z0-9]+$/)) {
+			const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/search/${target}`, {
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${userContext.user.authToken}`,
+					'Content-Type': 'application/json',
+				},
+			});
+			const data = await response.json();
+			console.log(data);
+			if (data.error || data.length === 0 || !data[0]) {
+				return null;
+			}
+			return data[0].id;
 		}
-		return data[0].id;
+		return null;
 	}
 
 	async function inviteToChannel(channelId: string) {

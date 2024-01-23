@@ -15,71 +15,62 @@ import { Socket } from 'socket.io-client';
 import { UserContext } from "../../contexts/UserContext";
 
 export default function SideBar() {
-	const [profileColor, setProfileColor] = useState("#535f71");
-	const [chatColor, setChatColor] = useState("#535f71");
-	const [gameColor, setGameColor] = useState("#535f71");
-	const [friendColor, setFriendColor] = useState("#535f71");
-	const [searchColor, setSearchColor] = useState("#535f71");
-	const [logoutColor, setLogoutColor] = useState("#535f71");
-
 	const socket = useContext<Socket | undefined>(WebSocketContext);
-<<<<<<< HEAD
 	const userContext = useContext(UserContext);
-
-	const handelLogout = () => {
+	const handleLogout = () => {
 		socket?.disconnect();
 		Cookies.remove("access_token");
 		userContext.logout();
 	}
-=======
->>>>>>> 9d34c5dbeb33fdd8d97163135c49567b82cbacb4
+	const [isHovered, setIsHovered] = useState<string | null>(null);
 
 	return (
 		<BrowserRouter>
 			<Nav className="d-md-block bg-dark sidebar" activeKey="/home">
 				<div className="sidebar-sticky">
 					<Nav.Item className="pb-1">
-						<NavLink className={({ isActive }) => {
-							setProfileColor(isActive ? "#ff7c14" : "#535f71");
-							return (isActive ? "active" : "")
-						}} to="/profile">
-							<PersonFill color={profileColor} size={25} />
+						<NavLink
+							className={({ isActive }) => (isActive ? "active" : "")}
+							to="/profile"
+							onClick={() => setIsHovered('/profile')}
+						>
+							<PersonFill color={isHovered === '/profile' ? "#ff7c14" : "#535f71"} size={25} />
 						</NavLink>
 					</Nav.Item>
 
 					<Nav.Item className="pb-1">
-						<NavLink className={({ isActive }) => {
-							setChatColor(isActive ? "#ff7c14" : "#535f71");
-							return (isActive ? "active" : "")
-						}} to="/chat">
-							<Discord color={chatColor} size={25} />
+						<NavLink
+							className={({ isActive }) => (isActive ? "active" : "")}
+							to="/chat"
+							onClick={() => setIsHovered('/chat')}						>
+							<Discord color={isHovered === '/chat' ? "#ff7c14" : "#535f71"} size={25} />
 						</NavLink>
 					</Nav.Item>
 
 					<Nav.Item className="pb-1">
-						<NavLink className={({ isActive }) => {
-							setGameColor(isActive ? "#ff7c14" : "#535f71");
-							return (isActive ? "active" : "")
-						}} to="/game">
-							<Joystick color={gameColor} size={25} />
+						<NavLink
+							className={({ isActive }) => (isActive ? "active" : "")}
+							to="/game"
+							onClick={() => setIsHovered('/game')}						>
+							<Joystick color={isHovered === '/game' ? "#ff7c14" : "#535f71"} size={25} />
 						</NavLink>
 					</Nav.Item>
 
 					<Nav.Item className="pb-1">
-						<NavLink className={({ isActive }) => {
-							setFriendColor(isActive ? "#ff7c14" : "#535f71");
-							return (isActive ? "active" : "")
-						}} to="/friend">
-							<PeopleFill color={friendColor} size={25} />
+						<NavLink
+							className={({ isActive }) => (isActive ? "active" : "")}
+							to="/friend"
+							onClick={() => setIsHovered('/friend')}						>
+							<PeopleFill color={isHovered === '/friend' ? "#ff7c14" : "#535f71"} size={25} />
 						</NavLink>
 					</Nav.Item>
 
 					<Nav.Item className="pb-1">
-						<NavLink className={({ isActive }) => {
-							setLogoutColor(isActive ? "#ff7c14" : "#535f71");
-							return (isActive ? "active" : "")
-						}} onClick={handelLogout} to="/">
-							<BoxArrowRight color={logoutColor} size={25} />
+						<NavLink
+							className={({ isActive }) => (isActive ? "active" : "")}
+							to="/"
+							onClick={handleLogout}				>
+							<BoxArrowRight color={isHovered === '/' ? "#ff7c14" : "#535f71"} size={25} />
 						</NavLink>
 					</Nav.Item>
 				</div>

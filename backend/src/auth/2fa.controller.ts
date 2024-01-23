@@ -39,6 +39,7 @@ export class TFAController {
 		}
 
 		const User = await this.usersService.turnOnTFA(request.user.sub);
+		User.isTFAEnabled = true;
 		return User;
 	}
 
