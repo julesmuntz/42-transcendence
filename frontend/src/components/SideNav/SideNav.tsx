@@ -23,6 +23,7 @@ export default function SideBar() {
 	const [logoutColor, setLogoutColor] = useState("#535f71");
 
 	const socket = useContext<Socket | undefined>(WebSocketContext);
+<<<<<<< HEAD
 	const userContext = useContext(UserContext);
 
 	const handelLogout = () => {
@@ -30,6 +31,8 @@ export default function SideBar() {
 		Cookies.remove("access_token");
 		userContext.logout();
 	}
+=======
+>>>>>>> 9d34c5dbeb33fdd8d97163135c49567b82cbacb4
 
 	return (
 		<BrowserRouter>
