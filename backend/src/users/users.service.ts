@@ -77,4 +77,11 @@ export class UsersService {
 	async findOneBySocketId(socketId: string): Promise<User> {
 		return this.userRepository.findOne({ where: { socketId } });
 	}
+
+	async findTFASecret(id: number): Promise<string | undefined> {
+		const user = await this.userRepository.findOne({ where: { id } });
+		if (!user)
+			return undefined;
+		return user.TFASecret;
+	}
 }

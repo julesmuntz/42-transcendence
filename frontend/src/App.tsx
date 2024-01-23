@@ -28,7 +28,6 @@ const queryClient = new QueryClient();
 function App() {
 	const userContext = useContext(UserContext);
 	const token = Cookies.get('access_token');
-	const TFASecret = Cookies.get('TFASecret');
 	const id = Cookies.get('id');
 	const socket = useContext<Socket | undefined>(WebSocketContext);
 	const [isSocketConnected, setIsSocketConnected] = useState(false);
@@ -69,8 +68,8 @@ function App() {
 
 	return (
 	  <div className="App">
-		{(!userContext.user.auth && !token) && (TFASecret && id) ? (
-		  <TwoFA id={id} TFASecret={TFASecret} />
+		{(!userContext.user.auth && !token) && (id) ? (
+		  <TwoFA id={id} />
 		) : (
 		  (!userContext.user.auth && !token) ? (
 			<LoginPage />

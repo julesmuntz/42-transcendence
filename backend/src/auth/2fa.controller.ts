@@ -46,14 +46,17 @@ export class TFAController {
 	@Post("authenticate")
 async authenticate(
   @Res({ passthrough: true }) res: Response,
-  @Body() body: { id: number, TFASecret: string, TFACode: string }
+  @Body() body: { id: number, TFACode: string }
 ) {
-  try {
-    const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, body.TFASecret);
+	const userTFA = await this.usersService.findTFASecret(body.id);
+	if (userTFA == undefined)
+		throw new UnauthorizedException("User not found");
+    const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, userTFA);
 	const requestOrigin = res.req.headers.origin;
     res.setHeader('Access-Control-Allow-Origin', requestOrigin);
 
     if (!isCodeValid) {
+		console.log("Wrong authentication code");
       throw new UnauthorizedException("Wrong authentication code");
     }
 
@@ -64,14 +67,9 @@ async authenticate(
     const access_token = await this.TFAService.generateJwt(user);
     const u = await this.usersService.update(body.id, statusOnline);
 
-    res.cookie('access_token', `${access_token}`, { expires: expirationDate });
-    res.status(200).json({ status: 'ok' }); // Send a JSON response
-
+    res.cookie('access_token', `${access_token}`, { httpOnly: false, sameSite: "strict", expires: expirationDate });
+	res.status(200).json({ status: 'ok', id: u.id }); // Send a JSON response
     return null; // Return null to ensure that NestJS doesn't try to send an additional response
-  } catch (error) {
-    // Handle errors and send an appropriate response
-    return null; // Return null to ensure that NestJS doesn't try to send an additional response
-  }
 }
 
 

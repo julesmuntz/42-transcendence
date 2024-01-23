@@ -21,14 +21,12 @@ export class AuthController {
 		const expirationDate = new Date();
 		if (result instanceof User) {
 			expirationDate.setTime(expirationDate.getTime() + 30000); // 30 second en millisecondes
-			res.cookie(`id`, `${result.id}`, { expires: expirationDate });
-			res.cookie('TFASecret', `${result.TFASecret}`, { expires: expirationDate });
+			res.cookie(`id`, `${result.id}`, {  httpOnly: false, sameSite: "strict", expires: expirationDate  });
 			return res.redirect(`http://${process.env.HOSTNAME}:3000`);
 		}
 
 		expirationDate.setDate(expirationDate.getDate() + 7);
-		res.cookie('access_token', `${result}`, { expires: expirationDate });
-	
+		res.cookie('access_token', `${result}`, {  httpOnly: false, sameSite: "strict", expires: expirationDate  });
 		return res.redirect(`http://${process.env.HOSTNAME}:3000`);
 	}
 
