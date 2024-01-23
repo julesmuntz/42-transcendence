@@ -1,6 +1,6 @@
 import Nav from "react-bootstrap/Nav";
-import React, { useEffect, useContext } from 'react';
-import { PersonFill, Discord, Joystick, PeopleFill, Search, DoorOpenFill, BoxArrowRight } from "react-bootstrap-icons";
+import React, { useContext } from 'react';
+import { PersonFill, Discord, Joystick, PeopleFill, BoxArrowRight } from "react-bootstrap-icons";
 import { BrowserRouter, Route, Routes, NavLink } from "react-router-dom";
 import Profile from "../Profile/Profile";
 import "./SideNav.css";
@@ -9,12 +9,10 @@ import ViewFriends from "../Friends/ViewFriends";
 import PublicProfile from "../Profile/PublicProfile";
 import Chat from "../Chat/Chat";
 import { useState } from "react";
-import LoginPage from "../LoginPage/LoginPage";
-import { WebSocketContext, useSocketEvent } from '../../contexts/WebSocketContext';
-import App from "../../App";
+import { WebSocketContext } from '../../contexts/WebSocketContext';
 import Cookies from "js-cookie";
 import { Socket } from 'socket.io-client';
-import Logout from "../Logout/Logout";
+import { UserContext } from "../../contexts/UserContext";
 
 export default function SideBar() {
 	const [profileColor, setProfileColor] = useState("#535f71");
@@ -25,7 +23,13 @@ export default function SideBar() {
 	const [logoutColor, setLogoutColor] = useState("#535f71");
 
 	const socket = useContext<Socket | undefined>(WebSocketContext);
-	const getColor = (isActive) => isActive ? "#ff7c14" : "#535f71";
+	const userContext = useContext(UserContext);
+
+	const handelLogout = () => {
+		socket?.disconnect();
+		Cookies.remove("access_token");
+		userContext.logout();
+	}
 
 	return (
 		<BrowserRouter>
@@ -71,7 +75,7 @@ export default function SideBar() {
 						<NavLink className={({ isActive }) => {
 							setLogoutColor(isActive ? "#ff7c14" : "#535f71");
 							return (isActive ? "active" : "")
-						}} to="/logout">
+						}} onClick={handelLogout} to="/">
 							<BoxArrowRight color={logoutColor} size={25} />
 						</NavLink>
 					</Nav.Item>
@@ -85,7 +89,6 @@ export default function SideBar() {
 				<Route path="/game" element={<Game />}></Route>
 				<Route path="/chat/:id" element={<Chat />}></Route>
 				<Route path="/chat" element={<Chat />}></Route>
-				<Route path="/logout" element={<Logout />}></Route>
 			</Routes>
 		</BrowserRouter>
 	);

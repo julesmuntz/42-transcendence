@@ -1,7 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Form } from 'react-bootstrap';
 import styled from "styled-components";
+import { useNavigate } from 'react-router-dom';
 import "./css/TwoFA.css"
+import { UserContext } from "../../contexts/UserContext";
+import Cookies from "js-cookie";
 
 const TwofaBody = styled.div`
 	height: 100vh;
@@ -17,10 +20,11 @@ const TwofaLegend = styled.div`
 	font-weight: bold;
 `;
 
-export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string }) {
+export default function TwoFA({ id }: { id: string }) {
 	const [countdown, setCountdown] = useState(30);
+	const userContext = useContext(UserContext);
 	let code = "";
-
+	// const navigate = useNavigate();
 	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		const inputValue = e.target.value;
@@ -92,18 +96,24 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				id: id,
-				TFASecret: TFASecret,
+				id: id, // Assurez-vous que 'id' est défini avant cet appel
 				TFACode: code,
 			}),
 		})
-			.then(() => {
-				console.log("SUCCESS fetch");
-				window.location.href = `http://${process.env.REACT_APP_HOSTNAME}:3000`;
-			})
-			.catch(() => {
-				console.log("ERROR fetch");
-			});
+		.then((res) => {
+			if (res.status === 200) {
+				return res.json(); // Retourne une promesse pour être traitée dans le prochain then
+			} else {
+				throw new Error("Status not 200");
+			}
+		})
+		.then((id) => {
+			const token = Cookies.get('access_token');
+			if (token && id.id)
+				userContext.setTocken(id.id, token);
+		})
+		.catch((error) => {
+		});
 	};
 
 	useEffect(() => {
@@ -116,7 +126,7 @@ export default function TwoFA({ id, TFASecret }: { id: string; TFASecret: string
 
 	useEffect(() => {
 		if (countdown === 0)
-			window.location.href = `http://${process.env.REACT_APP_HOSTNAME}:3000`;
+			console.log("countdown is 0");
 	}, [countdown]);
 
 	return (

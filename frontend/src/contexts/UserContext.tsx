@@ -78,11 +78,7 @@ export default function UserProvider({ children }: any) {
 	}
 
 	const logout = () => {
-		setUser((user: Iuser) => ({
-			info: {} as Info,
-			auth: false,
-			authToken: ''
-		}));
+		setUser(() => ({ info: {} as Info, auth: false, authToken: ''}));
 	};
 
 	return (
