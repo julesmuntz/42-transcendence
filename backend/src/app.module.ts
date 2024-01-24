@@ -17,6 +17,7 @@ import { GamesService } from 'games/games.service';
 import { Game } from 'games/entities/game.entity';
 import { UsersService } from "users/users.service";
 import { User } from "users/entities/user.entity";
+import { InvitationGateway } from 'pong/invitation.gateway';
 
 @Module({
 	imports: [ConfigModule.forRoot(),
@@ -51,6 +52,7 @@ import { User } from "users/entities/user.entity";
 		GamesService,
 		PongService,
 		UsersService,
+		InvitationGateway,
 	],
 })
 

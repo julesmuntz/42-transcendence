@@ -32,11 +32,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			jwt.verify(token, process.env.JWT_SECRET, (err) => {
 				if (err)
 				{
+					this.logger.error('Unauthorized connection');
 					socket.emit('notification', {
 						type: NotificationType.Error,
-						message: 'Access denied',
-					});
-					this.logger.error('Unauthorized connection');
+						message: 'Unauthorized connection'}
+					);
 					socket.disconnect();
 				}
 				else
@@ -45,6 +45,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					{
 						this.logger.log("Server: connection established");
 						socket.emit('message', 'Server: connection established');
+						socket.setMaxListeners(0);
 					}
 				}
 			});
@@ -89,6 +90,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			connectedUser = await this.dataSource.manager.findOneBy(User, {
 				id: parseInt(userId),
 			});
+			connectedUser.TFASecret = null
 			socket.emit('infoUser', connectedUser);
 			socket.emit('isSocketConnected', true);
 			return true;

@@ -1,7 +1,6 @@
 import Container from "react-bootstrap/Container";
-import { WebSocketContext } from "../../contexts/WebSocketContext";
 import { useContext, useEffect, useState } from "react";
-import { IFriends, Info, UserContext } from "../../contexts/UserContext";
+import { UserContext } from "../../contexts/UserContext";
 import { Link } from "react-router-dom";
 
 import "./css/GameHistory.css";
@@ -22,7 +21,7 @@ export default function GameHistory() {
 			}).then((ret) => {
 					return (ret.json());
 				}).then((res) => {
-					console.log(res);
+					// console.log(res);
 					setGames(res);
 					setDone(true);
 				});

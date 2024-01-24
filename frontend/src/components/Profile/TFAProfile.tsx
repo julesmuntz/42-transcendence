@@ -2,7 +2,6 @@ import Form from 'react-bootstrap/Form';
 import styled from "styled-components";
 import { UserContext } from '../../contexts/UserContext';
 import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import "../LoginPage/css/TwoFA.css";
 import "./css/Profile.css";
 
@@ -18,7 +17,6 @@ export function TFAProfile({ qrset, isActive }: { qrset: { qrcode: string, setQr
 
 	const userContext = useContext(UserContext);
 	let code = "";
-	const navigate = useNavigate();
 	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		const inputValue = e.target.value;

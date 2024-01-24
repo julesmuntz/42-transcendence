@@ -5,7 +5,6 @@ import { Room } from '../../shared/chats.interface';
 import CreateChannel from '../Channel/CreateChannel';
 
 export const useRoomQuery = (roomName: string, isConnected: boolean, token: string) => {
-	// if (roomName) {
 		const query = useQuery({
 			queryKey: ['rooms', roomName],
 			queryFn: (): Promise<Room> =>
@@ -17,8 +16,6 @@ export const useRoomQuery = (roomName: string, isConnected: boolean, token: stri
 			enabled: isConnected,
 		});
 		return query;
-	// }
-
 };
 
 export const ChatLayout = ({ children }: { children: React.ReactElement[] | undefined }) => {

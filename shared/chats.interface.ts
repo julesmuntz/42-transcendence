@@ -30,3 +30,12 @@ export interface Room {
 	channel: boolean // true = channel room, false = chat room
 	type: ChannelType
 }
+
+
+export interface userInfo {
+	id: number;
+	username: string;
+	avatarPath: string;
+	status: string;
+	socketId: string;
+}

@@ -78,6 +78,7 @@ export class UsersController {
 		return res.sendFile(image, { root: './imgs' });
 	}
 
+
 	@Patch(':id')
 	async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Req() request): Promise<any> {
 		if (request.user.sub !== parseInt(id))

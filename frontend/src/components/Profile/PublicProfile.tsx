@@ -41,8 +41,6 @@ export default function PublicProfile() {
 		return (<></>);
 	}
 
-	console.log(user);
-
 	if (!user)
 		return (<>
 			<div>

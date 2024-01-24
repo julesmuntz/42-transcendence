@@ -1,7 +1,7 @@
 import Nav from "react-bootstrap/Nav";
 import React, { useContext } from 'react';
 import { PersonFill, Discord, Joystick, PeopleFill, BoxArrowRight } from "react-bootstrap-icons";
-import { BrowserRouter, Route, Routes, NavLink } from "react-router-dom";
+import { Route, Routes, NavLink } from "react-router-dom";
 import Profile from "../Profile/Profile";
 import "./SideNav.css";
 import Game from "../Game/Game";
@@ -13,6 +13,7 @@ import { WebSocketContext } from '../../contexts/WebSocketContext';
 import Cookies from "js-cookie";
 import { Socket } from 'socket.io-client';
 import { UserContext } from "../../contexts/UserContext";
+import GameChat from "../Game/GameChat";
 
 export default function SideBar() {
 	const socket = useContext<Socket | undefined>(WebSocketContext);
@@ -25,7 +26,7 @@ export default function SideBar() {
 	const [isHovered, setIsHovered] = useState<string | null>(null);
 
 	return (
-		<BrowserRouter>
+		<>
 			<Nav className="d-md-block bg-dark sidebar" activeKey="/home">
 				<div className="sidebar-sticky">
 					<Nav.Item className="pb-1">
@@ -81,9 +82,10 @@ export default function SideBar() {
 				<Route path="/" element={<Profile />}></Route>
 				<Route path="/friend" element={<ViewFriends />}></Route>
 				<Route path="/game" element={<Game />}></Route>
+				<Route path="/gameChat" element={<GameChat />}></Route>
 				<Route path="/chat/:id" element={<Chat />}></Route>
 				<Route path="/chat" element={<Chat />}></Route>
 			</Routes>
-		</BrowserRouter>
+		</>
 	);
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Req, Res } from "@nestjs/common";
+import { Controller, Get, UseGuards, Req, Res, Param } from "@nestjs/common";
 import { FortyTwoAuthGuard } from "./guard/42.Guards";
 import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
@@ -39,4 +39,10 @@ export class AuthController {
 	user(@Req() request: Request) {
 		return request.user;
 	}
+
+	@Get("verify")
+	async verifyToken() : Promise<boolean>{
+		return true;
+	}
+
 }

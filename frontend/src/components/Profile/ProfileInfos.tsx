@@ -17,7 +17,7 @@ export default function ProfileInfos({ userPublic }: { userPublic: any | undefin
 
 	useEffect(() => {
 		const getNbWins = async () => {
-			console.log(user.id);
+			// console.log(user.id);
 			const nbWins = await fetch(`http://localhost:3030/games/nb-wins/${user.id}`, {
 				method: "GET",
 				headers: {

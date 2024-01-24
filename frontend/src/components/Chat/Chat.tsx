@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
-import { IFriends, UserContext, useEmits } from '../../contexts/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import { Message, UserRoom } from "../../shared/chats.interface";
 import { Header, UserList } from './Header';
 import { ChatLayout, useRoomQuery } from './ChatLayout';
@@ -27,7 +27,7 @@ export default function Chat() {
 		avatarPath: userContext.user.info.avatarPath,
 	});
 
-	const [friendBlock, setFriendBlock] = useState<IFriends[] | null>(null);
+	// const [friendBlock, setFriendBlock] = useState<IFriends[] | null>(null);
 	const [isType, setType] = useState<boolean>(false);
 	useSocketEvent(socket, 'type', () =>
 	{
@@ -64,11 +64,11 @@ export default function Chat() {
 		navigate('/chat');
 	});
 
-	useEmits(socket, 'friendsBlocked', null);
-	useSocketEvent(socket, 'friendsBlocked', (e: IFriends[]) => {
-		setFriendBlock(null);
-		setFriendBlock(e);
-	});
+	// useEmits(socket, 'friendsBlocked', null);
+	// useSocketEvent(socket, 'friendsBlocked', (e: IFriends[]) => {
+	// 	setFriendBlock(null);
+	// 	setFriendBlock(e);
+	// });
 
 	useEffect(() => {
 		const initializeChat = async () => {
@@ -235,7 +235,7 @@ export default function Chat() {
 						<UserList user={getUser ?? []} hostId={room.host.userId} user_a={user} handleBanUnBan={handleBanUnBan} handelMuteUnMute={handleMuteUnMute} handleKick={handleKick} handlePromote={handlePromote}></UserList>
 					) : (
 						<>
-							<Messages user={user} messages={messages} friends={null}></Messages>
+							<Messages user={user} messages={messages} friends={null} socket={socket}></Messages>
 							<MessageForm sendMessage={sendMessage}></MessageForm>
 						</>
 					)}

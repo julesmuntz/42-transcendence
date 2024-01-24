@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import {
 	DataBall,
-	DataDvd,
+	// DataDvd,
 	DataPing,
 	DataPlayer,
 	DataTime,
