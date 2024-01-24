@@ -51,7 +51,7 @@ export class FriendsGateway {
 				{
 					this.server.to(idUserTarget.socketId).emit('notification', {
 						type: NotificationType.Info,
-						message: user.username + 'sent you a friend request',
+						message: user.username + ' sent you a friend request',
 					});
 					this.server.to(idUserTarget.socketId).emit('friends', friends);
 				}

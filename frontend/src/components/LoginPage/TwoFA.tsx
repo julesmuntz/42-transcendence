@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { Form } from 'react-bootstrap';
 import styled from "styled-components";
-import { useNavigate } from 'react-router-dom';
 import "./css/TwoFA.css"
 import { UserContext } from "../../contexts/UserContext";
 import Cookies from "js-cookie";
@@ -24,7 +23,6 @@ export default function TwoFA({ id }: { id: string }) {
 	const [countdown, setCountdown] = useState(30);
 	const userContext = useContext(UserContext);
 	let code = "";
-	// const navigate = useNavigate();
 	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		const inputValue = e.target.value;

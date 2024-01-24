@@ -9,6 +9,7 @@ import TwoFA from './components/LoginPage/TwoFA';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { WebSocketContext, useSocketEvent } from './contexts/WebSocketContext';
 import { Socket } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 
 interface JwtPayload {
 	users: {
@@ -31,27 +32,54 @@ function App() {
 	const id = Cookies.get('id');
 	const socket = useContext<Socket | undefined>(WebSocketContext);
 	const [isSocketConnected, setIsSocketConnected] = useState(false);
+	const [popup, setPopup] = useState(false);
+	const navigate = useNavigate();
 
 	useSocketEvent(socket, 'infoUser', (e: Info) => {
-	  const getUser = async (e: Info) => {
-		userContext.connectUser(e);
-	  };
-	  if (userContext.user.auth) {
-		getUser(e);
-	  }
+		const getUser = async (e: Info) => {
+			userContext.connectUser(e);
+		};
+		if (userContext.user.auth) {
+			getUser(e);
+		}
 	});
 
 	useEffect(() => {
-	  const getTocken = async (id: number, token: string) => {
-		userContext.setTocken(id, token);
-	  };
+		const getTocken = async (id: number, token: string) => {
+		  userContext.setTocken(id, token);
+		};
 
-	  if (!userContext.user.auth && token) {
-		const user = jwtDecode<JwtPayload>(token);
-		const info = user.users;
-		getTocken(info.id, token);
-	  }
-	}, [token, userContext]);
+		const fetchData = async () => {
+			if (!userContext.user.auth && token) {
+				try {
+					await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/auth/verify`, {
+						method: 'GET',
+						headers: {
+						  'Authorization': `Bearer ${token}`,
+						  'Content-Type': 'application/json',
+						},
+					}).then((res) =>
+					{
+						if (res.status === 200) {
+							return res.json(); // Retourne une promesse pour être traitée dans le prochain then
+						} else {
+							throw new Error("Status not 200");
+						}
+					});
+
+					const user = jwtDecode<JwtPayload>(token);
+					const info = user.users;
+					getTocken(info.id, token);
+				} catch (error) {
+					Cookies.remove('access_token');
+				}
+		  }
+		};
+
+		fetchData(); // Appel de la fonction fetchData directement
+
+	  }, [token, userContext]);
+
 
 	useEffect(() => {
 		socket?.on("isSocketConnected", (e) => {
@@ -61,30 +89,59 @@ function App() {
 		});
 		return () => {
 			socket?.off("isSocketConnected");
-		}
+		};
 	}, [socket]);
 
-	// console.log(token);
+	useSocketEvent(socket, 'invited', () => {
+		setPopup(true);
+		setTimeout(() => {
+			setPopup(false);
+		}, 15 * 1000);
+	});
+
+	useSocketEvent(socket, 'AcceptInvitation', () => {
+		console.log('Invitation accepted');
+		navigate('/gameChat');
+	});
+
+	const handleAccept = () => {
+		setPopup(false);
+		socket?.emit('AcceptInvitation');
+	};
+
+	const handleReject = () => {
+		setPopup(false);
+		socket?.emit('RefuseInvitation');
+	};
 
 	return (
-	  <div className="App">
-		{(!userContext.user.auth && !token) && (id) ? (
-		  <TwoFA id={id} />
-		) : (
-		  (!userContext.user.auth && !token) ? (
-			<LoginPage />
-		  ) : (
-			<QueryClientProvider client={queryClient}>
-			  {(isSocketConnected && userContext.user.authToken) ? (
-				<SideNav />
-			  ) : (
-				<div></div>
-			  )}
-			</QueryClientProvider>
-		  )
-		)}
-	  </div>
+		<div className="App">
+			{(!userContext.user.auth && !token) && (id) ? (
+				<TwoFA id={id} />
+			) : (
+				(!userContext.user.auth && !token) ? (
+					<LoginPage />
+				) : (
+					<QueryClientProvider client={queryClient}>
+						{(isSocketConnected && userContext.user.authToken) ? (
+							<div>
+								<SideNav />
+								{popup && (
+									<div className="game-invite-popup">
+										<div>You have been invited to a game</div>
+										<button onClick={handleAccept}>Accept</button>
+										<button onClick={handleReject}>Refuse</button>
+									</div>
+								)}
+							</div>
+						) : (
+							<div></div>
+						)}
+					</QueryClientProvider>
+				)
+			)}
+		</div>
 	);
-  }
+}
 
-  export default App;
+export default App;
