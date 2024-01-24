@@ -1,7 +1,6 @@
 import { useState, createContext, useEffect } from 'react';
 
 export interface Info {
-	TFASecret: string;
 	avatarDefault: string;
 	avatarPath: string;
 	email: string;
@@ -79,11 +78,7 @@ export default function UserProvider({ children }: any) {
 	}
 
 	const logout = () => {
-		setUser((user: Iuser) => ({
-			info: {} as Info,
-			auth: false,
-			authToken: ''
-		}));
+		setUser(() => ({ info: {} as Info, auth: false, authToken: ''}));
 	};
 
 	return (

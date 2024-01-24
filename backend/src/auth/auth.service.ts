@@ -72,6 +72,7 @@ export class AuthService {
 	}
 
 	async generateJwt(user: User): Promise<string> {
+		user.TFASecret = null;
 		const payload = { sub: user.id, users: user };
 		return (this.jwtService.sign(payload));
 	}

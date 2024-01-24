@@ -56,8 +56,12 @@ export default function Profile() {
 		}
 	}, [qrcode]);
 
+	const isActive = () => {
+		setIs2FAActive(false);
+	}
+
 	if (is2FAActive)
-		return (<TFAProfile qrset={{ qrcode, setQrcode }} />);
+		return (<TFAProfile qrset={{ qrcode, setQrcode }} isActive={ isActive } />);
 
 	if (!userContext.user.info.email)
 		return (<></>);

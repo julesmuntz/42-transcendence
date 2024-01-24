@@ -24,6 +24,7 @@ export default function FriendNotifications() {
 		initializeNotifFriend();
 
 		socket?.on('friendsInvited', (e: IFriends[] | null) => {
+			setNotifs(null);
 			if (e)
 			{
 				for (const friend of e) {
@@ -41,6 +42,7 @@ export default function FriendNotifications() {
 		return (() => {
 			socket?.off('friendsInvited');
 			socket?.off('friendsInviteRemoved');
+			setNotifs(null);
 		});
 	}, [socket]);
 

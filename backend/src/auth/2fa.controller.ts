@@ -5,6 +5,7 @@ import { AuthService } from "./auth.service";
 import { User } from "../users/entities/user.entity";
 import { Public } from "./decorator/public.decorator";
 import { statusOnline } from "users/dto/update-user.dto";
+import { ok } from "assert";
 
 @Controller("2fa")
 @UseInterceptors(ClassSerializerInterceptor)
@@ -38,27 +39,41 @@ export class TFAController {
 		}
 
 		const User = await this.usersService.turnOnTFA(request.user.sub);
+		User.isTFAEnabled = true;
 		return User;
 	}
 
 	@Public()
 	@Post("authenticate")
-	async authenticate(
-		@Res({ passthrough: true }) res: Response,
-		@Body() body: { id: number, TFASecret: string, TFACode: string }
-	) {
-		const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, body.TFASecret);
-		if (!isCodeValid) {
-			throw new UnauthorizedException("Wrong authentication code");
-		}
-		const expirationDate = new Date();
-		expirationDate.setDate(expirationDate.getDate() + 7);
-		res.setHeader('Access-Control-Allow-Origin', `http://${process.env.HOSTNAME}:3000`);
-		const user = await this.usersService.findOne(body.id);
-		const access_token = await this.TFAService.generateJwt(user);
-		const u = await this.usersService.update(body.id, statusOnline);
-		res.cookie('access_token', `${access_token}`, { expires: expirationDate }).send({ status: 'ok' });
-	}
+async authenticate(
+  @Res({ passthrough: true }) res: Response,
+  @Body() body: { id: number, TFACode: string }
+) {
+	const userTFA = await this.usersService.findTFASecret(body.id);
+	if (userTFA == undefined)
+		throw new UnauthorizedException("User not found");
+    const isCodeValid = this.TFAService.isTFACodeValid(body.TFACode, userTFA);
+	const requestOrigin = res.req.headers.origin;
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+
+    if (!isCodeValid) {
+		console.log("Wrong authentication code");
+      throw new UnauthorizedException("Wrong authentication code");
+    }
+
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 7);
+
+    const user = await this.usersService.findOne(body.id);
+    const access_token = await this.TFAService.generateJwt(user);
+    const u = await this.usersService.update(body.id, statusOnline);
+
+    res.cookie('access_token', `${access_token}`, { httpOnly: false, sameSite: "strict", expires: expirationDate });
+	res.status(200).json({ status: 'ok', id: u.id }); // Send a JSON response
+    return null; // Return null to ensure that NestJS doesn't try to send an additional response
+}
+
+
 
 	@Post("turn-off")
 	async turnOffTFA(

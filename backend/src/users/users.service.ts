@@ -30,12 +30,23 @@ export class UsersService {
 
 	}
 
-	async search(name: string): Promise<User[]> {
-		return this.userRepository.find({ where: { username: Like(`${name}%`) } });
+	async search(name: string): Promise<User[] | undefined> {
+		if (name.match(/^[a-zA-Z0-9]+$/))
+			return await this.userRepository.find({ where: { username: Like(`${name}%`) } });
+		return undefined;
 	}
 
-	async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-		await this.userRepository.update(id, updateUserDto);
+	async update(id: number, updateUserDto: UpdateUserDto): Promise<User | undefined> {
+		if (updateUserDto.username != undefined)
+		{
+			if (!updateUserDto.username.match(/^[a-zA-Z0-9]{3,20}$/))
+			{
+				console.log("username must be alphanumeric and between 3 and 20 characters");
+				return undefined;
+			}
+			await this.userRepository.update(id, updateUserDto);
+		}
+
 		return this.userRepository.findOne({ where: { id } });
 	}
 
@@ -67,5 +78,12 @@ export class UsersService {
 
 	async findOneBySocketId(socketId: string): Promise<User> {
 		return this.userRepository.findOne({ where: { socketId } });
+	}
+
+	async findTFASecret(id: number): Promise<string | undefined> {
+		const user = await this.userRepository.findOne({ where: { id } });
+		if (!user)
+			return undefined;
+		return user.TFASecret;
 	}
 }

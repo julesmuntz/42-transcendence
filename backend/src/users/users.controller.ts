@@ -51,6 +51,9 @@ export class UsersController {
 	@Get('search/:name')
 	async search(@Param('name') name: string): Promise<User[]> {
 		const user = await this.usersService.search(name);
+		if (user === undefined) {
+			throw new NotFoundException("User does not exist !");
+		}
 		return user;
 	}
 
