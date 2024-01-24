@@ -13,7 +13,7 @@ export default function GameHistory() {
 
 	useEffect(() => {
 		const getGameHistory = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/games/${userContext.user.info.id}`,
+			await fetch(`http://localhost:3030/games/${userContext.user.info.id}`,
 			{
 				method: "GET",
 				headers: {

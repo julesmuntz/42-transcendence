@@ -9,7 +9,7 @@ export const useRoomQuery = (roomName: string, isConnected: boolean, token: stri
 		const query = useQuery({
 			queryKey: ['rooms', roomName],
 			queryFn: (): Promise<Room> =>
-			axios.get(`http://${process.env.REACT_APP_HOSTNAME}:3030/chats/rooms/${roomName}`, {
+			axios.get(`http://localhost:3030/chats/rooms/${roomName}`, {
 			  headers: {
 				Authorization: `Bearer ${token}`,
 			  },
