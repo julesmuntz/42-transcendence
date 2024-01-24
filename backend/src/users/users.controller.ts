@@ -8,6 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Express, Response } from 'express';
 import { editFileName } from './file-upload.utils';
+import * as fs from 'fs';
 
 @Controller('users')
 export class UsersController {
@@ -28,7 +29,7 @@ export class UsersController {
 	async handleUpload(@UploadedFile(
 		new ParseFilePipeBuilder()
 			.addFileTypeValidator({
-				fileType: 'jpeg',
+				fileType: '.(png|jpeg|jpg|svg)'
 			})
 			.addMaxSizeValidator({
 				maxSize: 200000
@@ -41,6 +42,14 @@ export class UsersController {
 			return {
 				statusCode: 401,
 			};
+		const user = await this.usersService.findOne(parseInt(id));
+		fs.unlink('.' + user.avatarPath.slice(27), (err) => {
+			if (err) {
+				console.error(err);
+				return ;
+			}
+			console.log("file deleted successfully");
+		});
 		await this.usersService.update(parseInt(id), { avatarPath: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename });
 		return {
 			statusCode: 200,
