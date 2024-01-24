@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import {
 	DataBall,
+	DataDvd,
 	DataPing,
 	DataPlayer,
 	DataTime,
@@ -12,7 +13,8 @@ import {
 	pingReset,
 	playerLeftReset,
 	playerRightReset,
-	ballReset
+	ballReset,
+	dvdReset
 } from '../../shared/config/pong.config';
 import { WebSocketContext, useSocketEvent } from '../../contexts/WebSocketContext';
 import { UserContext } from '../../contexts/UserContext';
@@ -31,6 +33,8 @@ export default function Pong() {
 	const [ratio, setRatio] = useState(Math.min(
 				(window.innerWidth - 45) / board.w,
 				window.innerHeight / board.h));
+	const [hide, setHide] = useState(false);
+	const [dvd, setDvd] = useState({ ...dvdReset });
 	const [upIsPressed, setUpIsPressed] = useState(false);
 	const [downIsPressed, setDownIsPressed] = useState(false);
 
@@ -51,9 +55,20 @@ export default function Pong() {
 			update: new Date(data.t.update),
 			kickoff: new Date(data.t.kickoff)
 		});
-		setPlayer1(data.player1);
-		setPlayer2(data.player2);
-		setBall(data.ball);
+		if (id === 1) {
+			setPlayer1(data.player1);
+			setPlayer2(data.player2);
+			setBall(data.ball);
+		}
+		else {
+			data.player2.position = 0;
+			setPlayer1(data.player2);
+			data.player1.position = 1;
+			setPlayer2(data.player1);
+			data.ball.x = board.w - data.ball.x;
+			data.ball.vx = -data.ball.vx;
+			setBall(data.ball);
+		}
 	});
 
 	const userContext = useContext(UserContext);
@@ -95,6 +110,14 @@ export default function Pong() {
 			newPing.hide = !ping.hide;
 			setPing(newPing);
 		}
+		if (e.key === "h") {
+			setHide(!hide);
+		}
+		if (e.key === "d") {
+			var newDvd = dvd;
+			newDvd.activate = !dvd.activate;
+			setDvd(newDvd);
+		}
 	}
 
 	function manageKeyup(e: KeyboardEvent): void {
@@ -129,7 +152,8 @@ export default function Pong() {
 				refresh={refresh}
 				t={t}
 				ratio={ratio}
-				id={id}
+				hide={hide}
+				dvd={dvd}
 			/>
 		</div>
 	);

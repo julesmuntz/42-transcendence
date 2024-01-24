@@ -45,3 +45,10 @@ export interface DataCanvas {
 	h: number;
 	margin: number;
 }
+
+export interface DataDvd {
+	activate: boolean;
+	color: string;
+	w: number;
+	h: number;
+}
