@@ -82,7 +82,7 @@ export function TFAProfile({ qrset, isActive }: { qrset: { qrcode: string, setQr
 	}
 
 	const sendCode = async (e: any) => {
-		await fetch(`http://localhost:3030/2fa/turn-on`, {
+		await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/2fa/turn-on`, {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`,

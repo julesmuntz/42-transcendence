@@ -26,25 +26,25 @@ export class UsersController {
 		})
 	}))
 	async handleUpload(@UploadedFile(
-		// new ParseFilePipeBuilder()
-		// 	.addFileTypeValidator({
-		// 		fileType: 'jpeg',
-		// 	})
-		// 	.addMaxSizeValidator({
-		// 		maxSize: 200000
-		// 	})
-		// 	.build({
-		// 		errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
-		// 	}),
+		new ParseFilePipeBuilder()
+			.addFileTypeValidator({
+				fileType: 'jpeg',
+			})
+			.addMaxSizeValidator({
+				maxSize: 200000
+			})
+			.build({
+				errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+			}),
 	) file: any, @Param('id') id: string, @Req() request): Promise<any> {
 		if (request.user.sub !== parseInt(id))
 			return {
 				statusCode: 401,
 			};
-		await this.usersService.update(parseInt(id), { avatarPath: `http://localhost:3030/users/imgs/` + file.filename });
+		await this.usersService.update(parseInt(id), { avatarPath: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename });
 		return {
 			statusCode: 200,
-			data: `http://localhost:3030/users/imgs/` + file.filename,
+			data: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename,
 		}
 	}
 
