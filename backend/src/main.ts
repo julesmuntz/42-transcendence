@@ -12,6 +12,7 @@ async function bootstrap() {
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
 		credentials: true
 	});
-	await app.listen(3030);
+	app.setGlobalPrefix('api');
+	await app.listen(3000);
 }
 bootstrap();

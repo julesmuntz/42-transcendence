@@ -65,14 +65,17 @@ export default function Messages({
 							</div>
 							<div
 								className="name"
-								onContextMenu={(e) => {
-									e.preventDefault();
-									socket?.emit('InvitePlayer', { userId: message.user.userId })
-								}}
 							>
-								<Link to={`/profile/${message.user.userId}`} className="link-text">
+								<Link to={`/profile/${message.user.userId}`} className="link-text" data-tooltip-content="Right click Invite to game">
 									{message.user.userName}
 								</Link>
+								{(<button data-tooltip-id="my-tooltip" data-tooltip-place="right" data-tooltip-content="Invite to game" type="button" className="btn btn-default" onClick={() => {
+									socket?.emit('InvitePlayer', { userId: message.user.userId })
+								}
+								}>
+									<span className="mr-1 text-lg text-white">{'🕹️'}</span>
+								</button>
+								)}
 							</div>
 
 							<div className="text">{message.message}</div>
@@ -106,11 +109,18 @@ export default function Messages({
 							</div>
 							<div
 								className="name"
-								onContextMenu={(e) => {
-									e.preventDefault();
+							>
+								<Link to={`/profile/${message.user.userId}`} className="link-text" data-tooltip-content="Right click Invite to game">
+									{message.user.userName}
+								</Link>
+								{(<button data-tooltip-id="my-tooltip" data-tooltip-place="right" data-tooltip-content="Invite to game" type="button" className="btn btn-default" onClick={() => {
 									socket?.emit('InvitePlayer', { userId: message.user.userId })
-								}}
-							><Link to={`/profile/${message.user.userId}`} className="link-text">{message.user.userName}</Link></div>
+								}
+								}>
+									<span className="mr-1 text-lg text-white">{'🕹️'}</span>
+								</button>
+								)}
+							</div>
 							<div className="text">{message.message}</div>
 							<div className="time">{message.timeSent}</div>
 						</div>

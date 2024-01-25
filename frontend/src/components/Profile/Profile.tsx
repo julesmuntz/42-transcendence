@@ -16,7 +16,7 @@ export default function Profile() {
 	const [is2FAActive, setIs2FAActive] = useState(false);
 
 	let getQrcode = async () => {
-		return fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/2fa/generate`, {
+		return fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/2fa/generate`, {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`
@@ -74,7 +74,7 @@ export default function Profile() {
 			<Container className="d-flex flex-column justify-content-center align-items-center">
 				<ProfileImg userPublic={undefined} />
 				<ProfileInfos userPublic={undefined} />
-				<GameHistory />
+				<GameHistory id={userContext.user.info.id}/>
 			</Container>
 			<Container>
 				<ProfileSecurity qrset={{ qrcode, setQrcode }} />

@@ -165,7 +165,7 @@ export default function Chat() {
 
 	async function getUserIdByUsername(target: string): Promise<number | null> {
 		if (target.match(/^[a-zA-Z0-9]+$/)) {
-			const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/search/${target}`, {
+			const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/users/search/${target}`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${userContext.user.authToken}`,
@@ -214,7 +214,6 @@ export default function Chat() {
 			{user?.userId && roomName && room && (
 				<ChatLayout>
 					<Header
-						isConnected={isConnected ?? false}
 						users={user}
 						roomName={room.name}
 						roomType={room.type}
@@ -228,6 +227,10 @@ export default function Chat() {
 						handleInvite={() => {
 								inviteToChannel(roomName);
 							}
+						}
+						socket={socket}
+						userid={room.users.map((user) => user.userId)
+							.filter((id) => id !== user.userId)[0]
 						}
 					/>
 
