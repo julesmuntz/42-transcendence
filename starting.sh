@@ -41,12 +41,12 @@ else
 	sessionEncrypt=$(generate_password)
 	echo "JWT_SECRET=$sessionEncrypt" >> "$ENV_FILE"
 
-	echo "HOSTNAME=$(hostname -s)" >> "$ENV_FILE"
-	echo "REACT_APP_HOSTNAME=$(hostname -s)" >> "$ENV_FILE"
-	API_CALLBACK=http://$(hostname -s):3030/auth/callback
+	echo "HOSTNAME=192.168.64.3" >> "$ENV_FILE"
+	echo "REACT_APP_HOSTNAME=192.168.64.3" >> "$ENV_FILE"
+	API_CALLBACK=http://192.168.64.3:3000/auth/callback
 	echo "API_CALLBACK=$API_CALLBACK" >> "$ENV_FILE"
 	echo "Created $ENV_FILE with example variables."
- 	echo "http://$(hostname -s):3000" > "url.txt"
+ 	echo "http://192.168.64.3:3000" > "url.txt"
 fi
 
 

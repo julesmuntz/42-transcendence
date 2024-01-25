@@ -8,19 +8,19 @@ import {
 import {
 	ServerToClientEvents,
 	ClientToServerEvents,
-} from '/shared/interfaces/events.interface';
+} from 'shared/interfaces/events.interface';
 import { PongService } from './pong.service';
-import { DataMove, DataUpdate } from '/shared/interfaces/data.interface';
+import { DataMove, DataUpdate } from 'shared/interfaces/data.interface';
 import { Server, Socket } from 'socket.io'
 import {
 	playerSpeed,
-} from '/shared/config/pong.config';
+} from 'shared/config/pong.config';
 import {
 	ballInteraction,
 	launchBall,
 	reflectBall,
 	updateData
-} from '/shared/functions/game';
+} from 'shared/functions/game';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class PongGateway {

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { UserRoom, Message, ChannelType } from '/shared/chats.interface';
+import { UserRoom, Message, ChannelType } from 'shared/chats.interface';
 
 @Entity()
 export class Room {

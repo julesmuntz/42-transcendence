@@ -5,8 +5,8 @@ import {
 	pingReset,
 	playerLeftReset,
 	playerRightReset,
-} from '/shared/config/pong.config';
-import { DataUpdate } from '/shared/interfaces/data.interface';
+} from 'shared/config/pong.config';
+import { DataUpdate } from 'shared/interfaces/data.interface';
 import { Socket } from 'socket.io';
 import { GamesService } from '../games/games.service';
 import { GameDto } from '../games/dto/game.dto';
