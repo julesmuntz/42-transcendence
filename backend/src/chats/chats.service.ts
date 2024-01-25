@@ -1,5 +1,5 @@
 import { Room } from './entities/chat.entity';
-import { UserRoom, Message } from '../shared/chats.interface';
+import { UserRoom, Message } from '/shared/chats.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
