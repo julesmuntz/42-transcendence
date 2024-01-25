@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
 import Form from 'react-bootstrap/Form';
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../contexts/UserContext";
 import '../css/ProfileModifier.css';
 
@@ -17,6 +17,7 @@ export default function ProfileModifier() {
 	}
 
 	const handleClose = () => {
+		setSrcImg(userContext.user.info.avatarPath);
 		setShow(false);
 	}
 
@@ -87,9 +88,10 @@ export default function ProfileModifier() {
 							<input
 								type="file"
 								name="profile-pic"
-								accept="image/gif, image/png, image/svg+xml, image/jpeg, image/png"
+								accept="image/png, image/svg+xml, image/jpeg, image/png"
 								onChange={changeImage}
 								style={{ color: '#ffffff' }}
+								className='type_file'
 								/>
 							<Image
 								src={srcImg}
