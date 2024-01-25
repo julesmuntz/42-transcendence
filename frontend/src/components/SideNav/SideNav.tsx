@@ -13,7 +13,6 @@ import { WebSocketContext } from '../../contexts/WebSocketContext';
 import Cookies from "js-cookie";
 import { Socket } from 'socket.io-client';
 import { UserContext } from "../../contexts/UserContext";
-import GameChat from "../Game/GameChat";
 
 export default function SideBar() {
 	const socket = useContext<Socket | undefined>(WebSocketContext);
@@ -82,7 +81,6 @@ export default function SideBar() {
 				<Route path="/" element={<Profile />}></Route>
 				<Route path="/friend" element={<ViewFriends />}></Route>
 				<Route path="/game" element={<Game />}></Route>
-				<Route path="/gameChat" element={<GameChat />}></Route>
 				<Route path="/chat/:id" element={<Chat />}></Route>
 				<Route path="/chat" element={<Chat />}></Route>
 			</Routes>

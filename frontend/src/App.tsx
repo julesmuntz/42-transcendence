@@ -9,7 +9,7 @@ import TwoFA from './components/LoginPage/TwoFA';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { WebSocketContext, useSocketEvent } from './contexts/WebSocketContext';
 import { Socket } from 'socket.io-client';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface JwtPayload {
 	users: {
@@ -34,6 +34,8 @@ function App() {
 	const [isSocketConnected, setIsSocketConnected] = useState(false);
 	const [popup, setPopup] = useState(false);
 	const navigate = useNavigate();
+	const location = useLocation();
+	const { hash, pathname, search } = location;
 
 	useSocketEvent(socket, 'infoUser', (e: Info) => {
 		const getUser = async (e: Info) => {
@@ -100,8 +102,15 @@ function App() {
 	});
 
 	useSocketEvent(socket, 'AcceptInvitation', () => {
-		console.log('Invitation accepted');
-		navigate('/gameChat');
+		userContext.setState("ingame");
+		if (pathname === '/game')
+			navigate(0);
+		else
+			navigate('/game');
+	});
+
+	useSocketEvent(socket, 'setStateOnline', () => {
+		userContext.setState("online");
 	});
 
 	const handleAccept = () => {

@@ -16,6 +16,8 @@ export default function ProfileImg({ userPublic }: { userPublic: any | undefined
 		statusColor = "#535f71";
 	else if (user.status === "online")
 		statusColor = "#0a5";
+	else if (user.status === "ingame")
+		statusColor = "#ff7c14";
 
 	return (
 		<div className="relative-profile-pic">

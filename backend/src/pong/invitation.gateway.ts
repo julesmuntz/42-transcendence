@@ -8,12 +8,16 @@ import {
 import { Server, Socket } from 'socket.io'
 import { NotificationType } from 'sockets.service';
 import { DataSource, Not } from 'typeorm';
+import { PongService } from './pong.service';
 import { User, UserStatus } from 'users/entities/user.entity';
 import { userInfo } from "../shared/chats.interface";
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class InvitationGateway {
-	constructor(private dataSources : DataSource) {}
+	constructor(
+		private dataSources : DataSource,
+		private pongService: PongService
+	) {}
 	private saveInvitations: Map<number, userInfo> = new Map<number, userInfo>;
 
 	@WebSocketServer()
@@ -87,6 +91,7 @@ export class InvitationGateway {
 			if (user)
 			{
 				this.saveInvitations.delete(IdTargetConnect.id);
+				this.pongService.setPrivateGame(user.id, IdTargetConnect.id);
 				client.emit('AcceptInvitation');
 				this.server.to(user.socketId).emit('AcceptInvitation');
 			}
