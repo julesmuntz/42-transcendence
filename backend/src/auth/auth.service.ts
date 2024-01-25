@@ -77,4 +77,8 @@ export class AuthService {
 		return (this.jwtService.sign(payload));
 	}
 
+	async verifyToken(token: string): Promise<User> {
+		const payload = this.jwtService.verify(token);
+		return (payload.users);
+	}
 }

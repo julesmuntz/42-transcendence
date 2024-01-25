@@ -1,7 +1,7 @@
 import Nav from "react-bootstrap/Nav";
 import React, { useContext } from 'react';
 import { PersonFill, Discord, Joystick, PeopleFill, BoxArrowRight } from "react-bootstrap-icons";
-import { BrowserRouter, Route, Routes, NavLink } from "react-router-dom";
+import { Route, Routes, NavLink } from "react-router-dom";
 import Profile from "../Profile/Profile";
 import "./SideNav.css";
 import Game from "../Game/Game";
@@ -22,19 +22,19 @@ export default function SideBar() {
 		Cookies.remove("access_token");
 		userContext.logout();
 	}
-	const [isHovered, setIsHovered] = useState<string | null>(null);
+	const [isSelected, setIsSelected] = useState<string | null>(null);
 
 	return (
-		<BrowserRouter>
+		<>
 			<Nav className="d-md-block bg-dark sidebar" activeKey="/home">
 				<div className="sidebar-sticky">
 					<Nav.Item className="pb-1">
 						<NavLink
 							className={({ isActive }) => (isActive ? "active" : "")}
 							to="/profile"
-							onClick={() => setIsHovered('/profile')}
+							onClick={() => setIsSelected('/profile')}
 						>
-							<PersonFill color={isHovered === '/profile' ? "#ff7c14" : "#535f71"} size={25} />
+							<PersonFill color={isSelected === '/profile' ? "#ff7c14" : "#535f71"} size={25} />
 						</NavLink>
 					</Nav.Item>
 
@@ -42,8 +42,8 @@ export default function SideBar() {
 						<NavLink
 							className={({ isActive }) => (isActive ? "active" : "")}
 							to="/chat"
-							onClick={() => setIsHovered('/chat')}						>
-							<Discord color={isHovered === '/chat' ? "#ff7c14" : "#535f71"} size={25} />
+							onClick={() => setIsSelected('/chat')}						>
+							<Discord color={isSelected === '/chat' ? "#ff7c14" : "#535f71"} size={25} />
 						</NavLink>
 					</Nav.Item>
 
@@ -51,8 +51,8 @@ export default function SideBar() {
 						<NavLink
 							className={({ isActive }) => (isActive ? "active" : "")}
 							to="/game"
-							onClick={() => setIsHovered('/game')}						>
-							<Joystick color={isHovered === '/game' ? "#ff7c14" : "#535f71"} size={25} />
+							onClick={() => setIsSelected('/game')}						>
+							<Joystick color={isSelected === '/game' ? "#ff7c14" : "#535f71"} size={25} />
 						</NavLink>
 					</Nav.Item>
 
@@ -60,8 +60,8 @@ export default function SideBar() {
 						<NavLink
 							className={({ isActive }) => (isActive ? "active" : "")}
 							to="/friend"
-							onClick={() => setIsHovered('/friend')}						>
-							<PeopleFill color={isHovered === '/friend' ? "#ff7c14" : "#535f71"} size={25} />
+							onClick={() => setIsSelected('/friend')}						>
+							<PeopleFill color={isSelected === '/friend' ? "#ff7c14" : "#535f71"} size={25} />
 						</NavLink>
 					</Nav.Item>
 
@@ -70,7 +70,7 @@ export default function SideBar() {
 							className={({ isActive }) => (isActive ? "active" : "")}
 							to="/"
 							onClick={handleLogout}				>
-							<BoxArrowRight color={isHovered === '/' ? "#ff7c14" : "#535f71"} size={25} />
+							<BoxArrowRight color={isSelected === '/' ? "#ff7c14" : "#535f71"} size={25} />
 						</NavLink>
 					</Nav.Item>
 				</div>
@@ -84,6 +84,6 @@ export default function SideBar() {
 				<Route path="/chat/:id" element={<Chat />}></Route>
 				<Route path="/chat" element={<Chat />}></Route>
 			</Routes>
-		</BrowserRouter>
+		</>
 	);
 }

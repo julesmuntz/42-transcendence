@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Res, Req, Patch, Param, Delete, NotFoundException, BadRequestException, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res, Req, Patch, Param, Delete, NotFoundException, BadRequestException, UseInterceptors, UploadedFile, ParseFilePipeBuilder, HttpStatus } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,6 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Express, Response } from 'express';
 import { editFileName } from './file-upload.utils';
+import * as fs from 'fs';
 
 @Controller('users')
 export class UsersController {
@@ -25,8 +26,31 @@ export class UsersController {
 			filename: editFileName
 		})
 	}))
-	async handleUpload(@UploadedFile() file: any, @Param('id') id: number): Promise<any> {
-		await this.usersService.update(id, { avatarPath: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename });
+	async handleUpload(@UploadedFile(
+		new ParseFilePipeBuilder()
+			.addFileTypeValidator({
+				fileType: '.(png|jpeg|jpg|svg)'
+			})
+			.addMaxSizeValidator({
+				maxSize: 200000
+			})
+			.build({
+				errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+			}),
+	) file: any, @Param('id') id: string, @Req() request): Promise<any> {
+		if (request.user.sub !== parseInt(id))
+			return {
+				statusCode: 401,
+			};
+		const user = await this.usersService.findOne(parseInt(id));
+		fs.unlink('.' + user.avatarPath.slice(27), (err) => {
+			if (err) {
+				console.error(err);
+				return ;
+			}
+			console.log("file deleted successfully");
+		});
+		await this.usersService.update(parseInt(id), { avatarPath: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename });
 		return {
 			statusCode: 200,
 			data: `http://${process.env.HOSTNAME}:3030/users/imgs/` + file.filename,
@@ -63,9 +87,14 @@ export class UsersController {
 		return res.sendFile(image, { root: './imgs' });
 	}
 
+
 	@Patch(':id')
-	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto): Promise<any> {
-		const user = await this.usersService.update(id, updateUserDto);
+	async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Req() request): Promise<any> {
+		if (request.user.sub !== parseInt(id))
+			return {
+				statusCode: 401,
+			};
+		const user = await this.usersService.update(parseInt(id), updateUserDto);
 		if (user)
 			return {
 				statusCode: 200,
@@ -76,13 +105,13 @@ export class UsersController {
 			}
 	}
 
-	@Delete(':id')
-	async delete(@Param('id') id: number) {
-		const user = await this.usersService.findOne(id);
-		if (!user) {
-			throw new NotFoundException("User does not exist !");
-		} else {
-			return this.usersService.delete(id);
-		}
-	}
+	// @Delete(':id')
+	// async delete(@Param('id') id: number) {
+	// 	const user = await this.usersService.findOne(id);
+	// 	if (!user) {
+	// 		throw new NotFoundException("User does not exist !");
+	// 	} else {
+	// 		return this.usersService.delete(id);
+	// 	}
+	// }
 }

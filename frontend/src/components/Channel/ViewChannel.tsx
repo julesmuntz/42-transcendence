@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../contexts/UserContext";
 import { WebSocketContext } from "../../contexts/WebSocketContext";
 import { useNavigate } from 'react-router-dom'
 
@@ -13,7 +12,6 @@ export default function ViewChannel() {
 
 	const [channel, setChannel] = useState<Channel[]>([]);
 	const socket = useContext(WebSocketContext);
-	const userContext = useContext(UserContext);
 	const navigate = useNavigate();
 
 	useEffect(() => {

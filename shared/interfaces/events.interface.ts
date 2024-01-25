@@ -4,6 +4,7 @@ export interface ServerToClientEvents {
 	ping: (n: number) => void;
 	pong_accept: (playerId: number) => void;
 	pong_update: (data: DataUpdate) => void;
+	setStateOnline: () => void;
 }
 
 export interface ClientToServerEvents {

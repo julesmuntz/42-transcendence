@@ -6,14 +6,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-tooltip/dist/react-tooltip.css';
 import UserProvider from './contexts/UserContext';
 import WebSocketProvider from './contexts/WebSocketContext';
-
+import { BrowserRouter } from "react-router-dom";
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
 );
 root.render(
 	<UserProvider>
 		<WebSocketProvider>
-			<App />
+			<BrowserRouter>
+				<App />
+			</BrowserRouter>
 		</WebSocketProvider>
 	</UserProvider>
 );

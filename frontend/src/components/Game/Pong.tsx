@@ -22,6 +22,7 @@ import Board from './Board';
 import './Pong.css';
 
 export default function Pong() {
+	const userContext = useContext(UserContext);
 	const socket = useContext<Socket | undefined>(WebSocketContext);
 
 	const [id, setId] = useState(0);
@@ -34,7 +35,7 @@ export default function Pong() {
 				(window.innerWidth - 45) / board.w,
 				window.innerHeight / board.h));
 	const [hide, setHide] = useState(false);
-	const [dvd, setDvd] = useState({ ...dvdReset });
+	const [dvd, setDvd] = useState<DataDvd>({ ...dvdReset });
 	const [upIsPressed, setUpIsPressed] = useState(false);
 	const [downIsPressed, setDownIsPressed] = useState(false);
 
@@ -71,8 +72,6 @@ export default function Pong() {
 		}
 	});
 
-	const userContext = useContext(UserContext);
-
 	useEffect(() => {
 		const intervalID: any = setInterval(() => {
 			var newPing = ping;
@@ -85,6 +84,7 @@ export default function Pong() {
 		window.addEventListener('keydown', manageKeydown);
 		window.addEventListener('keyup', manageKeyup);
 		window.addEventListener('resize', manageResize);
+		console.log("pong_join");
 		socket?.emit('pong_join', userContext.user.info.id);
 		return (() => {
 			clearInterval(intervalID);
@@ -92,7 +92,7 @@ export default function Pong() {
 			window.removeEventListener('keyup', manageKeyup);
 			window.removeEventListener('resize', manageResize);
 		});
-	});
+	}, []);
 
 	function manageKeydown(e: KeyboardEvent): void {
 		if (e.repeat)

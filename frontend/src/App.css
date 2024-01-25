@@ -24,7 +24,7 @@ body {
   color: white;
   overflow: auto;
   font-size: 1.5rem;
-  font-family: Uni, sans;
+  font-family: Uni, sans, Monospace;
 }
 
 .link-text,
@@ -37,4 +37,26 @@ body {
   color: #e47011;
   font-style: italic;
   text-decoration: underline;
+}
+
+.game-invite-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #252c38;
+  color: white;
+  padding: 20px;
+  z-index: 999;
+  box-shadow: -2px 2px 15px 2px #ff7c14;
+  border-radius: 12px;
+}
+
+.game-invite-popup button {
+  margin-top: 20px;
+  background-color: #ff7c14;
+  color: white;
+  border: none;
+  margin-inline: 5px;
+  border-radius: 5px;
 }

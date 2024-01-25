@@ -12,13 +12,6 @@ export default function FriendNotifications() {
 
 	useEffect(() => {
 		const initializeNotifFriend = async () => {
-			await new Promise<void>(resolve => {
-				if (socket?.connected) {
-					resolve();
-				} else {
-					socket?.on('connect', () => resolve());
-				}
-			});
 			socket?.emit('notification_friendsInvited', { id: null});
 		};
 		initializeNotifFriend();
@@ -34,17 +27,15 @@ export default function FriendNotifications() {
 				}
 			}
 		});
-
 		socket?.on('friendsInviteRemoved', () => {
 			socket?.emit('notification_friendsInvited', { id: null});
 		});
-
 		return (() => {
 			socket?.off('friendsInvited');
 			socket?.off('friendsInviteRemoved');
 			setNotifs(null);
 		});
-	}, [socket]);
+	}, [socket, userContext.user.info.id]);
 
 	if (!notifs)
 		return null;

@@ -37,16 +37,12 @@ export class UsersService {
 	}
 
 	async update(id: number, updateUserDto: UpdateUserDto): Promise<User | undefined> {
-		if (updateUserDto.username != undefined)
-		{
-			if (!updateUserDto.username.match(/^[a-zA-Z0-9]{3,20}$/))
-			{
-				console.log("username must be alphanumeric and between 3 and 20 characters");
-				return undefined;
-			}
-			await this.userRepository.update(id, updateUserDto);
+		if (updateUserDto.username != undefined
+			&& !updateUserDto.username.match(/^[a-zA-Z0-9]{3,20}$/)){
+			console.log("username must be alphanumeric and between 3 and 20 characters");
+			return undefined;
 		}
-
+		await this.userRepository.update(id, updateUserDto);
 		return this.userRepository.findOne({ where: { id } });
 	}
 

@@ -4,16 +4,18 @@ import Image from 'react-bootstrap/Image';
 import { Link } from 'react-router-dom';
 import { IFriends } from '../../contexts/UserContext';
 import { useEffect, useState } from 'react';
-
+import { Socket } from 'socket.io-client';
 
 export default function Messages({
 	user,
 	messages,
 	friends,
+	socket,
 }: {
 	user: Pick<UserRoom, 'userId' | 'userName'>;
 	messages: Message[];
 	friends: IFriends[] | null;
+	socket: Socket | undefined;
 }) {
 	const [done, setDone] = useState(false);
 
@@ -39,7 +41,7 @@ export default function Messages({
 		}, 10);
 	}, [done]);
 
-	const anchor = document.getElementsByClassName('anchor')[0];
+	// const anchor = document.getElementsByClassName('anchor')[0];
 	setTimeout(() => {
 		const anchor = document.getElementsByClassName('anchor')[0];
 		anchor?.scrollIntoView({
@@ -48,6 +50,7 @@ export default function Messages({
 	}, 5);
 
 	const reversedMessages = messages.slice().reverse();
+
 	if (!friends) {
 		return (
 			<div className="scrollable">
@@ -60,7 +63,18 @@ export default function Messages({
 								<Image src={message.user.avatarPath} alt="User name" roundedCircle fluid />
 								<div className="status offline"></div>
 							</div>
-							<div className="name"><Link to={`/profile/${message.user.userId}`} className="link-text">{message.user.userName}</Link></div>
+							<div
+								className="name"
+								onContextMenu={(e) => {
+									e.preventDefault();
+									socket?.emit('InvitePlayer', { userId: message.user.userId })
+								}}
+							>
+								<Link to={`/profile/${message.user.userId}`} className="link-text">
+									{message.user.userName}
+								</Link>
+							</div>
+
 							<div className="text">{message.message}</div>
 							<div className="time">{message.timeSent}</div>
 						</div>
@@ -90,7 +104,13 @@ export default function Messages({
 								<Image src={message.user.avatarPath} alt="User name" roundedCircle fluid />
 								<div className="status offline"></div>
 							</div>
-							<div className="name"><Link to={`/profile/${message.user.userId}`} className="link-text">{message.user.userName}</Link></div>
+							<div
+								className="name"
+								onContextMenu={(e) => {
+									e.preventDefault();
+									socket?.emit('InvitePlayer', { userId: message.user.userId })
+								}}
+							><Link to={`/profile/${message.user.userId}`} className="link-text">{message.user.userName}</Link></div>
 							<div className="text">{message.message}</div>
 							<div className="time">{message.timeSent}</div>
 						</div>

@@ -82,8 +82,10 @@ export class PongGateway {
 				break;
 		}
 		this.pongService.setData(client, data);
-		if (data.player1.score >= 5 || data.player2.score >= 5)
+		if (data.player1.score >= 5 || data.player2.score >= 5) {
 			this.pongService.registerResults(client);
+			this.server.to(this.pongService.getRoom(client)).emit('setStateOnline');
+		}
 		this.server.to(this.pongService.getRoom(client)).emit('pong_update', data);
 	}
 
@@ -92,8 +94,6 @@ export class PongGateway {
 		@MessageBody() id: number,
 		@ConnectedSocket() client: Socket
 	): void {
-		if (this.pongService.isInGame(client))
-			return ;
 		const playerId = this.pongService.joinGame(client, id);
 		client.emit('pong_accept', playerId);
 		if (this.pongService.gameStart(client)) {

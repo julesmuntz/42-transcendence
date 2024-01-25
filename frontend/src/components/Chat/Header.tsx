@@ -1,6 +1,5 @@
 import { UserRoom, ChannelType } from "../../shared/chats.interface";
 import { Tooltip } from "react-tooltip";
-import { ReactNode } from "react";
 import "./Chat.css";
 import "./Header.css";
 
