@@ -1,0 +1,84 @@
+#!/bin/bash
+
+ENV_FILE=".env"
+ENV_FILE_DATABASE="database.env"
+REACT_ENV="react.env"
+API_ENV="api.env"
+DOCKER_COMPOSE_FILE="docker-compose.yml"
+
+generate_password() {
+	LENGTH=42
+	CHARACTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?"
+	password=$(openssl rand -base64 48 | tr -d '/+=' | head -c $LENGTH)
+	echo "$password"
+}
+
+generate_env()
+{
+	if [ -e "$ENV_FILE" ] && [ -e "$ENV_FILE_DATABASE" ] && [ -e "$REACT_ENV" ]; then
+	  echo ".env file already exists. Skipping creation."
+	else
+		password=$(generate_password)
+		sessionEncrypt=$(generate_password)
+
+		echo "POSTGRES_TYPE=postgres" >> "$ENV_FILE"
+		echo "POSTGRES_HOST=database" >> "$ENV_FILE"
+		echo "POSTGRES_PORT=5432" >> "$ENV_FILE"
+		echo "POSTGRES_USERNAME=transcendence" >> "$ENV_FILE"
+		echo "POSTGRES_DATABASE_PASSWORD=$password" >> "$ENV_FILE"
+		echo "POSTGRES_DATABASE=postgres"  >> "$ENV_FILE"
+		echo "PORT=3000" >> "$ENV_FILE"
+		echo "HOSTNAME=$(hostname -s)" >> "$ENV_FILE"
+		echo "API_CALLBACK=http://$(hostname -s):3000/api/auth/callback" >> "$ENV_FILE"
+		echo "JWT_SECRET=$sessionEncrypt" >> "$ENV_FILE"
+
+		echo "POSTGRES_DB=postgres" >> "$ENV_FILE_DATABASE"
+		echo "POSTGRES_USER=transcendence" >> "$ENV_FILE_DATABASE"
+		echo "POSTGRES_PASSWORD=$password" >> "$ENV_FILE_DATABASE"
+
+		echo "REACT_APP_HOSTNAME=$(hostname -s)" >> "$REACT_ENV"
+		echo "REACT_APP_PORT=3000" >> "$REACT_ENV"
+
+		echo "Created $ENV_FILE with example variables."
+ 		echo "http://$(hostname -s):3000" > "url.txt"
+	fi
+
+	if [ -e "$API_ENV" ]; then
+		echo "api.env file already exists. Skipping creation."
+	else
+		read -p "Enter your API_ID: " api_id
+		read -p "Enter your API_SECRET: " api_secret
+		echo "API_ID=$api_id" >> "$API_ENV"
+		echo "API_SECRET=$api_secret" >> "$API_ENV"
+	fi
+}
+
+main() {
+	case "$1" in
+		"start")
+			echo "Starting your application..."
+			generate_env
+			docker compose -f $DOCKER_COMPOSE_FILE up --build;
+			;;
+		"stop")
+			echo "Stopping your application..."
+			docker compose -f $DOCKER_COMPOSE_FILE down
+			docker system prune -f -a
+			rm -rf $ENV_FILE $ENV_FILE_DATABASE $REACT_ENV
+			;;
+		"restart")
+			echo "restart your application..."
+			docker compose -f $DOCKER_COMPOSE_FILE down
+			docker system prune -f -a
+			rm -rf $ENV_FILE $ENV_FILE_DATABASE $REACT_ENV
+			generate_env
+			docker compose -f $DOCKER_COMPOSE_FILE up --build;
+		;;
+		*)
+			echo "Usage: $0 {start|stop}"
+			exit 1
+			;;
+	esac
+}
+
+main "$@"
