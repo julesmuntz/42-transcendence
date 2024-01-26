@@ -165,7 +165,7 @@ export default function Chat() {
 
 	async function getUserIdByUsername(target: string): Promise<number | null> {
 		if (target.match(/^[a-zA-Z0-9]+$/)) {
-			const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/users/search/${target}`, {
+			const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/users/search/${target}`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${userContext.user.authToken}`,

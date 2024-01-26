@@ -161,6 +161,7 @@ export class ChannelsGateway {
 		const channel = await this.dataSources.manager.findOne(Channel, { where: { name: payload.channelId } });
 		const user = await this.dataSources.manager.findOne(User, { where: { socketId: socket.id } });
 		if (channel && user) {
+			console.log(channel);
 			const compare = await bcrypt.compare(payload.password, channel.passwordHash);
 			if (compare) {
 				const userExist = await this.dataSources.manager.findOne(ChannelMember, { relations: ['channel', 'user'], where: { channel: { id: channel.id }, user: { id: user.id } } });

@@ -87,7 +87,7 @@ export default function TwoFA({ id }: { id: string }) {
 	}
 
 	const sendCode = async (e: any) => {
-		await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/2fa/authenticate`, {
+		await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/2fa/authenticate`, {
 			method: "POST",
 			credentials: "include",
 			headers: {

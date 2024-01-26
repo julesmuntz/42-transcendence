@@ -3,7 +3,9 @@ FROM node:latest
 COPY frontend frontend
 COPY backend backend
 COPY shared frontend/src/shared
-COPY shared shared
+COPY shared backend/src/shared
+
+COPY react.env frontend/.env
 
 RUN npm install --prefix frontend \
 	&& npm run build --prefix frontend \

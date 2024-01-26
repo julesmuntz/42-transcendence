@@ -5,5 +5,7 @@ frontend/.env
 node_modules/
 
 *.js
+.gitignore
+
 
 

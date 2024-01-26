@@ -18,7 +18,7 @@ export default function PublicProfile() {
 			nav('/profile');
 		}
 		let fetchUser = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/users/${id}`,
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/users/${id}`,
 				{
 					method: "GET",
 					headers: {
