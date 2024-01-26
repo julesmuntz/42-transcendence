@@ -1,6 +1,6 @@
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets'
 import { Logger } from '@nestjs/common'
-import { Message, UserRoom } from "../shared/chats.interface";
+import { Message, UserRoom } from "shared/chats.interface";
 import { Server, Socket } from 'socket.io'
 import { ChatsService } from "./chats.service";
 import { ChannelMember, ChannelMemberAccess, ChannelMemberPermission, ChannelMemberRole } from 'channels/entities/channel-member.entity';

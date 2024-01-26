@@ -54,7 +54,7 @@ function App() {
 		const fetchData = async () => {
 			if (!userContext.user.auth && token) {
 				try {
-					await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/auth/verify`, {
+					await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/auth/verify`, {
 						method: 'GET',
 						headers: {
 						  'Authorization': `Bearer ${token}`,

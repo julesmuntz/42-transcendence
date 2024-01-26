@@ -17,7 +17,7 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 	const userContext = useContext(UserContext);
 
 	let getQrcode = async () => {
-		return fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/2fa/generate`, {
+		return fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/2fa/generate`, {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`
@@ -53,7 +53,7 @@ export default function ProfileSecurity({ qrset }: { qrset: { qrcode: string, se
 
 	async function deactivate2FA(e: any) {
 		e.preventDefault();
-		return fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/2fa/turn-off`, {
+		return fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/2fa/turn-off`, {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${userContext.user.authToken}`

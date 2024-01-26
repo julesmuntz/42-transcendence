@@ -18,18 +18,22 @@ import { Game } from 'games/entities/game.entity';
 import { UsersService } from "users/users.service";
 import { User } from "users/entities/user.entity";
 import { InvitationGateway } from 'pong/invitation.gateway';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
 	imports: [ConfigModule.forRoot(),
 	TypeOrmModule.forRoot({
-		type: process.env.TYPE as any,
-		host: process.env.HOST,
-		port: parseInt(process.env.PORT) || 5432,
-		username: process.env.USERNAME,
-		password: process.env.DATABASE_PASSWORD,
-		database: process.env.DATABASE,
+		type: process.env.POSTGRES_TYPE as any,
+		host: process.env.POSTGRES_HOST,
+		port: parseInt(process.env.POSTGRES_PORT) || 5432,
+		username: process.env.POSTGRES_USERNAME,
+		password: process.env.POSTGRES_DATABASE_PASSWORD,
+		database: process.env.POSTGRES_DATABASE,
 		entities: [__dirname + '/**/*.entity{.ts,.js}'],
 		synchronize: true,
+	}),
+	ServeStaticModule.forRoot({
+		rootPath: '/frontend/build',
 	}),
 		AuthModule,
 		FriendsModule,

@@ -12,7 +12,7 @@ export default function GameHistory({id}: {id: number}) {
 
 	useEffect(() => {
 		const getGameHistory = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/games/${id}`,
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/games/${id}`,
 			{
 				method: "GET",
 				headers: {

@@ -17,7 +17,7 @@ export default function ProfileInfos({ userPublic }: { userPublic: any | undefin
 
 	useEffect(() => {
 		const getNbWins = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/games/nb-wins/${user.id}`, {
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/games/nb-wins/${user.id}`, {
 				method: "GET",
 				headers: {
 					"Authorization": `Bearer ${userContext.user.authToken}`
@@ -28,7 +28,7 @@ export default function ProfileInfos({ userPublic }: { userPublic: any | undefin
 		};
 
 		const getNbLosses = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/games/nb-losses/${user.id}`, {
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/games/nb-losses/${user.id}`, {
 				method: "GET",
 				headers: {
 					"Authorization": `Bearer ${userContext.user.authToken}`

@@ -4,67 +4,25 @@ services:
   database:
     image: postgres:latest
     container_name: database_container
-    ports:
-      - '5432:5432'
     env_file:
-      - .env
+      - database.env
     restart: always
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     networks:
       - ft_transcendence
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin4_container
-    restart: always
-    ports:
-      - "8888:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
-      PGADMIN_DEFAULT_PASSWORD: strong-password
-    depends_on:
-      - database
-    networks:
-      - ft_transcendence
-
-  backend:
+  server:
     build:
-      context: ./backend
+      context: ./
       dockerfile: Dockerfile
-    ports:
-      - 3030:3030
     env_file:
       - .env
       - api.env
-    volumes:
-      - ./backend/src:/app/src
-      - ./shared:/app/src/shared
     depends_on:
       - database
     networks:
       - ft_transcendence
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
     ports:
-      - 3000:3000
-    env_file:
-      - ./frontend/.env
-    volumes:
-      - ./frontend/src:/app/src
-      - ./shared:/app/src/shared
-    env_file:
-      - ./frontend/.env
-    depends_on:
-      - database
-    networks:
-      - ft_transcendence
-
-volumes:
-  postgres_data:
+      - "3000:3000"
 
 networks:
   ft_transcendence:

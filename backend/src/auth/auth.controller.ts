@@ -22,12 +22,12 @@ export class AuthController {
 		if (result instanceof User) {
 			expirationDate.setTime(expirationDate.getTime() + 30000); // 30 second en millisecondes
 			res.cookie(`id`, `${result.id}`, {  httpOnly: false, sameSite: "strict", expires: expirationDate  });
-			return res.redirect(`http://${process.env.HOSTNAME}:3000`);
+			return res.redirect(`http://${process.env.HOSTNAME}:${process.env.PORT}`);
 		}
 
 		expirationDate.setDate(expirationDate.getDate() + 7);
 		res.cookie('access_token', `${result}`, {  httpOnly: false, sameSite: "strict", expires: expirationDate  });
-		return res.redirect(`http://${process.env.HOSTNAME}:3000`);
+		return res.redirect(`http://${process.env.HOSTNAME}:${process.env.PORT}`);
 	}
 
 	@Get("logout")
