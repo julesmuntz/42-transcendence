@@ -1,6 +1,7 @@
 DOCKER_COMPOSE_FILE	= docker-compose.yml
 ENV_FILE			= .env
-F_ENV_FILE			= ./frontend/.env
+ENV_FILE_DATABASE="database.env"
+REACT_ENV="react.env"
 
 all: up
 
@@ -30,7 +31,8 @@ fclean: clean
 	@ if [ -n "$$(docker volume ls -q)" ]; then docker volume rm $$(docker volume ls -q); fi
 	@ echo "Removing .env"
 	@ if [ -e $(ENV_FILE) ]; then rm -rf $(ENV_FILE); fi
-	@ if [ -e $(F_ENV_FILE) ]; then rm -rf $(F_ENV_FILE); fi
+	@ if [ -e $(ENV_FILE_DATABASE) ]; then rm -rf $(ENV_FILE_DATABASE); fi
+	@ if [ -e $(REACT_ENV) ]; then rm -rf $(REACT_ENV); fi
 	@ docker system prune -f -a
 
 re: fclean all

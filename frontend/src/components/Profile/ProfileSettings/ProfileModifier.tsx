@@ -35,7 +35,7 @@ export default function ProfileModifier() {
 		const newUsername = e.target[1].value;
 
 		if (e.target[0].files[0])
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/users/upload/${userContext.user.info.id}`, {
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/users/upload/${userContext.user.info.id}`, {
 				method: "POST",
 				headers: {
 					"Authorization": `Bearer ${userContext.user.authToken}`,
@@ -52,7 +52,7 @@ export default function ProfileModifier() {
 			});
 
 		if (newUsername)
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3000/api/users/${userContext.user.info.id}`, {
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/users/${userContext.user.info.id}`, {
 				method: "PATCH",
 				headers: {
 					"Authorization": `Bearer ${userContext.user.authToken}`,

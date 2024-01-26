@@ -1,52 +1,42 @@
 #!/bin/bash
 
 generate_password() {
-  # Longueur du mot de passe
-  LENGTH=42
-
-  # Caractères possibles dans le mot de passe
-  CHARACTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?"
-
-  # Générer le mot de passe
-  password=$(openssl rand -base64 48 | tr -d '/+=' | head -c $LENGTH)
-
-  # Retourner le mot de passe
-  echo "$password"
+	LENGTH=42
+	CHARACTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?"
+	password=$(openssl rand -base64 48 | tr -d '/+=' | head -c $LENGTH)
+	echo "$password"
 }
 
-# Specify the path for the .env file
 ENV_FILE=".env"
 ENV_FILE_DATABASE="database.env"
-F_ENV_FILE="./frontend/.env"
+REACT_ENV="react.env"
 
-# Check if the .env file already exists
-if [ -e "$ENV_FILE" ]; then
+if [ -e "$ENV_FILE" , "$ENV_FILE_DATABASE" , "$REACT_ENV" ]; then
   echo ".env file already exists. Skipping creation."
 else
 	password=$(generate_password)
-	# Create the .env file and add some example variables
+	sessionEncrypt=$(generate_password)
+
 	echo "POSTGRES_TYPE=postgres" >> "$ENV_FILE"
 	echo "POSTGRES_HOST=database" >> "$ENV_FILE"
 	echo "POSTGRES_PORT=5432" >> "$ENV_FILE"
 	echo "POSTGRES_USERNAME=transcendence" >> "$ENV_FILE"
 	echo "POSTGRES_DATABASE_PASSWORD=$password" >> "$ENV_FILE"
 	echo "POSTGRES_DATABASE=postgres"  >> "$ENV_FILE"
-
+	echo "PORT=3000" >> "$ENV_FILE"
+	echo "HOSTNAME=$(hostname -s)" >> "$ENV_FILE"
+	echo "API_CALLBACK=http://$(hostname -s):3000/api/auth/callback" >> "$ENV_FILE"
+	echo "JWT_SECRET=$sessionEncrypt" >> "$ENV_FILE"
 
 	echo "POSTGRES_DB=postgres" >> "$ENV_FILE_DATABASE"
 	echo "POSTGRES_USER=transcendence" >> "$ENV_FILE_DATABASE"
 	echo "POSTGRES_PASSWORD=$password" >> "$ENV_FILE_DATABASE"
 
+	echo "REACT_APP_HOSTNAME=$(hostname -s)" >> "$REACT_ENV"
+	echo "REACT_APP_PORT=3000" >> "$REACT_ENV"
 
-	sessionEncrypt=$(generate_password)
-	echo "JWT_SECRET=$sessionEncrypt" >> "$ENV_FILE"
-
-	echo "HOSTNAME=192.168.64.3" >> "$ENV_FILE"
-	echo "REACT_APP_HOSTNAME=192.168.64.3" >> "$ENV_FILE"
-	API_CALLBACK=http://192.168.64.3:3000/auth/callback
-	echo "API_CALLBACK=$API_CALLBACK" >> "$ENV_FILE"
 	echo "Created $ENV_FILE with example variables."
- 	echo "http://192.168.64.3:3000" > "url.txt"
+ 	echo "http://$(hostname -s):3000" > "url.txt"
 fi
 
 
