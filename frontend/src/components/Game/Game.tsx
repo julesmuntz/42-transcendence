@@ -7,10 +7,8 @@ export default function Game() {
 	const userContext = useContext(UserContext);
 	const user = userContext.user.info;
 	const [inGame, setInGame] = useState(user.status === "ingame");
-	console.log(`user.status ${user.status}`);
 
 	useEffect(() => {
-		console.log(`user.status useEffect ${user.status}`);
 		if (inGame && user.status !== "ingame")
 			userContext.setState("ingame");
 	}, [inGame]);

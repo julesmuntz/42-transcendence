@@ -84,7 +84,6 @@ export default function Pong() {
 		window.addEventListener('keydown', manageKeydown);
 		window.addEventListener('keyup', manageKeyup);
 		window.addEventListener('resize', manageResize);
-		console.log("pong_join");
 		socket?.emit('pong_join', userContext.user.info.id);
 		return (() => {
 			clearInterval(intervalID);

@@ -70,7 +70,6 @@ export default function UserProvider({ children }: any) {
 	}
 
 	const setState = (state: string) => {
-		console.log(`setState ${state}`);
 		setUser((user: Iuser) => ({
 			info: { ...user.info, status: state },
 			auth: user.auth,
