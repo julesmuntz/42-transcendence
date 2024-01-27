@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ChatsService } from './chats.service';
-import { Room } from '../shared/chats.interface';
+import { Room } from 'shared/chats.interface';
 
 
 @Controller('chats')

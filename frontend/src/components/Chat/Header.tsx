@@ -1,10 +1,10 @@
 import { UserRoom, ChannelType } from "../../shared/chats.interface";
 import { Tooltip } from "react-tooltip";
+import { Socket } from 'socket.io-client';
 import "./Chat.css";
 import "./Header.css";
 
 export const Header = ({
-	isConnected,
 	users,
 	isChannel,
 	handleUsersClick,
@@ -15,9 +15,10 @@ export const Header = ({
 	handleInvite,
 	roomName,
 	roomType,
-	isProtected
+	isProtected,
+	socket,
+	userid,
 }: {
-	isConnected: boolean
 	users: UserRoom
 	isChannel: boolean
 	handleUsersClick: () => void
@@ -28,7 +29,9 @@ export const Header = ({
 	handleInvite(): void
 	roomName: string
 	roomType: ChannelType
-	isProtected: boolean
+	isProtected: boolean,
+	socket: Socket | undefined,
+	userid: number | undefined,
 }) => {
 
 	return (

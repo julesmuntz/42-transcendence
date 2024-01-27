@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
 import Form from 'react-bootstrap/Form';
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../../../contexts/UserContext";
 import '../css/ProfileModifier.css';
 
@@ -35,7 +35,7 @@ export default function ProfileModifier() {
 		const newUsername = e.target[1].value;
 
 		if (e.target[0].files[0])
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/upload/${userContext.user.info.id}`, {
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/users/upload/${userContext.user.info.id}`, {
 				method: "POST",
 				headers: {
 					"Authorization": `Bearer ${userContext.user.authToken}`,
@@ -52,7 +52,7 @@ export default function ProfileModifier() {
 			});
 
 		if (newUsername)
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${userContext.user.info.id}`, {
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/users/${userContext.user.info.id}`, {
 				method: "PATCH",
 				headers: {
 					"Authorization": `Bearer ${userContext.user.authToken}`,

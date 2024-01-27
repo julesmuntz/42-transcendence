@@ -58,7 +58,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 	}
 
-	//le deconnecter du chat
 	async handleDisconnect(socket: Socket) {
 		if (this.pongService.isInGame(socket))
 			this.pongService.kick(socket);

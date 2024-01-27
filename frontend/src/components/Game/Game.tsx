@@ -11,7 +11,7 @@ export default function Game() {
 	useEffect(() => {
 		if (inGame && user.status !== "ingame")
 			userContext.setState("ingame");
-	}, [inGame]);
+	}, [inGame, userContext, user.status]);
 
 	if (inGame)
 		return (<Pong />);

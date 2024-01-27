@@ -36,7 +36,7 @@ function App() {
 	const [invitUsername, setInvitUsername] = useState('');
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { hash, pathname, search } = location;
+	const { pathname } = location;
 
 	useSocketEvent(socket, 'infoUser', (e: Info) => {
 		const getUser = async (e: Info) => {
@@ -55,7 +55,7 @@ function App() {
 		const fetchData = async () => {
 			if (!userContext.user.auth && token) {
 				try {
-					await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/auth/verify`, {
+					await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/auth/verify`, {
 						method: 'GET',
 						headers: {
 						  'Authorization': `Bearer ${token}`,

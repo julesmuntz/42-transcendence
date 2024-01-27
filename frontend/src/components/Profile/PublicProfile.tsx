@@ -18,7 +18,7 @@ export default function PublicProfile() {
 			nav('/profile');
 		}
 		let fetchUser = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/${id}`,
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/users/${id}`,
 				{
 					method: "GET",
 					headers: {
@@ -55,7 +55,7 @@ export default function PublicProfile() {
 			<Container className="d-flex flex-column justify-content-center align-items-center">
 				<ProfileImg userPublic={user} />
 				<ProfileInfos userPublic={user} />
-				<GameHistory />
+				<GameHistory id={user.id} />
 			</Container>
 			<Container>
 				{id && <Friends IdUserTarget={parseInt(id)} />}

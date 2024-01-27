@@ -1,9 +1,0 @@
-.vscode/
-*.env
-frontend/.env
-
-node_modules/
-
-*.js
-
-

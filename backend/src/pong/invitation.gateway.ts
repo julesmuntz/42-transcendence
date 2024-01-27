@@ -10,7 +10,7 @@ import { NotificationType } from 'sockets.service';
 import { DataSource, Not } from 'typeorm';
 import { PongService } from './pong.service';
 import { User, UserStatus } from 'users/entities/user.entity';
-import { userInfo } from "../shared/chats.interface";
+import { userInfo } from "shared/chats.interface";
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class InvitationGateway {

@@ -19,7 +19,7 @@ export default function ViewFriends() {
 
     async function handelsearch(e: any) {
         if (e.target.value.match(/^[a-zA-Z0-9]+$/)) {
-            return (fetch(`http://${process.env.REACT_APP_HOSTNAME}:3030/users/search/${e.target.value}`, {
+            return (fetch(`http://${process.env.REACT_APP_HOSTNAME}:${process.env.REACT_APP_PORT}/api/users/search/${e.target.value}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${userContext.user.authToken}`
