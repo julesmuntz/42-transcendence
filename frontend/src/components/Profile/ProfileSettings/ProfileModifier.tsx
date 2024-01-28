@@ -48,6 +48,10 @@ export default function ProfileModifier() {
 					const newUser = userContext.user.info;
 					newUser.avatarPath = ret.data;
 					userContext.login(newUser, userContext.user.authToken);
+					alert("Profile picture successfully modified");
+				}
+				else {
+					alert("Invalid profile picture");
 				}
 			});
 
@@ -66,6 +70,11 @@ export default function ProfileModifier() {
 					const newUser = userContext.user.info;
 					newUser.username = newUsername;
 					userContext.login(newUser, userContext.user.authToken);
+					alert("Username successfully modified");
+				}
+				else
+				{
+					alert("Invalid username");
 				}
 			});
 	}

@@ -17,5 +17,5 @@ export default function Game() {
 
 	if (inGame)
 		return (<Pong />);
-	return (<button onClick={() => { setInGame(true); }} className="btn btn-dark goButton" style={{fontSize: '40px'}}>Start a game</button>);
+	return (<button onClick={() => { setInGame(true); }} className="btn btn-dark goButton">Start a game</button>);
 }

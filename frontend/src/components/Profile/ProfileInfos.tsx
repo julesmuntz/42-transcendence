@@ -43,34 +43,24 @@ export default function ProfileInfos({ userPublic }: { userPublic: any | undefin
 	});
 
 	return (
-		<Container>
-			{/* USERNAME */}
-			{/* <div className="d-flex"> */}
-				{/* <div className="info-title">Username</div> */}
-				<div className="username">{user.username}</div>
-			{/* </div> */}
-			{/* STATUS */}
-			<div className="d-flex justify-content-center align-items-center">
-				<div className="info-title fire">Status</div>
-				<div className="info">{user.status}</div>
+		<Container className="d-flex flex-column align-items-center">
+			<div className="username">{user.username}</div>
+			<div className="d-flex">
+				<div className="d-flex flex-column justify-content-left">
+					<div className="info-title fire">Status</div>
+					<div className="info-title fire">Email</div>
+					<hr />
+					<div className="info-title fire">Wins</div>
+					<div className="info-title fire">Losses</div>
+				</div>
+				<div className="d-flex flex-column justify-content-end">
+					<div className="info">{user.status}</div>
+					<div className="info">{user.email}</div>
+					<hr />
+					<div className="info">{nbWins}</div>
+					<div className="info">{nbLosses}</div>
+				</div>
 			</div>
-			{/* EMAIL ADDRESS */}
-			<div className="d-flex justify-content-center align-items-center">
-				<div className="info-title fire">Email</div>
-				<div className="info">{user.email}</div>
-			</div>
-			<hr/>
-			{/* GAME STATS (nb of wins and losses)*/}
-			<div className="d-flex justify-content-center align-items-center">
-				<div className="info-title fire">Wins</div>
-				<div className="info">{nbWins}</div>
-			</div>
-			<div className="d-flex justify-content-center align-items-center">
-				<div className="info-title fire">Losses</div>
-				<div className="info">{nbLosses}</div>
-			</div>
-			{/* <div>{nbWins === 1 ? `${nbWins} win` : `${nbWins} wins`}</div>
-			<div>{nbLosses === 1 ? `${nbLosses} loss` : `${nbLosses} losses`}</div> */}
 		</Container>
 	);
 }

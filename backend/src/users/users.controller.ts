@@ -39,9 +39,18 @@ export class UsersController {
 			}),
 	) file: any, @Param('id') id: string, @Req() request): Promise<any> {
 		if (request.user.sub !== parseInt(id))
+		{
+			fs.unlink('./imgs/' + file.filename, (err) => {
+				if (err) {
+					console.error(err);
+					return ;
+				}
+				console.log("file deleted successfully");
+			});
 			return {
 				statusCode: 401,
 			};
+		}
 		const user = await this.usersService.findOne(parseInt(id));
 		fs.unlink('.' + user.avatarPath.slice(27), (err) => {
 			if (err) {

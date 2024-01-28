@@ -10,6 +10,10 @@
 	font-size: 1.2em;
 }
 
+.modal-content input.username {
+	padding-bottom: 0px;
+}
+
 .modal-content input.username:focus {
 	color: white;
 }

@@ -45,7 +45,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					{
 						this.logger.log("Server: connection established");
 						socket.emit('message', 'Server: connection established');
-						socket.setMaxListeners(0);
+						socket.setMaxListeners(1000000);
 					}
 				}
 			});
