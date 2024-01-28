@@ -184,7 +184,6 @@ export class PongService {
 		this.playerId.delete(client.id);
 		client.leave(roomName);
 		if (pres.present1 === 0 && pres.present2 === 0) {
-			console.log("Deleted");
 			this.room_properties.delete(roomName);
 			this.presence.delete(roomName);
 			this.room_data.delete(roomName);

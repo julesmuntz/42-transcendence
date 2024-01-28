@@ -33,6 +33,7 @@ function App() {
 	const socket = useContext<Socket | undefined>(WebSocketContext);
 	const [isSocketConnected, setIsSocketConnected] = useState(false);
 	const [popup, setPopup] = useState(false);
+	const [invitUsername, setInvitUsername] = useState('');
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { pathname } = location;
@@ -94,7 +95,8 @@ function App() {
 		};
 	}, [socket]);
 
-	useSocketEvent(socket, 'invited', () => {
+	useSocketEvent(socket, 'invited', (username: string) => {
+		setInvitUsername(username);
 		setPopup(true);
 		setTimeout(() => {
 			setPopup(false);
@@ -137,7 +139,7 @@ function App() {
 								<SideNav />
 								{popup && (
 									<div className="game-invite-popup">
-										<div>You have been invited to a game</div>
+										<div>{invitUsername} invite you to a game</div>
 										<button onClick={handleAccept}>Accept</button>
 										<button onClick={handleReject}>Refuse</button>
 									</div>

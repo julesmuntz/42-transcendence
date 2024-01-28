@@ -30,7 +30,6 @@ export class GamesController {
 			}
 			return (accumulator + win);
 		}, 0);
-		// console.log(nbWins);
 		return (nbWins);
 	}
 
@@ -41,7 +40,6 @@ export class GamesController {
 			let loss = 0;
 			if (current.user1.id === parseInt(id))
 			{
-				// console.log("this is meeee");
 				if (current.score1 < current.score2)
 					loss = 1;
 			}

@@ -84,10 +84,11 @@ export default function Pong() {
 		window.addEventListener('keydown', manageKeydown);
 		window.addEventListener('keyup', manageKeyup);
 		window.addEventListener('resize', manageResize);
-		console.log("pong_join");
 		socket?.emit('pong_join', userContext.user.info.id);
 		return (() => {
 			clearInterval(intervalID);
+			if (player1.score >= 5 || player2.score >= 5)
+				userContext.setState("online");
 			window.removeEventListener('keydown', manageKeydown);
 			window.removeEventListener('keyup', manageKeyup);
 			window.removeEventListener('resize', manageResize);

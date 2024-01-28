@@ -62,7 +62,7 @@ export class InvitationGateway {
 				type: NotificationType.Success,
 				message: 'Invite sent'}
 				);
-				this.server.to(IdTargetConnect.socketId).emit('invited');
+				this.server.to(IdTargetConnect.socketId).emit('invited', user.username);
 				return ;
 			}
 			else if (!t)

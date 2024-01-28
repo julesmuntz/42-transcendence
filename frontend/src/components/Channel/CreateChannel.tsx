@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import { UserContext } from "../../contexts/UserContext";
 import { WebSocketContext } from "../../contexts/WebSocketContext";
 import ViewChannel from "./ViewChannel";
+import "./CreateChannel.css";
 
 export default function CreateChannel() {
 	const userContext = useContext(UserContext);
