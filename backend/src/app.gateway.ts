@@ -29,8 +29,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const token = request.query.token as string;
 		const userId = request.query.userId as string;
 		if (token && userId) {
-			jwt.verify(token, process.env.JWT_SECRET, (err) => {
-				if (err)
+			jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+				let decodedToken = decoded as JwtPayload;
+				if (err || decodedToken.users.id != userId)
 				{
 					this.logger.error('Unauthorized connection');
 					socket.emit('notification', {
