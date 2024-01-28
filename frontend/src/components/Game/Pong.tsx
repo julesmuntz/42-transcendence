@@ -87,6 +87,8 @@ export default function Pong() {
 		socket?.emit('pong_join', userContext.user.info.id);
 		return (() => {
 			clearInterval(intervalID);
+			if (player1.score >= 5 || player2.score >= 5)
+				userContext.setState("online");
 			window.removeEventListener('keydown', manageKeydown);
 			window.removeEventListener('keyup', manageKeyup);
 			window.removeEventListener('resize', manageResize);

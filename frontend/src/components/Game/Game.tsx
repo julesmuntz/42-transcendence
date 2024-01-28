@@ -9,11 +9,32 @@ export default function Game() {
 	const [inGame, setInGame] = useState(user.status === "ingame");
 
 	useEffect(() => {
-		if (inGame && user.status !== "ingame")
+		if (inGame)
 			userContext.setState("ingame");
-	}, [inGame, userContext, user.status]);
+	}, [inGame]);
 
 	if (inGame)
 		return (<Pong />);
-	return (<button onClick={() => { setInGame(true); }} className="btn btn-dark goButton" style={{fontSize: '40px'}}>Start a game</button>);
+	return (
+		<>
+			<button onClick={() => { setInGame(true); }} className="btn btn-dark goButton">
+				Start a game
+			</button>
+			<div className="game_options">
+				<h2>Options</h2>
+				<hr />
+				<div className="game_options_list">
+					<ul>
+						<li className="key">P</li>
+						<li className="key">H</li>
+						<li className="key">D</li>
+					</ul>
+					<ul>
+						<li>Ping</li>
+						<li>Hide mode</li>
+						<li>Dvd theme</li>
+					</ul>
+				</div>
+			</div>
+		</>);
 }
