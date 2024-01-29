@@ -8,6 +8,7 @@ import {
 } from 'shared/config/pong.config';
 import { DataUpdate } from 'shared/interfaces/data.interface';
 import { Socket } from 'socket.io';
+import { User } from "../users/entities/user.entity";
 import { GamesService } from '../games/games.service';
 import { GameDto } from '../games/dto/game.dto';
 import { UsersService } from "../users/users.service";
@@ -28,7 +29,7 @@ export class PongService {
 	constructor(
 		private gamesService: GamesService,
 		private readonly usersService: UsersService,
-		private dataSource:DataSource
+		private dataSource: DataSource
 	) {}
 	private isGameStarting: Map<string, boolean> = new Map<string, boolean>;
 	private room: Map<string, string> = new Map<string, string>();
@@ -156,7 +157,13 @@ export class PongService {
 		return (playerId);
 	}
 
-	joinGame(client: Socket, id: number): number {
+	async joinGame(client: Socket): Promise<number> {
+		const user = await this.dataSource.manager.findOne(User, {
+			where: [{ socketId: client.id }]
+		});
+		if (user === undefined)
+			return (0);
+		const id: number = user.id;
 		if (this.launchingPrivateGame.has(id))
 			return (this.joinPrivateGame(client, id));
 		else if (this.isInGame(client) && this.room_from_player.has(id))

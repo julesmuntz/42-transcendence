@@ -10,7 +10,7 @@ import { User, UserStatus } from 'users/entities/user.entity';
 import { DataSource } from 'typeorm';
 import { Logger } from '@nestjs/common';
 import { PongService } from 'pong/pong.service';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 @WebSocketGateway({ cors: true })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -22,7 +22,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@WebSocketServer() server: Server;
 	private logger = new Logger('AppGateway');
-
 
 	handleConnection(socket: Socket) {
 		const request = socket.handshake;

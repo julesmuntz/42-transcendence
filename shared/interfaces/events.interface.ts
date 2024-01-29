@@ -9,7 +9,7 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
 	ping: (n: number) => void;
-	pong_join: (id: number) => void;
+	pong_join: () => void;
 	pong_move: (direction: number) => void;
 	pong_refresh: () => void;
 }

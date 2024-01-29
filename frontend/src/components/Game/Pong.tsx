@@ -84,7 +84,7 @@ export default function Pong() {
 		window.addEventListener('keydown', manageKeydown);
 		window.addEventListener('keyup', manageKeyup);
 		window.addEventListener('resize', manageResize);
-		socket?.emit('pong_join', userContext.user.info.id);
+		socket?.emit('pong_join');
 		return (() => {
 			clearInterval(intervalID);
 			if (player1.score >= 5 || player2.score >= 5)

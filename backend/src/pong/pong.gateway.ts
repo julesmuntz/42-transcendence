@@ -10,6 +10,7 @@ import {
 	ClientToServerEvents,
 } from 'shared/interfaces/events.interface';
 import { PongService } from './pong.service';
+import { SocketsService } from '../sockets.service';
 import { DataMove, DataUpdate } from 'shared/interfaces/data.interface';
 import { Server, Socket } from 'socket.io'
 import {
@@ -24,7 +25,9 @@ import {
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class PongGateway {
-	constructor(private pongService: PongService) {}
+	constructor(
+		private pongService: PongService
+	) {}
 
 	@WebSocketServer()
 	public server: Server;
@@ -90,11 +93,12 @@ export class PongGateway {
 	}
 
 	@SubscribeMessage('pong_join')
-	handleEventJoin(
-		@MessageBody() id: number,
+	async handleEventJoin(
 		@ConnectedSocket() client: Socket
-	): void {
-		const playerId = this.pongService.joinGame(client, id);
+	): Promise<void> {
+		const playerId = await this.pongService.joinGame(client);
+		if (playerId === 0)
+			return ;
 		client.emit('pong_accept', playerId);
 		if (this.pongService.gameStart(client)) {
 			var data = this.pongService.getData(client);
